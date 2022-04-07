@@ -1,5 +1,5 @@
 const { base } = require("./../../../wrapper")
-const {generateSignedUrl} = require("./../../../services/storage");
+// const {generateSignedUrl} = require("./../../../services/storage");
 const ApiError = require("../ApiError");
 
 const action = {};
@@ -21,10 +21,10 @@ action.validateRequest = async(req, res, next) => {
 action.generateSignedUrl = async (req, res, next) => {
   const userId = req._userId;
   const {filename, type} = req.query;
-  generateSignedUrl(req._siteId, userId, type, filename).then((resp)=>{
+  // generateSignedUrl(req._siteId, userId, type, filename).then((resp)=>{
     res.status(200).send(base.success({result: resp}));
     next();
-  })
+  // })
 }
 
 

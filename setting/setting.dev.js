@@ -20,6 +20,9 @@ const settings = {
       "DB_NAME":process.env["SQL:DB_NAME"],
       "DIALECT":process.env["SQL:DIALECT"],
     },
+    "SENDGRID": {
+      "API_KEY": process.env['SENDGRID:API_KEY'],
+    },
     "JWT": {
       "SECRET": process.env["JWT:SECRET"]
     }

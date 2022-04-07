@@ -1,5 +1,5 @@
 const { base } = require("./../../../wrapper")
-const {generateSignedUrl: generateReviewSignedUrl} = require("./../../../services/storage");
+// const {generateSignedUrl: generateReviewSignedUrl} = require("./../../../services/storage");
 const { Review, Product } = require("../../../core/sql/controller/child");
 const async = require("async");
 const action = {};
@@ -14,10 +14,10 @@ const action = {};
 action.generateSignedUrl = async (req, res, next) => {
   const userId = req._userId;
   const {filename} = req.query;
-  generateReviewSignedUrl(req._siteId, 'review', userId, filename).then((resp)=>{
+  // generateReviewSignedUrl(req._siteId, 'review', userId, filename).then((resp)=>{
     res.status(200).send(base.success({result: resp}));
     next();
-  })
+  // })
 }
 
 /**

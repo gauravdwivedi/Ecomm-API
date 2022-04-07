@@ -6,6 +6,9 @@ const TABLE_NAME = "child_credentials";
 const FIELDS = {
   SITE_ID: "site_id",
   SITE_NAME: "site_name",
+  LOGO: 'logo',
+  THEME_COLOR: 'theme_color', 
+  MEDIA_URL: 'media_url',
   SQL_HOST: "sql_host",
   SQL_PORT: "sql_port",
   SQL_USERNAME: "sql_username",

@@ -1,3 +1,3 @@
 module.exports = {
-  childCredentials: require("./childCredentials")
+  childCredentials: require("./childCredentials"),
 }
