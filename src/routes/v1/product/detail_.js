@@ -46,18 +46,20 @@ detail.fetchDetailVideo = async (req, res, next) => {
   //   res.status(200).send(base.success({result: _wrapper(response)}));
   //   next();
   // })
-  let data = {id :1,
-     category :12,
-     Images :["/images/detail-video/gallery-img.svg","/images/detail-video/gallery-img.svg","/images/detail-video/gallery-img.svg","/images/detail-video/gallery-img.svg"],
-     video_url :"https://dm0qx8t0i9gc9.cloudfront.net/watermarks/video/rj3VhjeXiok7px9t/videoblocks-a-young-woman-holds-a-warm-sweater-on-her-hanger-on-which-a-tag-with-a-price-weighs-a-lady-looks-at-the-material-from-which-this-clothing-is-made_bvufjsg3z__d5af3b8987ca67810c952028dea4381a__P360.mp4",
-     title :'Perry Blue Dress',
-     description :'Lorem ipsum dolor sit amet, consectetur piscing elit, sed do tempor incididunt on.',
-     attributes :'',
-     qty_in_stock :100,
-     price :25,
-     discounted_price :20,
-    rating:4};
-    res.status(200).send(base.success({result:data}));
+  let data = {
+    id: 1,
+    category: 12,
+    Images: ["/images/detail-video/gallery-img.svg", "/images/detail-video/gallery-img.svg", "/images/detail-video/gallery-img.svg", "/images/detail-video/gallery-img.svg"],
+    video_url: "https://dm0qx8t0i9gc9.cloudfront.net/watermarks/video/rj3VhjeXiok7px9t/videoblocks-a-young-woman-holds-a-warm-sweater-on-her-hanger-on-which-a-tag-with-a-price-weighs-a-lady-looks-at-the-material-from-which-this-clothing-is-made_bvufjsg3z__d5af3b8987ca67810c952028dea4381a__P360.mp4",
+    title: 'Perry Blue Dress',
+    description: 'Lorem ipsum dolor sit amet, consectetur piscing elit, sed do tempor incididunt on.',
+    attributes: '',
+    qty_in_stock: 100,
+    price: 25,
+    discounted_price: 20,
+    rating: 4
+  };
+  res.status(200).send(base.success({ result: data }));
 }
 
 
