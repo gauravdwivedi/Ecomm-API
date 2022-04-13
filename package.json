@@ -16,6 +16,7 @@
     "bunyan": "^1.8.15",
     "cookie-parser": "^1.4.5",
     "cors": "^2.8.5",
+    "crypto": "^1.0.1",
     "cryptr": "^6.0.2",
     "elasticsearch": "^16.7.2",
     "express": "^4.17.1",

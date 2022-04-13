@@ -1,5 +1,6 @@
+const {UserBasicInfo: UserBasicInfoRedis} = require("../../../core/redis");
+const childConfig = require("../../../config/configs");
 const ApiError = require("../ApiError");
-const { Users } = require("../../../core/sql/controller/child");
 
 const detail = {};
 
@@ -10,8 +11,6 @@ const detail = {};
 * @param {*} next 
 */
 detail.validateRequest = async(req, res, next) => {
-  const { userId } = req.body;
-  if(!userId) next(new ApiError(400, 'E0010002', {}, 'Invalid request! Please check your inputs'));
   next();
 }
 
@@ -21,11 +20,10 @@ detail.validateRequest = async(req, res, next) => {
 * @param {*} res 
 * @param {*} next 
 */
-detail.getUserDetail = async(req, res, next) => {
-  const { userId } = req.body;
-  const UsersObj = new Users(req._siteId);
-  UsersObj.fetchDetailByID(userId, (err, detail) => {
-    req._response = detail;
+detail.getDetail = async(req, res, next) => {
+  const iUserBasicInfoRedis = new UserBasicInfoRedis(req._siteId);
+  iUserBasicInfoRedis.getUserShortDetail(req._userId).then(userProfile=>{
+    req._userProfileData = userProfile;
     next();
   })
 }
@@ -37,7 +35,7 @@ detail.getUserDetail = async(req, res, next) => {
 * @param {*} next 
 */
 detail.sendResponse = async(req, res, next) => {
-  res.status(200).send(req._response);
+  res.status(200).send(req._userProfileData);
   next();
 }
 

@@ -9,7 +9,9 @@ const reviews = require('./reviews');
 const product = require('./product');
 const common = require('./common');
 const sitemap = require('./sitemap');
+const userAuth = require('./userAuth');
 
+router.use('/auth', userAuth);
 router.use('/menu', menu);
 router.use('/video', video);
 router.use('/comment', comment);

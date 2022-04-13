@@ -1,72 +1,68 @@
-const verify = require("./verify");
-const register = require("./register");
-const changePassword = require("./changePassword");
-const updateUserDetails = require("./updateUserDetails");
-const detail = require("./detail");
-const resetPasswordTrigger = require("./resetPasswordTrigger");
-const resetPasswordVerify = require("./resetPasswordVerify");
-
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const error = require('../error');
+const error = require("../error");
 const auths = require("../auths");
 
-router.post('/user/verify',
-auths.setCredentials,
-verify.validate,
-verify.checkExistence,
-verify.generateToken,
-verify.sendResponse,
-error)
+const list = require('./list');
+const detail = require("./detail");
+const add = require("./add");
+const changePassword = require("./changePassword");
+const update = require("./update");
+const deleteUser = require("./delete");
 
-router.post('/user/register',
-auths.setCredentials,
-register.authenticateSignUpToken,
-register.validateRequest,
-register.ifSignUp,
-register.generateToken,
-register.sendResponse,
-error)
+router.post(
+  '/add',
+  auths.setCredentials,
+  add.validateRequest,
+  add.registerUser,
+  add.generateToken,
+  add.sendResponse,
+  error
+)
 
-router.post('/user/changePassword',
-auths.setCredentials,
-auths.verify,
-changePassword.validateRequest,
-changePassword.matchPassword,
-changePassword.saveNewPassword,
-changePassword.sendResponse,
-error)
+router.get(
+  '/list',
+  auths.setCredentials,
+  list.validateRequest,
+  list.getUsersList,
+  list.sendResponse,
+  error
+)
 
-router.patch('/user',
-auths.setCredentials,
-auths.verify,
-updateUserDetails.validateRequest,
-updateUserDetails.save,
-updateUserDetails.sendResponse,
-error);
+router.post(
+  '/detail',
+  auths.setCredentials,
+  detail.validateRequest,
+  detail.getUserDetail,
+  detail.sendResponse,
+  error
+)
 
-router.get('/myprofile',
-auths.setCredentials,
-auths.verify,
-detail.getDetail,
-detail.sendResponse,
-error);
+router.patch(
+  '/changePassword',
+  auths.setCredentials,
+  changePassword.validateRequest,
+  changePassword.changePassword,
+  changePassword.sendResponse,
+  error
+)
 
-router.patch('/resetPassword/trigger',
-auths.setCredentials,
-resetPasswordTrigger.validateRequest,
-resetPasswordTrigger.generateToken,
-resetPasswordTrigger.saveToken,
-resetPasswordTrigger.sendEmail,
-resetPasswordTrigger.sendResponse,
-error);
+router.patch(
+  '/updateUserDetails',
+  auths.setCredentials,
+  update.validateRequest,
+  update.updateUserDetails,
+  update.sendResponse,
+  error
+)
 
-router.patch('/resetPassword/verify',
-auths.setCredentials,
-resetPasswordVerify.validateRequest,
-resetPasswordVerify.validateToken,
-resetPasswordVerify.savePassword,
-resetPasswordVerify.sendResponse,
-error);
+router.delete(
+  '/deleteUser',
+  auths.setCredentials,
+  deleteUser.validateRequest,
+  deleteUser.deleteUser,
+  deleteUser.sendResponse,
+  error
+)
 
 module.exports = router;
