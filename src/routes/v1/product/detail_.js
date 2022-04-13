@@ -1,6 +1,5 @@
 const { Product } = require("../../../core/sql/controller/child");
 const { base } = require("../../../wrapper");
-const ApiError = require("../ApiError");
 const detail = {};
 
 /**
@@ -40,8 +39,9 @@ detail.fetchSQL = async (req, res, next) => {
 */
 detail.fetchDetailVideo = async (req, res, next) => {
   let { slug } = req.query;
-  // const ProductObj = new Product(req._siteId);
+  const ProductObj = new Product(req._siteId);
   
+
   // ProductObj.productDetail(slug, (error, response)=>{
   //   res.status(200).send(base.success({result: _wrapper(response)}));
   //   next();
