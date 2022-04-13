@@ -1,3 +1,4 @@
+
 const AbstractSQL = require("../abstract");
 const SqlString = require('sqlstring');
 const {Users: {FIELDS: USERS_FIELDS, TABLE_NAME: USERS_TABLE_NAME}} = require("../../model/child");
@@ -5,105 +6,125 @@ const {Users: {FIELDS: USERS_FIELDS, TABLE_NAME: USERS_TABLE_NAME}} = require(".
 class Users extends AbstractSQL{
   constructor(siteId){
     super(siteId);
-    this.tableName = USERS_TABLE_NAME;
+    this.siteId = siteId;
     this.connection = super.connection();
   }
-  
+
   /**
-  * fetching details of all sites
+  * Add User
   */
-  async fetchAll(){
-    let query = SqlString.format(`SELECT * FROM \`${this.tableName}\``, []);
-    let results = await this.connection.query(query, super.getQueryType('SELECT'));
-    return results;
-  }
-
-  /**
-   * Get user detail
-   * @returns 
-   */
-  async getUserDetail(userId, callback){
-    let query = SqlString.format(`SELECT * FROM \`${this.tableName}\` where ${USERS_FIELDS.ID} = ?`, [userId]);
-
-    this.connection.query(query, super.getQueryType('SELECT')).then(result => {
-      callback(null, result && result[0] ? result[0] : {})
+   addUser(params, callback){
+    this.connection.query(QUERY_BUILDER.SAVE(params), super.getQueryType('INSERT')).then(result => {
+      callback(null, result)
     }).catch(error => callback(error, null));
   }
 
-  
+  /**
+  * Check User email
+  */
+   checkEmail(email, callback){
+    this.connection.query(QUERY_BUILDER.CHECK_EMAIL(email), super.getQueryType('SELECT')).then(result => {
+      callback(null, result[0])
+    }).catch(error => callback(error, null));
+  }
   
   /**
-  * registering new user
-  * @param {*} email 
-  * @param {*} password 
-  * @param {*} options 
+  * login
   */
-  async register(email, password, options = {}){
-    const query = `INSERT INTO \`${this.tableName}\`
-    (${USERS_FIELDS.EMAIL}, ${USERS_FIELDS.PASSWORD}, ${USERS_FIELDS.FIRST_NAME}, ${USERS_FIELDS.LAST_NAME}, ${USERS_FIELDS.IS_ACTIVE}, ${USERS_FIELDS.IS_SUPERUSER}, ${USERS_FIELDS.EMAIL_VERIFIED})
+  login(params, callback){
+    this.connection.query(QUERY_BUILDER.LOGIN(params), super.getQueryType('SELECT')).then(result => {
+      callback(null, result[0])
+    }).catch(error => callback(error, null));
+  }
+
+  /**
+  * Fetch List
+  */
+   fetchList(callback){
+    this.connection.query(QUERY_BUILDER.FETCH_LIST(), super.getQueryType('SELECT')).then(result => {
+      callback(null, result)
+    }).catch(error => callback(error, null));
+  }
+
+  /**
+  * Fetch User Detail by ID
+  */
+   fetchDetailByID(userID, callback){
+    this.connection.query(QUERY_BUILDER.FETCH_DETAIL_BY_ID(userID), super.getQueryType('SELECT')).then(result => {
+      callback(null, result)
+    }).catch(error => callback(error, null));
+  }
+
+  /**
+  * Update User Detail by ID
+  */
+   updateDetailByID(params, callback){
+    this.connection.query(QUERY_BUILDER.UPDATE_DETAIL_BY_ID(params), super.getQueryType('UPDATE')).then(result => {
+      callback(null, result)
+    }).catch(error => callback(error, null));
+  }
+
+  /**
+  * Update User Password
+  */
+   changePassword(params, callback){
+    this.connection.query(QUERY_BUILDER.CHANGE_PASSWORD(params), super.getQueryType('UPDATE')).then(result => {
+      callback(null, result)
+    }).catch(error => callback(error, null));
+  }
+
+  /**
+  * Delete User
+  */
+   deleteUser(userID, callback){
+    this.connection.query(QUERY_BUILDER.DELETE_USER_BY_ID(userID), super.getQueryType('DELETE')).then(result => {
+      callback(null, result)
+    }).catch(error => callback(error, null));
+  }
+}
+
+
+const QUERY_BUILDER = {
+  
+  SAVE: (params) => {
+    let { email, password, options } = params;
+    const query = `INSERT INTO ${USERS_TABLE_NAME}
+    (${USERS_FIELDS.EMAIL}, ${USERS_FIELDS.PASSWORD}, ${USERS_FIELDS.FIRST_NAME}, ${USERS_FIELDS.LAST_NAME}, ${USERS_FIELDS.IS_SUPERUSER}, ${USERS_FIELDS.EMAIL_VERIFIED}, ${USERS_FIELDS.STATUS})
     VALUES(?,?,?,?,?,?,?)
     ON DUPLICATE KEY
     UPDATE ${USERS_FIELDS.FIRST_NAME}=?`;
-
-    const params =  [email, password, options[USERS_FIELDS.FIRST_NAME], options[USERS_FIELDS.LAST_NAME], 0, 0, 0, options[USERS_FIELDS.FIRST_NAME]]
-
-    return await this.connection.query(SqlString.format(query,params), super.getQueryType('INSERT'));
-  }
-  
-  /**
-  * updating password
-  * @param {*} email 
-  * @param {*} password 
-  * @param {*} options 
-  */
-  async updatePassword(email, password){
-    let query = SqlString.format(`UPDATE \`${this.tableName}\`
-    SET ${USERS_FIELDS.PASSWORD} = ?
-    WHERE ${USERS_FIELDS.EMAIL} = ?`,
-    [password, email]);
-    return await this.connection.query(query, super.getQueryType('UPDATE'));
-  }
-  
-  /**
-  * Updating user info
-  * @param {*} userId 
-  * @param {*} options 
-  */
-  async updateUser(userId, options = {}){
-    if(!Object.keys(options).length) return;
-    let query = ``;
-    const values = [];
-    
-    if(options[USERS_FIELDS.FIRST_NAME]){
-      query += `SET ${USERS_FIELDS.FIRST_NAME} = ? `;
-      values.push(options[USERS_FIELDS.FIRST_NAME])
-    }
-    if(options[USERS_FIELDS.LAST_NAME]){
-      query += `, ${USERS_FIELDS.LAST_NAME} = ? `;
-      values.push(options[USERS_FIELDS.LAST_NAME])
-    }
-    
-    if(options[USERS_FIELDS.GENDER]){
-      query += `, ${USERS_FIELDS.GENDER} = ? `;
-      values.push(options[USERS_FIELDS.GENDER])
-    }
-
-    if(options[USERS_FIELDS.DOB]){
-      query += `, ${USERS_FIELDS.DOB} = ? `;
-      values.push(options[USERS_FIELDS.DOB])
-    }
-
-    if(options[USERS_FIELDS.PHONE]){
-      query += `, ${USERS_FIELDS.PHONE} = ? `;
-      values.push(options[USERS_FIELDS.PHONE])
-    }
-    
-    if(!query.length) return;
-    
-    query = `UPDATE \`${this.tableName}\` ` + query + `WHERE ${USERS_FIELDS.ID} = ?`;
-    values.push(userId);
-    return await this.connection.query(SqlString.format(query, values), super.getQueryType('UPDATE'));
-    
+    return SqlString.format(query, [email, password, options[USERS_FIELDS.FIRST_NAME], options[USERS_FIELDS.LAST_NAME], 0, 0, 1, options[USERS_FIELDS.FIRST_NAME]])
+  },
+  CHECK_EMAIL: (email) => {
+    const query = `SELECT email, password FROM ${USERS_TABLE_NAME} WHERE ${USERS_FIELDS.EMAIL} = ?`;
+    return SqlString.format(query, [email])
+  },
+  LOGIN: (params) => {
+    let {email, password} = params;
+    const query = `SELECT id, email, first_name, last_name, avatar, is_superuser, email_verified, gender, dob, phone, status FROM ${USERS_TABLE_NAME} WHERE ${USERS_FIELDS.EMAIL} = ? AND ${USERS_FIELDS.PASSWORD} = ? AND ${USERS_FIELDS.STATUS} = 1`;
+    return SqlString.format(query, [email, password])
+  },
+  FETCH_LIST: () => {
+    const query = `SELECT id, email, first_name, last_name, avatar, is_superuser, email_verified, gender, dob, phone, status FROM ${USERS_TABLE_NAME}`;
+    return SqlString.format(query, [])
+  },
+  FETCH_DETAIL_BY_ID: (userID) => {
+    const query = `SELECT id, email, first_name, last_name, avatar, is_superuser, email_verified, gender, dob, phone, status FROM ${USERS_TABLE_NAME} WHERE ${USERS_FIELDS.ID} = ? AND ${USERS_FIELDS.STATUS} = 1`;
+    return SqlString.format(query, [userID])
+  },
+  CHANGE_PASSWORD: (params) => {
+    let { email, newPassword } = params;
+    const query = `UPDATE ${USERS_TABLE_NAME} SET ${USERS_FIELDS.PASSWORD} = ? WHERE ${USERS_FIELDS.EMAIL} = ? AND ${USERS_FIELDS.STATUS} = 1`;
+    return SqlString.format(query, [newPassword, email]);
+  },
+  UPDATE_DETAIL_BY_ID: (params) => {
+    let { firstName, lastName, gender, dob, phone, userId } = params;
+    const query = `UPDATE ${USERS_TABLE_NAME} SET ${USERS_FIELDS.FIRST_NAME} = ?, ${USERS_FIELDS.LAST_NAME} = ?, ${USERS_FIELDS.GENDER} = ?, ${USERS_FIELDS.DOB} = ?, ${USERS_FIELDS.PHONE} = ? WHERE ${USERS_FIELDS.ID} = ?`;
+    return SqlString.format(query, [firstName, lastName, gender, dob, phone, userId])
+  },
+  DELETE_USER_BY_ID: (userId) => {
+    const query = `DELETE FROM ${USERS_TABLE_NAME} WHERE ${USERS_FIELDS.ID} = ?`;
+    return SqlString.format(query, [userId])
   }
 }
 

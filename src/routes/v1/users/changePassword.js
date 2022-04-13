@@ -1,9 +1,8 @@
-const {UserBasicInfo: UserBasicInfoRedis} = require("../../../core/redis");
-const {Users: UsersSQL} = require("../../../core/sql/controller/child");
 const ApiError = require("../ApiError");
-const { Base64 } = require('js-base64');
+const { Users } = require("../../../core/sql/controller/child");
+const crypto = require("crypto");const salt = 'sads7hgGDgd7FDH='
 
-const forgotPassword = {};
+const changePassword = {};
 
 /**
 * validating request body
@@ -11,53 +10,31 @@ const forgotPassword = {};
 * @param {*} res 
 * @param {*} next 
 */
-forgotPassword.validateRequest = async(req, res, next) => {
-  const {email, oldPassword, newPassword} = req.body;
-  
-  if(typeof email !== 'string' || email.length > 100){
-    return next(new ApiError(400, 'E0010004'));
-  }
-  
-  if(typeof oldPassword !== 'string' || oldPassword.length > 100){
-    return next(new ApiError(400, 'E0010004'));
-  }
-  req.body.oldPassword = Base64.encode(oldPassword);
-  
-  if(typeof newPassword !== 'string' || newPassword.length > 100){
-    return next(new ApiError(400, 'E0010004'));
-  }
-  req.body.newPassword = Base64.encode(newPassword);
+changePassword.validateRequest = async(req, res, next) => {
+  const { email, password } = req.body;
+  if(!email || !password) next(new ApiError(400, 'E0010002', {}, 'Invalid request! Please check your inputs'));
   next();
 }
 
 /**
-* matching the password
+* saving in db
 * @param {*} req 
 * @param {*} res 
 * @param {*} next 
 */
-forgotPassword.matchPassword = async(req, res, next) => {
-  const iUserBasicInfoRedis = new UserBasicInfoRedis(req._siteId);
-  req._iUserBasicInfoRedis = iUserBasicInfoRedis;
-  req._userBasicInfo = await iUserBasicInfoRedis.getAllUserInfo(req._userId);
-  if(!req._userBasicInfo) return next(new ApiError(400, 'E0010001'));
-  if(req.body.oldPassword === req._userBasicInfo.password){
-    next();
-  }else{
-    return next(new ApiError(400, 'E0020001'))
-  }
-}
-
-/**
-* saving new password
-* @param {*} req 
-* @param {*} res 
-* @param {*} next 
-*/
-forgotPassword.saveNewPassword = async(req, res, next) => {
-  await new UsersSQL(req._siteId).updatePassword(req.body.email, req.body.newPassword);
-  await req._iUserBasicInfoRedis.updatePassword(req._userBasicInfo.user_id, req.body.newPassword);
-  next();
+changePassword.changePassword = async(req, res, next) => {
+  req.body.password = crypto.pbkdf2Sync(req.body.password, salt, 10000, 64, 'sha512').toString('base64');
+  req.body.newPassword = crypto.pbkdf2Sync(req.body.newPassword, salt, 10000, 64, 'sha512').toString('base64');
+  const UsersObj = new Users(req._siteId);
+  UsersObj.checkEmail(req.body.email, (err, response) => {
+    if(response && response.email) {
+      if(response.password != req.body.password) return next(new ApiError(400, 'E0010002', {}, 'Passwords not same'));
+      UsersObj.changePassword(req.body, (err, newResponse) => {
+        req._response = newResponse;
+        next();
+      })
+    }
+  })
 }
 
 /**
@@ -66,9 +43,9 @@ forgotPassword.saveNewPassword = async(req, res, next) => {
 * @param {*} res 
 * @param {*} next 
 */
-forgotPassword.sendResponse = async(req, res, next) => {
-  res.status(200).send();
+changePassword.sendResponse = async(req, res, next) => {
+  res.status(200).send(req._response);
   next();
 }
 
-module.exports = forgotPassword;
+module.exports = changePassword;

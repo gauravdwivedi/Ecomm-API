@@ -109,5 +109,6 @@ const _setCredentials = async(req) => {
   }else{
     req._configs = configs.ALL_CONFIGS(siteId);
   }
+  console.log(req._configs);
   return;
 }

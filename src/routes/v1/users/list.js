@@ -1,7 +1,7 @@
 const ApiError = require("../ApiError");
 const { Users } = require("../../../core/sql/controller/child");
 
-const detail = {};
+const list = {};
 
 /**
 * validating request body
@@ -9,9 +9,7 @@ const detail = {};
 * @param {*} res 
 * @param {*} next 
 */
-detail.validateRequest = async(req, res, next) => {
-  const { userId } = req.body;
-  if(!userId) next(new ApiError(400, 'E0010002', {}, 'Invalid request! Please check your inputs'));
+list.validateRequest = async(req, res, next) => {
   next();
 }
 
@@ -21,11 +19,10 @@ detail.validateRequest = async(req, res, next) => {
 * @param {*} res 
 * @param {*} next 
 */
-detail.getUserDetail = async(req, res, next) => {
-  const { userId } = req.body;
+list.getUsersList = async(req, res, next) => {
   const UsersObj = new Users(req._siteId);
-  UsersObj.fetchDetailByID(userId, (err, detail) => {
-    req._response = detail;
+  UsersObj.fetchList((err, list) => {
+    req._response = list;
     next();
   })
 }
@@ -36,9 +33,9 @@ detail.getUserDetail = async(req, res, next) => {
 * @param {*} res 
 * @param {*} next 
 */
-detail.sendResponse = async(req, res, next) => {
+list.sendResponse = async(req, res, next) => {
   res.status(200).send(req._response);
   next();
 }
 
-module.exports = detail;
+module.exports = list;
