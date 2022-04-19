@@ -33,7 +33,7 @@ router.post(
 );
 
 router.post(
-  "/user/register",
+  "/register",
   auths.setCredentials,
   register.authenticateSignUpToken,
   register.validateRequest,

@@ -27,6 +27,8 @@ register.authenticateSignUpToken = async(req, res, next) => {
   let signUpToken = req.cookies[cookieHelper.COOKIE_NAME_SIGN_UP_TOKEN];
   !signUpToken && (signUpToken = req.headers["x-signup-token"]);
   const iTokensRedis = new TokensRedis(req._siteId);
+  console.log(iTokensRedis);
+  console.log(signUpToken);
   req._iTokensRedis = iTokensRedis;
   isValidRegistration = await iTokensRedis.verifySignUp(signUpToken, email);
   if(!isValidRegistration) return res.status(401).send();

@@ -5,20 +5,9 @@ const auths = require("../auths");
 
 const list = require('./list');
 const detail = require("./detail");
-const add = require("./add");
 const changePassword = require("./changePassword");
 const update = require("./update");
 const deleteUser = require("./delete");
-
-router.post(
-  '/add',
-  auths.setCredentials,
-  add.validateRequest,
-  add.registerUser,
-  add.generateToken,
-  add.sendResponse,
-  error
-)
 
 router.get(
   '/list',
