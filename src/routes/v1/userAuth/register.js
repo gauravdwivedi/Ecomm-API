@@ -27,8 +27,6 @@ register.authenticateSignUpToken = async(req, res, next) => {
   let signUpToken = req.cookies[cookieHelper.COOKIE_NAME_SIGN_UP_TOKEN];
   !signUpToken && (signUpToken = req.headers["x-signup-token"]);
   const iTokensRedis = new TokensRedis(req._siteId);
-  console.log(iTokensRedis);
-  console.log(signUpToken);
   req._iTokensRedis = iTokensRedis;
   isValidRegistration = await iTokensRedis.verifySignUp(signUpToken, email);
   if(!isValidRegistration) return res.status(401).send();
@@ -44,7 +42,7 @@ register.authenticateSignUpToken = async(req, res, next) => {
 * @param {*} next 
 */
 register.validateRequest = async(req, res, next) => {
-  const {password, firstName, lastName, avatar} = req.body;
+  const {password, firstName, lastName, avatar, phone} = req.body;
   
   if(typeof password !== 'string' || password.length > 100){
     return next(new ApiError(400, 'E0010004'));
@@ -56,6 +54,10 @@ register.validateRequest = async(req, res, next) => {
   }
   
   if(typeof lastName !== 'string' || lastName.length > 100){
+    return next(new ApiError(400, 'E0010004'));
+  }
+
+  if(!phone){
     return next(new ApiError(400, 'E0010004'));
   }
 
@@ -75,6 +77,7 @@ register.ifSignUp = async(req, res, next) => {
     [USERS_SQL_FIELDS.PASSWORD]: req.body.password,
     [USERS_SQL_FIELDS.FIRST_NAME]: req.body.firstName,
     [USERS_SQL_FIELDS.LAST_NAME]: req.body.lastName,
+    [USERS_SQL_FIELDS.PHONE]: req.body.phone,
     [USERS_SQL_FIELDS.AVATAR]: req.body.avatar,
     [USERS_SQL_FIELDS.CREATED_AT]: req.body.createdAt,
     [USERS_SQL_FIELDS.UPDATED_AT]: req.body.updatedAt,
@@ -90,6 +93,7 @@ register.ifSignUp = async(req, res, next) => {
     [iUserBasicInfoRedis.HASH_FIELDS().PASSWORD]: req.body.password,
     [iUserBasicInfoRedis.HASH_FIELDS().FIRST_NAME]: req.body.firstName,
     [iUserBasicInfoRedis.HASH_FIELDS().LAST_NAME]: req.body.lastName,
+    [iUserBasicInfoRedis.HASH_FIELDS().PHONE]: req.body.phone,
     [iUserBasicInfoRedis.HASH_FIELDS().CREATED_AT]: req.body.createdAt,
     [iUserBasicInfoRedis.HASH_FIELDS().UPDATED_AT]: req.body.updatedAt
   };
@@ -115,6 +119,7 @@ register.sendResponse = async(req, res, next) => {
       firstName: req._userBasicInfo.first_name,
       lastName: req._userBasicInfo.last_name,
       avatar: req._userBasicInfo.avatar || "",
+      phone: req._userBasicInfo.phone || "",
     }
   });
   next();
