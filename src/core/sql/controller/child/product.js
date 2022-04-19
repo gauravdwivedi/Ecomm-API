@@ -20,6 +20,12 @@ class Product extends AbstractSQL{
   * @param {*} siteId 
   */
   
+  list(sort_by, order, min_price, max_price, category_id, offset, limit, callback) {
+    this.connection.query(QUERY_BUILDER.GET_LIST(sort_by, order, min_price, max_price, category_id, offset, limit), super.getQueryType('SELECT')).then(result => {
+      callback(null, result)
+    }).catch(error => callback(error, null));
+  }
+  
   detail(slug, callback) {
     this.connection.query(QUERY_BUILDER.GET_DETAIL(slug), super.getQueryType('SELECT')).then(result => {
       callback(null, result)
@@ -63,6 +69,18 @@ class Product extends AbstractSQL{
 
 
 const QUERY_BUILDER = {
+  GET_LIST: (sort_by, order, min_price, max_price, category_id, offset, limit) => {
+    let myQuery = `${PRODUCT_FIELDS.CATEGORY} = ${category_id}`;
+    myQuery += min_price ? `AND ${PRODUCT_FIELDS.PRICE} >= ${min_price}` : '';
+    myQuery += max_price ? `AND ${PRODUCT_FIELDS.PRICE} <= ${max_price}` : '';
+    const query = ` SELECT ${PRODUCT_FIELDS.ID}, ${PRODUCT_FIELDS.CATEGORY}, ${PRODUCT_FIELDS.IMAGES}, ${PRODUCT_FIELDS.VIDEO_URL}, ${PRODUCT_FIELDS.TITLE}, ${PRODUCT_FIELDS.ATTRIBUTES}, ${PRODUCT_FIELDS.QTY_IN_STOCK}, ${PRODUCT_FIELDS.PRICE}, ${PRODUCT_FIELDS.DISCOUNTED_PRICE}, ${PRODUCT_FIELDS.RATING}, ${PRODUCT_FIELDS.SLUG} 
+      FROM ${PRODUCT_TABLE_NAME}
+      WHERE ${myQuery}
+      ORDER BY ${sort_by} ${order}
+      limit ?,?`;
+    return SqlString.format(query, [offset, limit])
+  },
+
   GET_DETAIL: (slug) => {
     const query = ` SELECT ${PRODUCT_FIELDS.ID}, ${PRODUCT_FIELDS.NAME}, ${PRODUCT_FIELDS.SLUG}, ${PRODUCT_FIELDS.DESCRIPTION}, ${PRODUCT_FIELDS.SIZE}, ${PRODUCT_FIELDS.PRICE}
     FROM ${PRODUCT_TABLE_NAME}
