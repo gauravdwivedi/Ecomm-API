@@ -40,6 +40,8 @@ class UserBasicInfo extends AbsractRedis{
       [HASH_FIELDS.PASSWORD]: options[HASH_FIELDS.PASSWORD],
       [HASH_FIELDS.FIRST_NAME]: options[HASH_FIELDS.FIRST_NAME],
       [HASH_FIELDS.LAST_NAME]: options[HASH_FIELDS.LAST_NAME],
+      [HASH_FIELDS.PHONE]: options[HASH_FIELDS.PHONE],
+      [HASH_FIELDS.ROLE]: options[HASH_FIELDS.ROLE],
       [HASH_FIELDS.CREATED_AT]: options[HASH_FIELDS.CREATED_AT],
       [HASH_FIELDS.UPDATED_AT]: options[HASH_FIELDS.UPDATED_AT],
     };
@@ -68,6 +70,7 @@ class UserBasicInfo extends AbsractRedis{
           [HASH_FIELDS.GENDER]: userData[HASH_FIELDS.GENDER],
           [HASH_FIELDS.DOB]: userData[HASH_FIELDS.DOB],
           [HASH_FIELDS.PHONE]: userData[HASH_FIELDS.PHONE],
+          [HASH_FIELDS.ROLE]: userData[HASH_FIELDS.ROLE],
         }: {}
         return resolve(userDetails);
       });

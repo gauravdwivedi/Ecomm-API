@@ -5,13 +5,14 @@
 const TABLE_NAME = "users";
 const FIELDS = {
   ID: "id",
+  SITE_ID: "site_id",
   EMAIL: "email",
   PASSWORD: "password",
   FIRST_NAME: "first_name",
   LAST_NAME: "last_name",
   AVATAR: "avatar",
   STATUS: "status",
-  IS_SUPERUSER: "is_superuser",
+  ROLE: "role",
   EMAIL_VERIFIED: "email_verified",
   GENDER: "gender",
   DOB: "dob",

@@ -80,6 +80,7 @@ verify.generateToken = async(req, res, next) => {
 */
 verify.sendResponse = async(req, res, next) => {
   if(req._isAlreadyAnUser){
+    console.log(req._userBasicInfo);
     res.status(200).send({
       token: req._token,
       registration: false,
@@ -88,6 +89,7 @@ verify.sendResponse = async(req, res, next) => {
         firstName: req._userBasicInfo.first_name,
         lastName: req._userBasicInfo.last_name,
         avatar: req._userBasicInfo.avatar,
+        role: req._userBasicInfo.role,
       }
     })
     next()

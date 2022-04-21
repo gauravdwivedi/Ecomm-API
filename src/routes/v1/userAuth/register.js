@@ -73,6 +73,7 @@ register.ifSignUp = async(req, res, next) => {
   req.body.updatedAt = moment().format("YYYY-MM-DD HH:mm:ss");
   
   const [userId, x] = await new UsersSQL(req._siteId).register(req.body.email, req.body.password, {
+    [USERS_SQL_FIELDS.SITE_ID]: req._siteId,
     [USERS_SQL_FIELDS.EMAIL]: req.body.email,
     [USERS_SQL_FIELDS.PASSWORD]: req.body.password,
     [USERS_SQL_FIELDS.FIRST_NAME]: req.body.firstName,
@@ -93,6 +94,7 @@ register.ifSignUp = async(req, res, next) => {
     [iUserBasicInfoRedis.HASH_FIELDS().PASSWORD]: req.body.password,
     [iUserBasicInfoRedis.HASH_FIELDS().FIRST_NAME]: req.body.firstName,
     [iUserBasicInfoRedis.HASH_FIELDS().LAST_NAME]: req.body.lastName,
+    [iUserBasicInfoRedis.HASH_FIELDS().ROLE]: 2,
     [iUserBasicInfoRedis.HASH_FIELDS().PHONE]: req.body.phone,
     [iUserBasicInfoRedis.HASH_FIELDS().CREATED_AT]: req.body.createdAt,
     [iUserBasicInfoRedis.HASH_FIELDS().UPDATED_AT]: req.body.updatedAt
@@ -120,6 +122,7 @@ register.sendResponse = async(req, res, next) => {
       lastName: req._userBasicInfo.last_name,
       avatar: req._userBasicInfo.avatar || "",
       phone: req._userBasicInfo.phone || "",
+      role: req._userBasicInfo.role || 2
     }
   });
   next();
