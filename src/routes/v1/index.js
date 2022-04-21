@@ -10,6 +10,7 @@ const product = require('./product');
 const common = require('./common');
 const sitemap = require('./sitemap');
 const userAuth = require('./userAuth');
+const category = require('./category');
 
 router.use('/auth', userAuth);
 router.use('/menu', menu);
@@ -18,6 +19,7 @@ router.use('/comment', comment);
 router.use('/users', users);
 router.use('/reviews', reviews);
 router.use('/product', product);
+router.use('/category', category);
 router.use('/common', common);
 router.use('/sitemap', sitemap);
 router.use('/liveSessions', require("./liveSessions"));
