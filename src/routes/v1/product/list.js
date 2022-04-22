@@ -40,10 +40,8 @@ list.productList = async (req, res, next) => {
 
   ProdObj.list(sort_by, order, min_price, max_price, category_id, offset, limit, (error, result)=>{
     if(result && result.length){
-      result.forEach(products=>{
-        res.status(200).send(base.success({result: products}));
-        next();
-      })
+      res.status(200).send(base.success({result}));
+      next();
     } else if(error) {
       console.log(error);
       res.status(200).send(base.success({result: {}}));
