@@ -103,6 +103,18 @@ class UserBasicInfo extends AbsractRedis{
       [HASH_FIELDS.PASSWORD]: password,
     })
   }
+
+    /**
+  * updating the role
+  * @param {*} userId 
+  * @param {*} role 
+  */
+     async updateRole(userId, role){
+      const _key = key.USER_BASIC_INFO.format({userId});
+      return await super.asyncHmset(_key, {
+        [HASH_FIELDS.ROLE]: role,
+      })
+    }
   
   /**
   * updating the user

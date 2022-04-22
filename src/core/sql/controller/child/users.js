@@ -74,6 +74,19 @@ class Users extends AbstractSQL{
     [password, email]);
     return await this.connection.query(query, super.getQueryType('UPDATE'));
   }
+
+    /**
+  * updating role
+  * @param {*} userId 
+  * @param {*} role 
+  */
+     async updateRole(userId, role){
+      let query = SqlString.format(`UPDATE \`${this.tableName}\`
+      SET ${USERS_FIELDS.ROLE} = ?
+      WHERE ${USERS_FIELDS.ID} = ?`,
+      [role, userId]);
+      return await this.connection.query(query, super.getQueryType('UPDATE'));
+    }
   
   /**
   * Updating user info
@@ -107,6 +120,11 @@ class Users extends AbstractSQL{
     if(options[USERS_FIELDS.PHONE]){
       query += `, ${USERS_FIELDS.PHONE} = ? `;
       values.push(options[USERS_FIELDS.PHONE])
+    }
+
+    if(options[USERS_FIELDS.ROLE]){
+      query += `, ${USERS_FIELDS.ROLE} = ? `;
+      values.push(options[USERS_FIELDS.ROLE])
     }
     
     if(!query.length) return;
