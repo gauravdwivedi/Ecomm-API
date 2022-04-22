@@ -2,8 +2,6 @@ const express = require("express");
 const router = express.Router();
 const auths = require("../auths");
 const error = require("../error");
-
-const auth = require("./auth");
 const verify = require("./verify");
 const register = require("./register");
 const changePassword = require("./changePassword");
@@ -11,16 +9,6 @@ const updateUserDetails = require("./updateUserDetails");
 const detail = require("./detail");
 const resetPasswordTrigger = require("./resetPasswordTrigger");
 const resetPasswordVerify = require("./resetPasswordVerify");
-
-router.post(
-  `/login`,
-  auths.setCredentials,
-  auth.validateBody,
-  auth.checkInSQL,
-  auth.generateToken,
-  auth.sendResponse,
-  error
-);
 
 router.post(
   "/user/verify",

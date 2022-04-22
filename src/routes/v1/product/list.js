@@ -1,7 +1,5 @@
 const { Product } = require("../../../core/sql/controller/child");
 const { base } = require("./../../../wrapper");
-const async = require("async");
-const wrapper = require("./../../../wrapper");
 const ApiError = require("../ApiError");
 const list = {};
 
@@ -39,13 +37,6 @@ list.validateBody = (req, res, next) => {
 list.productList = async (req, res, next) => {
   let { sort_by, order, min_price, max_price, category_id, offset, limit } = req.query;
   const ProdObj = new Product(req._siteId);
-  console.log('sort_by', sort_by);
-  console.log('order', order);
-  console.log('min_price', min_price);
-  console.log('max_price', max_price);
-  console.log('category_id', category_id);
-  console.log('offset', offset);
-  console.log('limit', limit);
 
   ProdObj.list(sort_by, order, min_price, max_price, category_id, offset, limit, (error, result)=>{
     if(result && result.length){

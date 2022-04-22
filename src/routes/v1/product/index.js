@@ -10,7 +10,6 @@ const auths = require("../auths");
 router.get(
   `/list`,
   auths.setCredentials,
-  auths.verify,
   list.validateBody,
   list.productList,
   error
