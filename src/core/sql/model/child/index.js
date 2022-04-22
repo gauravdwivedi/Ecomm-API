@@ -15,4 +15,5 @@ module.exports = {
   CommentThumb: require('./commentThumb'),
   LiveSessions: require('./liveSessions'),
   Pages: require('./pages'),
+  Category: require('./category'),
 }

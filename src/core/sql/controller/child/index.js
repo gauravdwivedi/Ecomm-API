@@ -7,5 +7,6 @@ module.exports = {
   Product: require("./product"),
   LiveSessions: require('./liveSessions'),
   ProductMenus: require('./productMenus'),
-  ProductMenuEntity: require('./productMenuEntity')
+  ProductMenuEntity: require('./productMenuEntity'),
+  Category: require("./category"),
 }

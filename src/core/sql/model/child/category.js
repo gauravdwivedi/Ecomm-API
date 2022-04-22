@@ -6,6 +6,8 @@ const TABLE_NAME = "category";
 const FIELDS = {
   ID: "id",
   TITLE: "title",
+  ICON: "icon",
+  STATUS: "status",
 }
 
 
