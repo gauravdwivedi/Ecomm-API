@@ -17,6 +17,7 @@ const multerMid = multer({
 
 let app = express();
 app.use(cookieParser());
+app.use(cors())
 
 const session = require('express-session');
 const sessionConfig = {
