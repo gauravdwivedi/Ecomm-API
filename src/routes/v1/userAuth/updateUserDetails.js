@@ -14,29 +14,43 @@ const updateUserDetails = {};
 * @param {*} next 
 */
 updateUserDetails.validateRequest = async(req, res, next) => {
+
   const {firstName, lastName, avatar, gender, dob, phone} = req.body;
+  console.log('DOB',dob)
+
+  let Newdob=moment(dob).format('YYYY-MM-DD');
+  req.body.dob=Newdob
+
   
   if(Object.keys(req.body).includes('firstName') && (typeof firstName !== 'string' || firstName.length > 100)){
+    console.log('1')
     return next(new ApiError(401, 'E0010004'));
   }
   
   if(Object.keys(req.body).includes('lastName') && (typeof lastName !== 'string' || lastName.length > 100)){
+    console.log('2')
     return next(new ApiError(401, 'E0010004'));
   }
   
   if(Object.keys(req.body).includes('avatar') && (typeof avatar !== 'string')){
+
+    console.log('3')
     return next(new ApiError(401, 'E0010004'));
   }
 
-  if(Object.keys(req.body).includes('gender') && !Object.values(C.ALLOWED_GENDERS).includes(gender)){
+  if(Object.keys(req.body).includes('gender') && !Object.values(C.GENDERS_LABEL).includes(gender)){
+    console.log('4')
     return next(new ApiError(401, 'E0010004'));
   }
 
-  if(Object.keys(req.body).includes('dob') && !moment(dob, 'YYYY-MM-DD', true).isValid()){
+  if(Object.keys(req.body).includes('dob') && !moment(Newdob, 'YYYY-MM-DD', true).isValid()){
+    console.log('5',req.body.dob)
+
     return next(new ApiError(401, 'E0010004'));
   }
 
-  if(Object.keys(req.body).includes('phone') && typeof phone !== 'string'){
+  if(Object.keys(req.body).includes('phone') && typeof phone !== 'number'){
+    console.log('6')
     return next(new ApiError(401, 'E0010004'));
   }
   
@@ -50,8 +64,12 @@ updateUserDetails.validateRequest = async(req, res, next) => {
 * @param {*} next 
 */
 updateUserDetails.save = async(req, res, next) => {
-  const {firstName, lastName, avatar, gender, dob, phone} = req.body;
-  await new UsersSQL(req._siteId).updateUser(req._userId, {
+  
+  const {userId,firstName, lastName, avatar, gender, dob, phone} = req.body;
+
+  console.log(userId)
+
+  await new UsersSQL(req._siteId).updateUser(userId, {
     [USERS_SQL_FIELDS.FIRST_NAME]: firstName || undefined,
     [USERS_SQL_FIELDS.LAST_NAME]: lastName || undefined,
     [USERS_SQL_FIELDS.AVATAR]: avatar || undefined,
@@ -61,7 +79,7 @@ updateUserDetails.save = async(req, res, next) => {
   });
   
   const iUserBasicInfoRedis = new UserBasicInfoRedis(req._siteId);
-  await iUserBasicInfoRedis.updateUser(req._userId, {
+  await iUserBasicInfoRedis.updateUser(userId, {
     [iUserBasicInfoRedis.HASH_FIELDS().FIRST_NAME]: firstName || undefined,
     [iUserBasicInfoRedis.HASH_FIELDS().LAST_NAME]: lastName || undefined,
     [iUserBasicInfoRedis.HASH_FIELDS().AVATAR]: avatar || undefined,

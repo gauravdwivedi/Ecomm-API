@@ -23,7 +23,19 @@ class Users extends AbstractSQL{
    * @returns 
    */
   async getUserDetail(userId, callback){
-    let query = SqlString.format(`SELECT * FROM \`${this.tableName}\` where ${USERS_FIELDS.ID} = ?`, [userId]);
+    let query = SqlString.format(`SELECT ${USERS_FIELDS.ID},
+    ${USERS_FIELDS.EMAIL},
+    ${USERS_FIELDS.AVATAR},
+    ${USERS_FIELDS.EMAIL_VERIFIED},
+    ${USERS_FIELDS.CREATED_AT},
+    ${USERS_FIELDS.DOB},
+    ${USERS_FIELDS.FIRST_NAME},
+    ${USERS_FIELDS.LAST_NAME},
+    ${USERS_FIELDS.LAST_NAME},
+    ${USERS_FIELDS.GENDER},
+    ${USERS_FIELDS.PHONE},
+    ${USERS_FIELDS.ROLE}
+    FROM \`${this.tableName}\` where ${USERS_FIELDS.ID} = ?`, [userId]);
 
     this.connection.query(query, super.getQueryType('SELECT')).then(result => {
       callback(null, result && result[0] ? result[0] : {})
