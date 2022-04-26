@@ -34,7 +34,7 @@ list.getCategoryList = async(req, res, next) => {
 * @param {*} next 
 */
 list.sendResponse = async(req, res, next) => {
-  res.status(200).send(req._response);
+  res.status(200).send({result: req._response});
   next();
 }
 

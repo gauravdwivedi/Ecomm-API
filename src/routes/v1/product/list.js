@@ -11,8 +11,7 @@ const list = {};
 * @param {*} next
 */
 list.validateBody = (req, res, next) => {
-  let { sort_by, order, category_id, page, limit } = req.query;
-  if(!category_id) return next(new ApiError(400, 'E0010004'));
+  let { sort_by, order, page, limit } = req.query;
   if(!sort_by) req.query.sort_by = 'id';
   if(!order) req.query.order = 'desc';
   if(!limit) limit = 20;
