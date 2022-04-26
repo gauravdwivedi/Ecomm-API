@@ -10,6 +10,7 @@ const list = {};
 * @param {*} next 
 */
 list.validateRequest = async(req, res, next) => {
+
   next();
 }
 
@@ -21,10 +22,17 @@ list.validateRequest = async(req, res, next) => {
 */
 list.getUsersList = async(req, res, next) => {
   const UsersObj = new Users(req._siteId);
-  UsersObj.fetchList((err, list) => {
-    req._response = list;
-    next();
-  })
+  // UsersObj.fetchAll((err, list) => {
+  //   req._response = list;
+  //   next();
+  // })
+
+    let usersList = await UsersObj.fetchAll();
+    console.log(usersList)
+    if(usersList){
+      req._response = usersList;
+      next();
+    }
 }
 
 /**
