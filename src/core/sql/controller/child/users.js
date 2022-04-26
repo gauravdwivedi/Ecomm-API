@@ -23,7 +23,20 @@ class Users extends AbstractSQL{
    * @returns 
    */
   async getUserDetail(userId, callback){
-    let query = SqlString.format(`SELECT * FROM \`${this.tableName}\` where ${USERS_FIELDS.ID} = ?`, [userId]);
+    let query = SqlString.format(`SELECT ${USERS_FIELDS.ID},
+    ${USERS_FIELDS.EMAIL},
+    ${USERS_FIELDS.AVATAR},
+    ${USERS_FIELDS.EMAIL_VERIFIED},
+    ${USERS_FIELDS.CREATED_AT},
+    ${USERS_FIELDS.DOB},
+    ${USERS_FIELDS.FIRST_NAME},
+    ${USERS_FIELDS.LAST_NAME},
+    ${USERS_FIELDS.LAST_NAME},
+    ${USERS_FIELDS.GENDER},
+    ${USERS_FIELDS.PHONE},
+    ${USERS_FIELDS.ROLE},
+    ${USERS_FIELDS.STATUS}
+    FROM \`${this.tableName}\` where ${USERS_FIELDS.ID} = ?`, [userId]);
 
     this.connection.query(query, super.getQueryType('SELECT')).then(result => {
       callback(null, result && result[0] ? result[0] : {})
@@ -80,58 +93,76 @@ class Users extends AbstractSQL{
   * @param {*} userId 
   * @param {*} role 
   */
-     async updateRole(userId, role){
+    async updateRole(userId, role){
       let query = SqlString.format(`UPDATE \`${this.tableName}\`
       SET ${USERS_FIELDS.ROLE} = ?
       WHERE ${USERS_FIELDS.ID} = ?`,
       [role, userId]);
       return await this.connection.query(query, super.getQueryType('UPDATE'));
     }
+
+
+    /**
+     * 
+     * @param {*} userId 
+     * @param {*} options 
+     * @returns 
+     */
+
+    async deleteUser(userId,cb){
+      console.log('UserID',userId)
+        let query = SqlString.format(`UPDATE \`${this.tableName}\`
+          SET ${USERS_FIELDS.STATUS}=?
+          WHERE ${USERS_FIELDS.ID} =?`,
+          [0,userId]);
+          let res= await this.connection.query(query,super.getQueryType('UPDATE'));
+        cb(null,res)
+    }
   
-  /**
-  * Updating user info
-  * @param {*} userId 
-  * @param {*} options 
-  */
-  async updateUser(userId, options = {}){
-    if(!Object.keys(options).length) return;
-    let query = ``;
-    const values = [];
-    
-    if(options[USERS_FIELDS.FIRST_NAME]){
-      query += `SET ${USERS_FIELDS.FIRST_NAME} = ? `;
-      values.push(options[USERS_FIELDS.FIRST_NAME])
-    }
-    if(options[USERS_FIELDS.LAST_NAME]){
-      query += `, ${USERS_FIELDS.LAST_NAME} = ? `;
-      values.push(options[USERS_FIELDS.LAST_NAME])
-    }
-    
-    if(options[USERS_FIELDS.GENDER]){
-      query += `, ${USERS_FIELDS.GENDER} = ? `;
-      values.push(options[USERS_FIELDS.GENDER])
-    }
+    /**
+    * Updating user info
+    * @param {*} userId 
+    * @param {*} options 
+    */
+    async updateUser(userId, options = {}){
+        if(!Object.keys(options).length) return;
+        let query = ``;
+        const values = [];
+        
+        if(options[USERS_FIELDS.FIRST_NAME]){
+          query += `SET ${USERS_FIELDS.FIRST_NAME} = ? `;
+          values.push(options[USERS_FIELDS.FIRST_NAME])
+        }
+        if(options[USERS_FIELDS.LAST_NAME]){
+          query += `, ${USERS_FIELDS.LAST_NAME} = ? `;
+          values.push(options[USERS_FIELDS.LAST_NAME])
+        }
+        
+        if(options[USERS_FIELDS.GENDER]){
+          query += `, ${USERS_FIELDS.GENDER} = ? `;
+          values.push(options[USERS_FIELDS.GENDER])
+        }
 
-    if(options[USERS_FIELDS.DOB]){
-      query += `, ${USERS_FIELDS.DOB} = ? `;
-      values.push(options[USERS_FIELDS.DOB])
-    }
+        if(options[USERS_FIELDS.DOB]){
+          query += `, ${USERS_FIELDS.DOB} = ? `;
+          values.push(options[USERS_FIELDS.DOB])
+        }
 
-    if(options[USERS_FIELDS.PHONE]){
-      query += `, ${USERS_FIELDS.PHONE} = ? `;
-      values.push(options[USERS_FIELDS.PHONE])
-    }
+        if(options[USERS_FIELDS.PHONE]){
+          query += `, ${USERS_FIELDS.PHONE} = ? `;
+          values.push(options[USERS_FIELDS.PHONE])
+        }
 
-    if(options[USERS_FIELDS.ROLE]){
-      query += `, ${USERS_FIELDS.ROLE} = ? `;
-      values.push(options[USERS_FIELDS.ROLE])
-    }
-    
-    if(!query.length) return;
-    
-    query = `UPDATE \`${this.tableName}\` ` + query + `WHERE ${USERS_FIELDS.ID} = ?`;
-    values.push(userId);
-    return await this.connection.query(SqlString.format(query, values), super.getQueryType('UPDATE'));
+        if(options[USERS_FIELDS.ROLE]){
+          query += `, ${USERS_FIELDS.ROLE} = ? `;
+          values.push(options[USERS_FIELDS.ROLE])
+        }
+        
+        if(!query.length) return;
+        
+        query = `UPDATE \`${this.tableName}\` ` + query + `WHERE ${USERS_FIELDS.ID} = ?`;
+        values.push(userId);
+        return await this.connection.query(SqlString.format(query, values), super.getQueryType('UPDATE'));
     
   }
 }

@@ -17,7 +17,6 @@ const multerMid = multer({
 
 let app = express();
 app.use(cookieParser());
-app.use(cors())
 
 const session = require('express-session');
 const sessionConfig = {
@@ -34,7 +33,7 @@ app.use(session(sessionConfig));
 app.disable('x-powered-by')
 app.use(multerMid.single('file'))
 
-
+app.use(cors());
 app.options("*", cors());
 
 app.get("/", (req, res) => {
