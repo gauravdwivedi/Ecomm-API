@@ -12,29 +12,6 @@ const { Base64 } = require('js-base64');
 const addUser = {};
 
 /**
-* verifying sign up token
-* @param {*} req 
-* @param {*} res 
-* @param {*} next 
-*/
-// register.authenticateSignUpToken = async(req, res, next) => {
-//   const {email} = req.body;
-  
-//   if(typeof email !== 'string' || email.length > 100){
-//     return next(new ApiError(400, 'E0010004'));
-//   }
-  
-//   let signUpToken = req.cookies[cookieHelper.COOKIE_NAME_SIGN_UP_TOKEN];
-//   !signUpToken && (signUpToken = req.headers["x-signup-token"]);
-//   const iTokensRedis = new TokensRedis(req._siteId);
-//   req._iTokensRedis = iTokensRedis;
-//   isValidRegistration = await iTokensRedis.verifySignUp(signUpToken, email);
-//   if(!isValidRegistration) return res.status(401).send();
-//   iTokensRedis.invalidateSignUpToken(signUpToken);
-//   next();
-// }
-
-/**
 * validating request body
 * encrypting password
 * @param {*} req 

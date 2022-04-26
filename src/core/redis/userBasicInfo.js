@@ -105,6 +105,18 @@ class UserBasicInfo extends AbsractRedis{
   }
 
     /**
+  * deleting user
+  * @param {*} userId 
+  * @param {*} password 
+  */
+     async deleteUser(userId){
+      const _key = key.USER_BASIC_INFO.format({userId});
+      return await super.asyncHmset(_key, {
+        [HASH_FIELDS.STATUS]: 0,
+      })
+    }
+
+    /**
   * updating the role
   * @param {*} userId 
   * @param {*} role 

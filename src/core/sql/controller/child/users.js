@@ -109,14 +109,13 @@ class Users extends AbstractSQL{
      * @returns 
      */
 
-    async deleteUser(userId,cb){
+    async deleteUser(userId){
       console.log('UserID',userId)
         let query = SqlString.format(`UPDATE \`${this.tableName}\`
           SET ${USERS_FIELDS.STATUS}=?
           WHERE ${USERS_FIELDS.ID} =?`,
           [0,userId]);
-          let res= await this.connection.query(query,super.getQueryType('UPDATE'));
-        cb(null,res)
+          return await this.connection.query(query,super.getQueryType('UPDATE'));
     }
   
     /**

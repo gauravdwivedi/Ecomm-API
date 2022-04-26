@@ -1,6 +1,7 @@
+const {UserBasicInfo: UserBasicInfoRedis} = require("../../../core/redis");
+const {Users: UsersSQL} = require("../../../core/sql/controller/child");
 const ApiError = require("../ApiError");
-const { Users } = require("../../../core/sql/controller/child");
-const { Base64 } = require("js-base64");
+const { Base64 } = require('js-base64');
 
 const deleteUser = {};
 
@@ -11,24 +12,25 @@ const deleteUser = {};
 * @param {*} next 
 */
 deleteUser.validateRequest = async(req, res, next) => {
-  const { userId } = req.body;
-  if(!userId) next(new ApiError(400, 'E0010002', {}, 'Invalid request! Please check your inputs'));
+  const {userId} = req.body;
+  
+  if(!userId){
+    return next(new ApiError(400, 'E0010004'));
+  }
   next();
 }
 
 /**
-* saving in db
+* deleting user
 * @param {*} req 
 * @param {*} res 
 * @param {*} next 
 */
 deleteUser.deleteUser = async(req, res, next) => {
-  const { userId } = req.body;
-  const UsersObj = new Users(req._siteId);
-  UsersObj.deleteUser(userId, (err, response) => {
-    req._response = response;
-    next();
-  })
+  const iUserBasicInfoRedis = new UserBasicInfoRedis(req._siteId);
+  await new UsersSQL(req._siteId).deleteUser(req.body.userId);
+  await iUserBasicInfoRedis.deleteUser(req.body.userId);
+  next();
 }
 
 /**
@@ -38,7 +40,7 @@ deleteUser.deleteUser = async(req, res, next) => {
 * @param {*} next 
 */
 deleteUser.sendResponse = async(req, res, next) => {
-  res.status(200).send(req._response);
+  res.status(200).send();
   next();
 }
 
