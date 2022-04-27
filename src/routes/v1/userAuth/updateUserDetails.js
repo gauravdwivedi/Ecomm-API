@@ -65,7 +65,7 @@ updateUserDetails.validateRequest = async(req, res, next) => {
 */
 updateUserDetails.save = async(req, res, next) => {
   
-  const {userId,firstName, lastName, avatar, gender, dob, phone} = req.body;
+  const {userId,firstName, lastName, avatar, gender, dob, phone,status} = req.body;
 
   console.log(userId)
 
@@ -76,6 +76,9 @@ updateUserDetails.save = async(req, res, next) => {
     [USERS_SQL_FIELDS.DOB]: dob || undefined,
     [USERS_SQL_FIELDS.GENDER]: gender || undefined,
     [USERS_SQL_FIELDS.PHONE]: phone || undefined,
+    [USERS_SQL_FIELDS.STATUS]: status || 1,
+
+
   });
   
   const iUserBasicInfoRedis = new UserBasicInfoRedis(req._siteId);
@@ -86,6 +89,8 @@ updateUserDetails.save = async(req, res, next) => {
     [iUserBasicInfoRedis.HASH_FIELDS().GENDER]: gender || undefined,
     [iUserBasicInfoRedis.HASH_FIELDS().DOB]: dob || undefined,
     [iUserBasicInfoRedis.HASH_FIELDS().PHONE]: phone || undefined,
+    [iUserBasicInfoRedis.HASH_FIELDS().STATUS]: status || 1,
+
   });
   next();
 }
