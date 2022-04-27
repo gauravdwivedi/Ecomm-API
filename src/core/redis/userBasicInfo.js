@@ -42,6 +42,7 @@ class UserBasicInfo extends AbsractRedis{
       [HASH_FIELDS.LAST_NAME]: options[HASH_FIELDS.LAST_NAME],
       [HASH_FIELDS.PHONE]: options[HASH_FIELDS.PHONE],
       [HASH_FIELDS.ROLE]: options[HASH_FIELDS.ROLE],
+      [HASH_FIELDS.STATUS]: options[HASH_FIELDS.STATUS],
       [HASH_FIELDS.CREATED_AT]: options[HASH_FIELDS.CREATED_AT],
       [HASH_FIELDS.UPDATED_AT]: options[HASH_FIELDS.UPDATED_AT],
     };
@@ -71,6 +72,7 @@ class UserBasicInfo extends AbsractRedis{
           [HASH_FIELDS.DOB]: userData[HASH_FIELDS.DOB],
           [HASH_FIELDS.PHONE]: userData[HASH_FIELDS.PHONE],
           [HASH_FIELDS.ROLE]: userData[HASH_FIELDS.ROLE],
+          [HASH_FIELDS.STATUS]: userData[HASH_FIELDS.STATUS],
         }: {}
         return resolve(userDetails);
       });
@@ -144,7 +146,7 @@ class UserBasicInfo extends AbsractRedis{
     if(options[HASH_FIELDS.GENDER]) _toUpdate[HASH_FIELDS.GENDER] = options[HASH_FIELDS.GENDER];
     if(options[HASH_FIELDS.PHONE]) _toUpdate[HASH_FIELDS.PHONE] = options[HASH_FIELDS.PHONE];
     if(options[HASH_FIELDS.DOB]) _toUpdate[HASH_FIELDS.DOB] = options[HASH_FIELDS.DOB];
-
+    if(options[HASH_FIELDS.STATUS]) _toUpdate[HASH_FIELDS.STATUS] = options[HASH_FIELDS.STATUS];
     return await super.asyncHmset(_key, _toUpdate);
   }
 }
