@@ -19,8 +19,10 @@ router.get(
 
 
 router.post(
-  '/addCategory',
+  '/add',
   auths.setCredentials,
+  auths.verify,
+  auths.verifyAdmin,
   addCategory.validateRequest,
   addCategory.add,
   addCategory.sendResponse,
@@ -28,8 +30,10 @@ router.post(
 )
 
 router.patch(
-  '/updateCategoryDetails',
+  '/update',
   auths.setCredentials,
+  auths.verify,
+  auths.verifyAdmin,
   update.validateRequest,
   update.updateCategoryDetails,
   update.sendResponse,
@@ -37,7 +41,7 @@ router.patch(
 )
 
 router.delete(
-  '/deleteCategory',
+  '/delete',
   auths.setCredentials,
   deleteCategory.validateRequest,
   deleteCategory.deleteCategory,

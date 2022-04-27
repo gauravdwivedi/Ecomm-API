@@ -38,7 +38,23 @@ class Tokens extends AbsractRedis{
       key: _key,
       field: "userId"
     });
+    console.log(userId);
     if(value == userId) return true;
+    return false;
+  }
+
+  /**
+  * verifying if token is valid or not
+  * @param {*} token 
+  * @param {*} userId 
+  */
+  async verifyAdmin(token){
+    const _key = key.SSO_TOKEN.format({token});
+    const value = await super.asyncHget({
+      key: _key,
+      field: "status"
+    });
+    if(value == 1) return true;
     return false;
   }
   

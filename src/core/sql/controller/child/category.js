@@ -56,21 +56,21 @@ class Category extends AbstractSQL{
 const QUERY_BUILDER = {
   
   SAVE: (params) => {
-    let { title, icon,status } = params;
+    let { title, icon, slug } = params;
     const query = `INSERT INTO ${CATEGORY_TABLE_NAME}
-    (${CATEGORY_FIELDS.TITLE}, ${CATEGORY_FIELDS.ICON} , ${CATEGORY_FIELDS.STATUS})
-    VALUES(?,?,?)
+    (${CATEGORY_FIELDS.TITLE}, ${CATEGORY_FIELDS.ICON} , ${CATEGORY_FIELDS.SLUG}, ${CATEGORY_FIELDS.STATUS})
+    VALUES(?,?,?,1)
     ON DUPLICATE KEY
     UPDATE ${CATEGORY_FIELDS.TITLE}=?`;
-    return SqlString.format(query, [title, icon,status,title])
+    return SqlString.format(query, [title, icon, slug, title])
   },
   FETCH_LIST: () => {
-    const query = `SELECT id, title, icon, status FROM ${CATEGORY_TABLE_NAME}`;
+    const query = `SELECT * FROM ${CATEGORY_TABLE_NAME}`;
     return SqlString.format(query, [])
   },
   
   UPDATE_DETAIL_BY_ID: (params) => {
-    let { title, icon,status, categoryId } = params;
+    let { title, icon, slug, categoryId } = params;
     let values = [];
     let query = `UPDATE ${CATEGORY_TABLE_NAME} `;
     if(title){
@@ -83,10 +83,10 @@ const QUERY_BUILDER = {
       values.push(icon);
     }
 
-    if(status){
+    if(slug){
       query +=  (icon) ?  " , " : " SET ";
-      query += ` ${CATEGORY_FIELDS.STATUS} = ? `;
-      values.push(status);
+      query += ` ${CATEGORY_FIELDS.SLUG} = ? `;
+      values.push(slug);
     }
 
     query += ` WHERE ${CATEGORY_FIELDS.ID} = ?`;
