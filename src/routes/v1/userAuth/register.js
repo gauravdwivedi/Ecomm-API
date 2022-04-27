@@ -96,6 +96,7 @@ register.ifSignUp = async(req, res, next) => {
     [iUserBasicInfoRedis.HASH_FIELDS().LAST_NAME]: req.body.lastName,
     [iUserBasicInfoRedis.HASH_FIELDS().ROLE]: 2,
     [iUserBasicInfoRedis.HASH_FIELDS().PHONE]: req.body.phone,
+    [iUserBasicInfoRedis.HASH_FIELDS().STATUS]: 1,
     [iUserBasicInfoRedis.HASH_FIELDS().CREATED_AT]: req.body.createdAt,
     [iUserBasicInfoRedis.HASH_FIELDS().UPDATED_AT]: req.body.updatedAt
   };
@@ -122,7 +123,8 @@ register.sendResponse = async(req, res, next) => {
       lastName: req._userBasicInfo.last_name,
       avatar: req._userBasicInfo.avatar || "",
       phone: req._userBasicInfo.phone || "",
-      role: req._userBasicInfo.role || 2
+      role: req._userBasicInfo.role || 2,
+      status: req._userBasicInfo.status || 0
     }
   });
   next();

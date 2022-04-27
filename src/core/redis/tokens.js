@@ -48,11 +48,11 @@ class Tokens extends AbsractRedis{
   * @param {*} token 
   * @param {*} userId 
   */
-  async verifyAdmin(token){
-    const _key = key.SSO_TOKEN.format({token});
+  async verifyAdmin(userId){
+    const _key = key.USER_BASIC_INFO.format({userId});
     const value = await super.asyncHget({
       key: _key,
-      field: "status"
+      field: "role"
     });
     if(value == 1) return true;
     return false;

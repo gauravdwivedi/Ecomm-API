@@ -48,8 +48,8 @@ auth.verifyAdmin = async(req, res, next) => {
 
     const {id} = decoded;
     if(!id) return res.status(401).send();
-    const isAuthenticatedUser = await new TokensRedis(req._siteId).verifyAdmin(token);
-    if(!isAuthenticatedUser) return res.status(401).send();
+    const isUserAdmin = await new TokensRedis(req._siteId).verifyAdmin(id);
+    if(!isUserAdmin) return res.status(401).send();
     req._userId = id;
     
     next();

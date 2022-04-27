@@ -43,6 +43,8 @@ router.patch(
 router.delete(
   '/delete',
   auths.setCredentials,
+  auths.verify,
+  auths.verifyAdmin,
   deleteCategory.validateRequest,
   deleteCategory.deleteCategory,
   deleteCategory.sendResponse,
