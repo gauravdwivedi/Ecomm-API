@@ -24,10 +24,16 @@ detail.validateRequest = async(req, res, next) => {
 detail.getUserDetail = async(req, res, next) => {
   const { userId } = req.body;
   const UsersObj = new Users(req._siteId);
-  UsersObj.fetchDetailByID(userId, (err, detail) => {
-    req._response = detail;
+  // UsersObj.fetchDetailByID(userId, (err, detail) => {
+  //   req._response = detail;
+  //   next();
+  // })
+
+  UsersObj.getUserDetail(userId,(err,detail) => {
+    req._response=detail;
     next();
   })
+
 }
 
 /**

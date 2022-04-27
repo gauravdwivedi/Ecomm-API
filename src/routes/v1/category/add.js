@@ -10,8 +10,8 @@ const addCategory = {};
 * @param {*} next 
 */
 addCategory.validateRequest = async(req, res, next) => {
-  const { title, icon,status } = req.body;
-  if(!(title && icon && status )) next(new ApiError(400, 'E0010002', {}, 'Invalid request! Please check your inputs'));
+  const { title, icon, slug } = req.body;
+  if(!(title && icon && slug )) next(new ApiError(400, 'E0010002', {}, 'Invalid request! Please check your inputs'));
   next();
 }
 

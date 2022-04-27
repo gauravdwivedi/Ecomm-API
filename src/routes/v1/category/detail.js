@@ -1,7 +1,7 @@
 const ApiError = require("../ApiError");
 const { Category } = require("../../../core/sql/controller/child");
 
-const list = {};
+const detail = {};
 
 /**
 * validating request body
@@ -9,7 +9,9 @@ const list = {};
 * @param {*} res 
 * @param {*} next 
 */
-list.validateRequest = async(req, res, next) => {
+detail.validateRequest = async(req, res, next) => {
+  const { categoryId } = req.body;
+  if(!categoryId) next(new ApiError(400, 'E0010002', {}, 'Invalid request! Please check your inputs'));
   next();
 }
 
@@ -19,10 +21,11 @@ list.validateRequest = async(req, res, next) => {
 * @param {*} res 
 * @param {*} next 
 */
-list.getCategoryList = async(req, res, next) => {
+detail.getCategoryDetail = async(req, res, next) => {
+  const { categoryId } = req.body;
   const CategoryObj = new Category(req._siteId);
-  CategoryObj.fetchList((err, list) => {
-    req._response = list;
+  CategoryObj.fetchDetail(categoryId, (err, result) => {
+    req._response = result;
     next();
   })
 }
@@ -33,9 +36,9 @@ list.getCategoryList = async(req, res, next) => {
 * @param {*} res 
 * @param {*} next 
 */
-list.sendResponse = async(req, res, next) => {
+detail.sendResponse = async(req, res, next) => {
   res.status(200).send({result: req._response});
   next();
 }
 
-module.exports = list;
+module.exports = detail;

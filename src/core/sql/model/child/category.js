@@ -7,6 +7,7 @@ const FIELDS = {
   ID: "id",
   TITLE: "title",
   ICON: "icon",
+  SLUG: "slug",
   STATUS: "status",
 }
 

@@ -90,6 +90,7 @@ verify.sendResponse = async(req, res, next) => {
         lastName: req._userBasicInfo.last_name,
         avatar: req._userBasicInfo.avatar,
         role: req._userBasicInfo.role,
+        status:req._userBasicInfo.status
       }
     })
     next()

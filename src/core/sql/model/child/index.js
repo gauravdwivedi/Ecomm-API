@@ -4,6 +4,8 @@ module.exports = {
   LikeVideo: require("./likeVideo"),
   MenuVideo: require("./menuVideo"),
   ProductVideo: require("./productVideo"),
+  ProductImages: require("./productImages"),
+  Variants: require("./variants"),
   ProductMenus: require("./productMenus"),
   ProductMenuEntity: require("./productMenuEntity"),
   Metadata: require("./metadata"),

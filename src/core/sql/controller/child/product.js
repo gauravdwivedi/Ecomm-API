@@ -7,6 +7,8 @@ const {
   Video: {SCHEMA:{FIELDS: VIDEO_FIELDS, TABLE_NAME: VIDEO_TABLE_NAME}},
   ProductVideo: {SCHEMA:{FIELDS: PRODUCT_VIDEO_FIELDS, TABLE_NAME: PRODUCT_VIDEO_TABLE_NAME}},
   Metadata: {SCHEMA:{FIELDS: METADATA_FIELDS, TABLE_NAME: METADATA_TABLE_NAME}},
+  ProductImages: {SCHEMA:{FIELDS: PRODUCT_IMAGES_FIELDS, TABLE_NAME: PRODUCT_IMAGES_TABLE_NAME}},
+  Variants: {SCHEMA:{FIELDS: VARIANTS_FIELDS, TABLE_NAME: VARIANTS_TABLE_NAME}},
 } = require("./../../model/child");
 
 class Product extends AbstractSQL{
@@ -16,14 +18,41 @@ class Product extends AbstractSQL{
   }
   
   /**
+  * adding new product
+  * @param {*} name 
+  */
+  
+  save(name, category, video_url, slug) {
+    this.connection.query(QUERY_BUILDER.SAVE(name, category, video_url, slug), super.getQueryType('INSERT')).then(result => {
+      callback(null, result)
+    }).catch(error => callback(error, null));
+  } 
+  
+  /**
   * fetching for site
   * @param {*} siteId 
   */
   
-  list(sort_by, order, min_price, max_price, category_id, offset, limit, callback) {
-    this.connection.query(QUERY_BUILDER.GET_LIST(sort_by, order, min_price, max_price, category_id, offset, limit), super.getQueryType('SELECT')).then(result => {
+  list(sort_by, order, min_price, max_price, category_id, size, offset, limit, callback) {
+    this.connection.query(QUERY_BUILDER.GET_LIST(sort_by, order, min_price, max_price, category_id, size, offset, limit), super.getQueryType('SELECT')).then(result => {
       callback(null, result)
     }).catch(error => callback(error, null));
+  }
+
+  getProductVariants = (product_id, size, color, min_price, max_price) => {
+    return new Promise((resolve, reject) => {
+      this.connection.query(QUERY_BUILDER.GET_PRODUCT_VARIANTS(product_id, size, color, min_price, max_price), super.getQueryType('SELECT')).then(result => {
+        resolve(result);
+      }).catch(error => reject(error));
+    })
+  }
+
+  getProductImages(product_id) {
+    return new Promise((resolve, reject) => {
+      this.connection.query(QUERY_BUILDER.GET_PRODUCT_IMAGES(product_id), super.getQueryType('SELECT')).then(result => {
+        resolve(result)
+      }).catch(error => reject(error));
+    })
   }
   
   detail(slug, callback) {
@@ -69,16 +98,62 @@ class Product extends AbstractSQL{
 
 
 const QUERY_BUILDER = {
-  GET_LIST: (sort_by, order, min_price, max_price, category_id, offset, limit) => {
-    let myQuery = `${PRODUCT_FIELDS.CATEGORY} = ${category_id}`;
-    myQuery += min_price ? `AND ${PRODUCT_FIELDS.PRICE} >= ${min_price}` : '';
-    myQuery += max_price ? `AND ${PRODUCT_FIELDS.PRICE} <= ${max_price}` : '';
-    const query = ` SELECT ${PRODUCT_FIELDS.ID}, ${PRODUCT_FIELDS.CATEGORY}, ${PRODUCT_FIELDS.IMAGES}, ${PRODUCT_FIELDS.VIDEO_URL}, ${PRODUCT_FIELDS.TITLE}, ${PRODUCT_FIELDS.ATTRIBUTES}, ${PRODUCT_FIELDS.QTY_IN_STOCK}, ${PRODUCT_FIELDS.PRICE}, ${PRODUCT_FIELDS.DISCOUNTED_PRICE}, ${PRODUCT_FIELDS.RATING}, ${PRODUCT_FIELDS.SLUG} 
-      FROM ${PRODUCT_TABLE_NAME}
+  SAVE: (name, category, video_url, slug) => {
+    const data = {
+      [PRODUCT_FIELDS.TITLE] : name,
+      [PRODUCT_FIELDS.CATEGORY] : category,
+      [PRODUCT_FIELDS.VIDEO_URL] : video_url,
+      [PRODUCT_FIELDS.SLUG] : slug
+    }
+    return SqlString.format(`INSERT INTO ${PRODUCT_TABLE_NAME} SET ?`, data)
+  },
+
+  SAVE_PRODUCT_VARIANT: (product_id, params) => {
+    const { sku, size, color, qty_in_stock, price, discounted_price } = params;
+    const data = {
+      [VARIANTS_FIELDS.PRODUCT_ID] : product_id,
+      [VARIANTS_FIELDS.SKU] : sku,
+      [VARIANTS_FIELDS.SIZE] : size,
+      [VARIANTS_FIELDS.COLOR] : color,
+      [VARIANTS_FIELDS.QTY_IN_STOCK] : qty_in_stock,
+      [VARIANTS_FIELDS.PRICE] : price,
+      [VARIANTS_FIELDS.DISCOUNTED_PRICE] : discounted_price,
+    }
+    return SqlString.format(`INSERT INTO ${VARIANTS_TABLE_NAME} SET ?`, data)
+  },
+
+  GET_LIST: (sort_by, order, min_price, max_price, category_id, size, offset, limit) => {
+    let myQuery = `p.${PRODUCT_FIELDS.STATUS} = 1`;
+    myQuery += category_id ? ` AND p.${PRODUCT_FIELDS.CATEGORY} = ${category_id}`: '';
+    myQuery += min_price ? ` AND v.${VARIANTS_FIELDS.PRICE} >= ${min_price}` : '';
+    myQuery += max_price ? ` AND v.${VARIANTS_FIELDS.PRICE} <= ${max_price}` : '';
+    myQuery += size ? ` AND v.${VARIANTS_FIELDS.SIZE} = \'${size}\'` : '';
+    const query = ` SELECT DISTINCT p.${PRODUCT_FIELDS.ID}, p.${PRODUCT_FIELDS.CATEGORY}, p.${PRODUCT_FIELDS.VIDEO_URL}, p.${PRODUCT_FIELDS.TITLE}, p.${PRODUCT_FIELDS.RATING}, p.${PRODUCT_FIELDS.SLUG} 
+      FROM ${PRODUCT_TABLE_NAME} as p
+      INNER JOIN ${VARIANTS_TABLE_NAME} as v ON v.${VARIANTS_FIELDS.PRODUCT_ID} = p.${PRODUCT_FIELDS.ID}
       WHERE ${myQuery}
       ORDER BY ${sort_by} ${order}
       limit ?,?`;
     return SqlString.format(query, [offset, limit])
+  },
+
+  GET_PRODUCT_VARIANTS: (product_id, size, color, min_price, max_price) => {
+    let myQuery = `${VARIANTS_FIELDS.PRODUCT_ID} = ${product_id}`;
+    myQuery += min_price ? ` AND ${VARIANTS_FIELDS.PRICE} >= ${min_price}` : '';
+    myQuery += max_price ? ` AND ${VARIANTS_FIELDS.PRICE} <= ${max_price}` : '';
+    myQuery += size ? ` AND ${VARIANTS_FIELDS.SIZE} = \'${size}\'` : '';
+    myQuery += color ? ` AND ${VARIANTS_FIELDS.COLOR} = \'${color}\'` : '';
+    const query = ` SELECT ${VARIANTS_FIELDS.ID}, ${VARIANTS_FIELDS.SKU}, ${VARIANTS_FIELDS.SIZE}, ${VARIANTS_FIELDS.COLOR}, ${VARIANTS_FIELDS.QTY_IN_STOCK}, ${VARIANTS_FIELDS.PRICE}, ${VARIANTS_FIELDS.DISCOUNTED_PRICE}, ${VARIANTS_FIELDS.STATUS}
+      FROM ${VARIANTS_TABLE_NAME}
+      WHERE ${myQuery}`;
+    return SqlString.format(query, []);
+  },
+
+  GET_PRODUCT_IMAGES: (product_id) => {
+    const query = ` SELECT ${PRODUCT_IMAGES_FIELDS.URL}
+      FROM ${PRODUCT_IMAGES_TABLE_NAME}
+      WHERE ${PRODUCT_IMAGES_FIELDS.PRODUCT_ID} = ${product_id}`;
+    return SqlString.format(query, [])
   },
 
   GET_DETAIL: (slug) => {

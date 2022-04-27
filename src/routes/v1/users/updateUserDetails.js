@@ -15,10 +15,10 @@ const updateUserDetails = {};
 */
 updateUserDetails.validateRequest = async(req, res, next) => {
 
-  const {firstName, lastName, avatar, gender, dob} = req.body;
+  const {firstName, lastName, avatar, gender, dob, phone} = req.body;
   console.log('DOB',dob)
 
-  let Newdob = moment(dob).format('YYYY-MM-DD');
+  let Newdob=moment(dob).format('YYYY-MM-DD');
   req.body.dob=Newdob
 
   
@@ -48,6 +48,11 @@ updateUserDetails.validateRequest = async(req, res, next) => {
 
     return next(new ApiError(401, 'E0010004'));
   }
+
+  if(Object.keys(req.body).includes('phone') && typeof phone !== 'number'){
+    console.log('6')
+    return next(new ApiError(401, 'E0010004'));
+  }
   
   next();
 }
@@ -60,27 +65,27 @@ updateUserDetails.validateRequest = async(req, res, next) => {
 */
 updateUserDetails.save = async(req, res, next) => {
   
-  const {firstName, lastName, avatar, gender, dob} = req.body;
+  const { userId, firstName, lastName, avatar, gender, dob, phone, status } = req.body;
 
-  await new UsersSQL(req._siteId).updateUser(req._userId, {
+  await new UsersSQL(req._siteId).updateUser(userId, {
     [USERS_SQL_FIELDS.FIRST_NAME]: firstName || undefined,
     [USERS_SQL_FIELDS.LAST_NAME]: lastName || undefined,
     [USERS_SQL_FIELDS.AVATAR]: avatar || undefined,
     [USERS_SQL_FIELDS.DOB]: dob || undefined,
     [USERS_SQL_FIELDS.GENDER]: gender || undefined,
-    [USERS_SQL_FIELDS.STATUS]: 1,
-
-
+    [USERS_SQL_FIELDS.PHONE]: phone || undefined,
+    [USERS_SQL_FIELDS.STATUS]: status || 1,
   });
   
   const iUserBasicInfoRedis = new UserBasicInfoRedis(req._siteId);
-  await iUserBasicInfoRedis.updateUser(req._userId, {
+  await iUserBasicInfoRedis.updateUser(userId, {
     [iUserBasicInfoRedis.HASH_FIELDS().FIRST_NAME]: firstName || undefined,
     [iUserBasicInfoRedis.HASH_FIELDS().LAST_NAME]: lastName || undefined,
     [iUserBasicInfoRedis.HASH_FIELDS().AVATAR]: avatar || undefined,
     [iUserBasicInfoRedis.HASH_FIELDS().GENDER]: gender || undefined,
     [iUserBasicInfoRedis.HASH_FIELDS().DOB]: dob || undefined,
-    [iUserBasicInfoRedis.HASH_FIELDS().STATUS]: 1,
+    [iUserBasicInfoRedis.HASH_FIELDS().PHONE]: phone || undefined,
+    [iUserBasicInfoRedis.HASH_FIELDS().STATUS]: status || 1,
 
   });
   next();

@@ -9,30 +9,7 @@ const moment = require('moment');
 const { Base64 } = require('js-base64');
 
 
-const register = {};
-
-/**
-* verifying sign up token
-* @param {*} req 
-* @param {*} res 
-* @param {*} next 
-*/
-register.authenticateSignUpToken = async(req, res, next) => {
-  const {email} = req.body;
-  
-  if(typeof email !== 'string' || email.length > 100){
-    return next(new ApiError(400, 'E0010004'));
-  }
-  
-  let signUpToken = req.cookies[cookieHelper.COOKIE_NAME_SIGN_UP_TOKEN];
-  !signUpToken && (signUpToken = req.headers["x-signup-token"]);
-  const iTokensRedis = new TokensRedis(req._siteId);
-  req._iTokensRedis = iTokensRedis;
-  isValidRegistration = await iTokensRedis.verifySignUp(signUpToken, email);
-  if(!isValidRegistration) return res.status(401).send();
-  iTokensRedis.invalidateSignUpToken(signUpToken);
-  next();
-}
+const addUser = {};
 
 /**
 * validating request body
@@ -41,8 +18,8 @@ register.authenticateSignUpToken = async(req, res, next) => {
 * @param {*} res 
 * @param {*} next 
 */
-register.validateRequest = async(req, res, next) => {
-  const {password, firstName, lastName, avatar, phone} = req.body;
+addUser.validateRequest = async(req, res, next) => {
+  const {password, firstName, lastName, avatar, phone,email,gender} = req.body;
   
   if(typeof password !== 'string' || password.length > 100){
     return next(new ApiError(400, 'E0010004'));
@@ -61,14 +38,22 @@ register.validateRequest = async(req, res, next) => {
     return next(new ApiError(400, 'E0010004'));
   }
 
+  if(!email){
+    return next(new ApiError(400, 'E0010004'));
+  }
+
+  if(!gender){
+    return next(new ApiError(400, 'E0010004'));
+  }
+
+
   if(Object.keys(req.body).includes('avatar') && typeof avatar !== 'string'){
     return next(new ApiError(400, 'E0010004'));
   }
   next();
 }
 
-
-register.ifSignUp = async(req, res, next) => {
+addUser.ifSignUp = async(req, res, next) => {
   req.body.createdAt = moment().format("YYYY-MM-DD HH:mm:ss");
   req.body.updatedAt = moment().format("YYYY-MM-DD HH:mm:ss");
   
@@ -78,6 +63,7 @@ register.ifSignUp = async(req, res, next) => {
     [USERS_SQL_FIELDS.PASSWORD]: req.body.password,
     [USERS_SQL_FIELDS.FIRST_NAME]: req.body.firstName,
     [USERS_SQL_FIELDS.LAST_NAME]: req.body.lastName,
+    [USERS_SQL_FIELDS.GENDER]:req.body.gender,
     [USERS_SQL_FIELDS.PHONE]: req.body.phone,
     [USERS_SQL_FIELDS.AVATAR]: req.body.avatar,
     [USERS_SQL_FIELDS.CREATED_AT]: req.body.createdAt,
@@ -94,9 +80,9 @@ register.ifSignUp = async(req, res, next) => {
     [iUserBasicInfoRedis.HASH_FIELDS().PASSWORD]: req.body.password,
     [iUserBasicInfoRedis.HASH_FIELDS().FIRST_NAME]: req.body.firstName,
     [iUserBasicInfoRedis.HASH_FIELDS().LAST_NAME]: req.body.lastName,
+    [iUserBasicInfoRedis.HASH_FIELDS().GENDER]:req.body.gender,
     [iUserBasicInfoRedis.HASH_FIELDS().ROLE]: 2,
     [iUserBasicInfoRedis.HASH_FIELDS().PHONE]: req.body.phone,
-    [iUserBasicInfoRedis.HASH_FIELDS().STATUS]: 1,
     [iUserBasicInfoRedis.HASH_FIELDS().CREATED_AT]: req.body.createdAt,
     [iUserBasicInfoRedis.HASH_FIELDS().UPDATED_AT]: req.body.updatedAt
   };
@@ -106,15 +92,14 @@ register.ifSignUp = async(req, res, next) => {
   next();
 }
 
+// register.generateToken = async(req, res, next) => {
+//   const token = jwt.sign({ id: req._userId }, superConfig["JWT"]["SECRET"].format({siteId: req._siteId}), {});
+//   await req._iTokensRedis.saveSSO(token, req._userId);
+//   req._token = token;
+//   next();
+// }
 
-register.generateToken = async(req, res, next) => {
-  const token = jwt.sign({ id: req._userId }, superConfig["JWT"]["SECRET"].format({siteId: req._siteId}), {});
-  await req._iTokensRedis.saveSSO(token, req._userId);
-  req._token = token;
-  next();
-}
-
-register.sendResponse = async(req, res, next) => {
+addUser.sendResponse = async(req, res, next) => {
   res.status(200).send({
     token: req._token,
     user: {
@@ -123,11 +108,10 @@ register.sendResponse = async(req, res, next) => {
       lastName: req._userBasicInfo.last_name,
       avatar: req._userBasicInfo.avatar || "",
       phone: req._userBasicInfo.phone || "",
-      role: req._userBasicInfo.role || 2,
-      status: req._userBasicInfo.status || 0
+      role: req._userBasicInfo.role || 2
     }
   });
   next();
 }
 
-module.exports = register;
+module.exports = addUser;

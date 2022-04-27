@@ -5,9 +5,10 @@ const auths = require("../auths");
 
 const list = require('./list');
 const detail = require("./detail");
-const update = require("./update");
 const deleteUser = require("./delete");
 const updateUserRole = require("./updateUserRole");
+const updateUserDetails = require("./updateUserDetails")
+const addUser = require("../users/add")
 
 router.get(
   '/list',
@@ -30,11 +31,23 @@ router.post(
 router.patch(
   '/updateUserDetails',
   auths.setCredentials,
-  update.validateRequest,
-  update.updateUserDetails,
-  update.sendResponse,
+  updateUserDetails.validateRequest,
+  updateUserDetails.save,
+  updateUserDetails.sendResponse,
   error
 )
+
+router.post(
+  '/add-user',
+  auths.setCredentials,
+  addUser.validateRequest,
+  addUser.ifSignUp,
+  addUser.sendResponse,
+  error
+  )
+
+
+  
 
 router.patch(
   "/updateUserRole",

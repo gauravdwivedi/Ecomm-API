@@ -37,6 +37,26 @@ auth.verify = async(req, res, next) => {
   }
 }
 
+auth.verifyAdmin = async(req, res, next) => {
+  let token = req.cookies[cookieHelper.COOKIE_NAME_SSO_TOKEN];
+  !token && (token = req.headers["x-sso-token"]);
+
+  if(!token) return res.status(401).send();
+  
+  try{
+    const decoded = jwt.verify(token, superConfig["JWT"]["SECRET"].format({siteId: req._siteId}));
+
+    const {id} = decoded;
+    if(!id) return res.status(401).send();
+    const isUserAdmin = await new TokensRedis(req._siteId).verifyAdmin(id);
+    if(!isUserAdmin) return res.status(401).send();
+    req._userId = id;
+    
+    next();
+  }catch(err){
+    return next(new ApiError(500, 'E0010001', {debug: err}))
+  }
+}
 
 auth.setProfile = async(req, res, next) => {
   let token = req.cookies[cookieHelper.COOKIE_NAME_SSO_TOKEN];

@@ -33,7 +33,7 @@ app.use(session(sessionConfig));
 app.disable('x-powered-by')
 app.use(multerMid.single('file'))
 
-
+app.use(cors());
 app.options("*", cors());
 
 app.get("/", (req, res) => {

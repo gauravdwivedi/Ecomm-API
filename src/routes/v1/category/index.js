@@ -4,6 +4,7 @@ const error = require("../error");
 const auths = require("../auths");
 
 const list = require('./list');
+const detail = require('./detail');
 const addCategory = require("./add");
 const update = require("./update");
 const deleteCategory = require("./delete");
@@ -17,10 +18,20 @@ router.get(
   error
 )
 
+router.post(
+  '/detail',
+  auths.setCredentials,
+  detail.validateRequest,
+  detail.getCategoryDetail,
+  detail.sendResponse,
+  error
+)
 
 router.post(
-  '/addCategory',
+  '/add',
   auths.setCredentials,
+  auths.verify,
+  auths.verifyAdmin,
   addCategory.validateRequest,
   addCategory.add,
   addCategory.sendResponse,
@@ -28,8 +39,10 @@ router.post(
 )
 
 router.patch(
-  '/updateCategoryDetails',
+  '/update',
   auths.setCredentials,
+  auths.verify,
+  auths.verifyAdmin,
   update.validateRequest,
   update.updateCategoryDetails,
   update.sendResponse,
@@ -37,8 +50,10 @@ router.patch(
 )
 
 router.delete(
-  '/deleteCategory',
+  '/delete',
   auths.setCredentials,
+  auths.verify,
+  auths.verifyAdmin,
   deleteCategory.validateRequest,
   deleteCategory.deleteCategory,
   deleteCategory.sendResponse,
