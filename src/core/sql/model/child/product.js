@@ -11,6 +11,7 @@ const FIELDS = {
   VIDEO_URL: "video_url",
   RATING: "rating",
   SLUG: "slug",
+  DESCRIPTION: "description",
   STATUS: 'status'
 }
 
