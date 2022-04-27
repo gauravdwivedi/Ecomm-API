@@ -5,10 +5,9 @@ const auths = require("../auths");
 
 const list = require('./list');
 const detail = require("./detail");
-const update = require("./update");
 const deleteUser = require("./delete");
 const updateUserRole = require("./updateUserRole");
-const updateUserDetails = require("../userAuth/updateUserDetails")
+const updateUserDetails = require("./updateUserDetails")
 const addUser = require("../users/add")
 
 router.get(
