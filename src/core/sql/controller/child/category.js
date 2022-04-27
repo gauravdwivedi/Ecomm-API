@@ -26,12 +26,20 @@ class Category extends AbstractSQL{
   /**
   * Fetch List
   */
-   fetchList(callback){
+  fetchList(callback){
     this.connection.query(QUERY_BUILDER.FETCH_LIST(), super.getQueryType('SELECT')).then(result => {
       callback(null, result)
     }).catch(error => callback(error, null));
   }
 
+  /**
+  * Fetch List
+  */
+  fetchDetail(id, callback){
+    this.connection.query(QUERY_BUILDER.FETCH_DETAIL(id), super.getQueryType('SELECT')).then(result => {
+      callback(null, result && result[0] ? result[0] : {})
+    }).catch(error => callback(error, null));
+  }
 
   /**
   * Update Category Detail by ID
@@ -64,9 +72,15 @@ const QUERY_BUILDER = {
     UPDATE ${CATEGORY_FIELDS.TITLE}=?`;
     return SqlString.format(query, [title, icon, slug, title])
   },
+
   FETCH_LIST: () => {
     const query = `SELECT * FROM ${CATEGORY_TABLE_NAME}`;
     return SqlString.format(query, [])
+  },
+
+  FETCH_DETAIL: (id) => {
+    const query = `SELECT * FROM ${CATEGORY_TABLE_NAME} WHERE id=?`;
+    return SqlString.format(query, [id])
   },
   
   UPDATE_DETAIL_BY_ID: (params) => {

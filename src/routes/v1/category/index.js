@@ -4,6 +4,7 @@ const error = require("../error");
 const auths = require("../auths");
 
 const list = require('./list');
+const detail = require('./detail');
 const addCategory = require("./add");
 const update = require("./update");
 const deleteCategory = require("./delete");
@@ -17,6 +18,14 @@ router.get(
   error
 )
 
+router.post(
+  '/detail',
+  auths.setCredentials,
+  detail.validateRequest,
+  detail.getCategoryDetail,
+  detail.sendResponse,
+  error
+)
 
 router.post(
   '/add',
