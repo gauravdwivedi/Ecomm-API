@@ -21,9 +21,9 @@ class Product extends AbstractSQL{
   * adding new product
   * @param {*} name 
   */
-  
-  save(name, category, video_url, slug) {
-    this.connection.query(QUERY_BUILDER.SAVE(name, category, video_url, slug), super.getQueryType('INSERT')).then(result => {
+
+  save(title, description, category, video_url, rating, slug) {
+    this.connection.query(QUERY_BUILDER.SAVE(title, description, category, video_url, rating, slug), super.getQueryType('INSERT')).then(result => {
       callback(null, result)
     }).catch(error => callback(error, null));
   } 
@@ -98,11 +98,13 @@ class Product extends AbstractSQL{
 
 
 const QUERY_BUILDER = {
-  SAVE: (name, category, video_url, slug) => {
+  SAVE: (title, description, category, video_url, rating, slug) => {
     const data = {
-      [PRODUCT_FIELDS.TITLE] : name,
+      [PRODUCT_FIELDS.TITLE] : title,
+      [PRODUCT_FIELDS.DESCRIPTION] : description,
       [PRODUCT_FIELDS.CATEGORY] : category,
       [PRODUCT_FIELDS.VIDEO_URL] : video_url,
+      [PRODUCT_FIELDS.RATING] : rating,
       [PRODUCT_FIELDS.SLUG] : slug
     }
     return SqlString.format(`INSERT INTO ${PRODUCT_TABLE_NAME} SET ?`, data)
