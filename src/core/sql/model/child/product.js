@@ -15,7 +15,8 @@ const FIELDS = {
   QTY_IN_STOCK: "qty_in_stock",
   DISCOUNTED_PRICE: "discounted_price",
   RATING: "rating",
-  SLUG: "slug"
+  SLUG: "slug",
+  DESCRIPTION: "description"
 }
 
 

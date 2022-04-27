@@ -28,10 +28,8 @@ detail.fetchSQL = async (req, res, next) => {
   ProductObj.detail(slug, (error, response)=>{
     console.log('AMAMAMAMAMAM', response);
     if(response && response[0] && response[0].id){
-      ProductObj.productVideo(response[0].id, (error, video)=>{
-        res.status(200).send(base.success({result: {...response[0], ...video}}));
+      res.status(200).send(base.success({result: response[0]}));
         next();
-      })
     }
     else{
       res.status(200).send(base.success({result: {}}));
