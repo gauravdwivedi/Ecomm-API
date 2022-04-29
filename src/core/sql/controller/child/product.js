@@ -114,6 +114,38 @@ class Product extends AbstractSQL{
     });
   }
 
+  updateProduct = (product_id, params) => {
+    return new Promise((resolve, reject) => {
+      this.connection.query(QUERY_BUILDER.UPDATE_PRODUCT(product_id, params), super.getQueryType('UPDATE')).then(result => {
+        resolve(result);
+      }).catch(error => reject(error));
+    })
+  }
+
+  updateProductVariant = (variant_id, params) => {
+    return new Promise((resolve, reject) => {
+      this.connection.query(QUERY_BUILDER.UPDATE_PRODUCT_VARIANT(variant_id, params), super.getQueryType('UPDATE')).then(result => {
+        resolve(result);
+      }).catch(error => reject(error));
+    })
+  }
+
+  deleteProductVariant = (variant_id) => {
+    return new Promise((resolve, reject) => {
+      this.connection.query(QUERY_BUILDER.DELETE_PRODUCT_VARIANT(variant_id), super.getQueryType('DELETE')).then(result => {
+        resolve(result);
+      }).catch(error => reject(error));
+    })
+  }
+
+  deleteProductImage = (image_id) => {
+    return new Promise((resolve, reject) => {
+      this.connection.query(QUERY_BUILDER.DELETE_PRODUCT_IMAGE(image_id), super.getQueryType('DELETE')).then(result => {
+        resolve(result);
+      }).catch(error => reject(error));
+    })
+  }
+
 }
 
 
@@ -239,7 +271,53 @@ const QUERY_BUILDER = {
    LEFT JOIN ${METADATA_TABLE_NAME} as md on md.${METADATA_FIELDS.ENTITY_ID} = v.${VIDEO_FIELDS.ID} AND md.${METADATA_FIELDS.ENTITY_TYPE} = 'video'
     WHERE P.${PRODUCT_FIELDS.SLUG} = ? AND v.${VIDEO_FIELDS.HLS_MASTER_PUBLIC_URL} IS NOT NULL`;
     return SqlString.format(query, [slug])
-  }
+  },
+
+  UPDATE_PRODUCT: (productId, params) => {
+    const { title, category, video_url, rating, slug } = params;
+    const query = `UPDATE ${PRODUCT_TABLE_NAME} 
+      SET ${PRODUCT_FIELDS.TITLE} = ? ,
+      ${PRODUCT_FIELDS.CATEGORY} = ? ,
+      ${PRODUCT_FIELDS.VIDEO_URL} = ? ,
+      ${PRODUCT_FIELDS.RATING} = ? ,
+      ${PRODUCT_FIELDS.SLUG} = ? 
+      WHERE ${PRODUCT_FIELDS.ID} = ?`;
+    
+    const queryParams = [title, category, video_url, rating, slug, productId];
+    return SqlString.format(query, queryParams)
+  },
+
+  UPDATE_PRODUCT_VARIANT: (variantId, params) => {
+    const { sku, size, color, qty_in_stock, price, discounted_price } = params;
+    const query = `UPDATE ${VARIANTS_TABLE_NAME} 
+      SET ${VARIANTS_FIELDS.SKU} = ? ,
+      ${VARIANTS_FIELDS.SIZE} = ? ,
+      ${VARIANTS_FIELDS.COLOR} = ? ,
+      ${VARIANTS_FIELDS.QTY_IN_STOCK} = ? ,
+      ${VARIANTS_FIELDS.PRICE} = ?,
+      ${VARIANTS_FIELDS.DISCOUNTED_PRICE} = ?
+      WHERE ${VARIANTS_FIELDS.ID} = ?`;
+    
+    const queryParams = [sku, size, color, qty_in_stock, price, discounted_price, variantId];
+    return SqlString.format(query, queryParams)
+  },
+
+  DELETE_PRODUCT_VARIANT: (variantId) => {
+    const query = `DELETE FROM ${VARIANTS_TABLE_NAME}
+      WHERE ${VARIANTS_FIELDS.ID} = ?`;
+    
+    const queryParams = [variantId];
+    return SqlString.format(query, queryParams)
+  },
+
+  DELETE_PRODUCT_IMAGE: (imageId) => {
+    const query = `DELETE FROM ${PRODUCT_IMAGES_TABLE_NAME}
+      WHERE ${PRODUCT_IMAGES_FIELDS.ID} = ?`;
+    
+    const queryParams = [imageId];
+    return SqlString.format(query, queryParams)
+  },
+  
   
 }
 

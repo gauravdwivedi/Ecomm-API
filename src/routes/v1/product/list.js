@@ -43,7 +43,6 @@ list.productList = async (req, res, next) => {
       for(let index = 0; index < result.length; index++) {
         let product = result[index];
         const category = await CatObj.fetchDetail(product.category);
-        console.log('myres', category);
         const attributes =  await ProdObj.getProductVariants(product.id, size, color, min_price, max_price);
         const images = await ProdObj.getProductImages(product.id);
         myresult.push({ ...product, attributes, images, category });
@@ -52,7 +51,10 @@ list.productList = async (req, res, next) => {
       next();
     } else if(error) {
       console.log(error);
-      res.status(200).send(base.success({result: {}}));
+      res.status(200).send(base.success({result: []}));
+      next();
+    } else {
+      res.status(200).send(base.success({result: []}));
       next();
     }
   })

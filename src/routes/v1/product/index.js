@@ -7,6 +7,8 @@ const add = require("./add");
 const reviews = require("./reviews");
 const error = require("../error");
 const auths = require("../auths");
+const update = require("./update");
+const deleteAction = require("./delete");
 
 router.post(
   `/add`,
@@ -16,6 +18,48 @@ router.post(
   add.validateRequest,
   add.addProduct,
   add.sendResponse,
+  error
+);
+
+router.post(
+  `/updateProduct`,
+  auths.setCredentials,
+  auths.verify,
+  auths.verifyAdmin,
+  update.validateUpdateProductRequest,
+  update.updateProduct,
+  update.sendResponse,
+  error
+);
+
+router.post(
+  `/updateVariant`,
+  auths.setCredentials,
+  auths.verify,
+  auths.verifyAdmin,
+  update.validateUpdateProductVariantRequest,
+  update.updateProductVariant,
+  update.sendResponse,
+  error
+);
+
+router.delete(
+  `/deleteVariant`,
+  auths.setCredentials,
+  auths.verify,
+  auths.verifyAdmin,
+  deleteAction.validateBody,
+  deleteAction.deleteProductImage,
+  error
+);
+
+router.delete(
+  `/deleteProductImage`,
+  auths.setCredentials,
+  auths.verify,
+  auths.verifyAdmin,
+  deleteAction.validateBody,
+  deleteAction.deleteProductImage,
   error
 );
 
