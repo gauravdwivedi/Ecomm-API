@@ -8,6 +8,7 @@ const detail = require('./detail');
 const addCategory = require("./add");
 const update = require("./update");
 const deleteCategory = require("./delete");
+const upload = require("./upload")
 
 router.get(
   '/list',
@@ -16,6 +17,13 @@ router.get(
   list.getCategoryList,
   list.sendResponse,
   error
+)
+
+router.post(
+  `/uploadicon`,
+  auths.setCredentials,
+  upload.icon
+
 )
 
 router.post(
