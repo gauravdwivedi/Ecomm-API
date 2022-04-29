@@ -2,6 +2,7 @@ const ApiError = require("../ApiError");
 const tokenHelper = require("../../../core/helper/tokenHelper");
 const {Tokens: TokensRedis, UniqueIdentifier: UniqueIdentifierRedis} = require("../../../core/redis");
 const {emailService} = require("../../../services");
+const email = require("../../../services/email2")
 
 const resetPasswordTrigger = {};
 
@@ -13,6 +14,7 @@ const resetPasswordTrigger = {};
 */
 resetPasswordTrigger.validateRequest = async(req, res, next) => {
   const {email} = req.body;
+  console.log('EMAIL',email)
   if(typeof email !== 'string'){
     return next(new ApiError(400, 'E0010004'));
   }
@@ -62,7 +64,8 @@ resetPasswordTrigger.saveToken = async(req, res, next) => {
 
 resetPasswordTrigger.sendEmail = async(req, res, next) => {
   try{
-    await emailService.resetPassword(req.body.email, req._token);
+    // await emailService.resetPassword(req.body.email, req._token);
+    await email.resetPassword(req.body.email,req._token)
   }catch(e){
     return next(new ApiError(400, 'E0010001', {
       message: 'error in sending email',
@@ -79,6 +82,7 @@ resetPasswordTrigger.sendEmail = async(req, res, next) => {
 * @param {*} next 
 */
 resetPasswordTrigger.sendResponse = async(req, res, next) => {
+  
   res.status(200).send();
   next();
 }
