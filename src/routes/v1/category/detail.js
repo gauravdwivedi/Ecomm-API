@@ -24,10 +24,9 @@ detail.validateRequest = async(req, res, next) => {
 detail.getCategoryDetail = async(req, res, next) => {
   const { categoryId } = req.body;
   const CategoryObj = new Category(req._siteId);
-  CategoryObj.fetchDetail(categoryId, (err, result) => {
-    req._response = result;
-    next();
-  })
+  const result = await CategoryObj.fetchDetail(categoryId);
+  req._response = result;
+  next();
 }
 
 /**
