@@ -22,16 +22,37 @@ class Product extends AbstractSQL{
   * @param {*} name 
   */
 
-  save(title, description, category, video_url, rating, slug) {
-    this.connection.query(QUERY_BUILDER.SAVE(title, description, category, video_url, rating, slug), super.getQueryType('INSERT')).then(result => {
-      callback(null, result)
-    }).catch(error => callback(error, null));
-  } 
-  
-  /**
-  * fetching for site
-  * @param {*} siteId 
-  */
+  saveProduct(title, description, category, video_url, rating, slug) {
+    return new Promise((resolve, reject) => {
+      this.connection.query(QUERY_BUILDER.SAVE_PRODUCT(title, description, category, video_url, rating, slug), super.getQueryType('INSERT')).then(result => {
+        resolve(result);
+      }).catch(error => resolve(error));
+    })
+  }
+
+  saveProductVariants(productId, attributes) {
+    return new Promise((resolve, reject) => {
+      let a = [];
+      attributes.map(attribute => {
+        this.connection.query(QUERY_BUILDER.SAVE_PRODUCT_VARIANT(productId, attribute), super.getQueryType('INSERT')).then(result => {
+          a.push(result && result[0] ? result[0] : "");
+        }).catch(error => console.log(error));
+      })
+      resolve(a);
+    })
+  }
+
+  saveProductImages(productId, images) {
+    return new Promise((resolve, reject) => {
+      let a = [];
+      images.map(image => {
+        this.connection.query(QUERY_BUILDER.SAVE_PRODUCT_IMAGES(productId, image), super.getQueryType('INSERT')).then(result => {
+          a.push(result && result[0] ? result[0] : "");
+        }).catch(error => console.log(error));
+      })
+      resolve(a);
+    })
+  }
   
   list(sort_by, order, min_price, max_price, category_id, size, offset, limit, callback) {
     this.connection.query(QUERY_BUILDER.GET_LIST(sort_by, order, min_price, max_price, category_id, size, offset, limit), super.getQueryType('SELECT')).then(result => {
@@ -98,7 +119,7 @@ class Product extends AbstractSQL{
 
 
 const QUERY_BUILDER = {
-  SAVE: (title, description, category, video_url, rating, slug) => {
+  SAVE_PRODUCT: (title, description, category, video_url, rating, slug) => {
     const data = {
       [PRODUCT_FIELDS.TITLE] : title,
       [PRODUCT_FIELDS.DESCRIPTION] : description,
@@ -114,14 +135,24 @@ const QUERY_BUILDER = {
     const { sku, size, color, qty_in_stock, price, discounted_price } = params;
     const data = {
       [VARIANTS_FIELDS.PRODUCT_ID] : product_id,
-      [VARIANTS_FIELDS.SKU] : sku,
-      [VARIANTS_FIELDS.SIZE] : size,
-      [VARIANTS_FIELDS.COLOR] : color,
-      [VARIANTS_FIELDS.QTY_IN_STOCK] : qty_in_stock,
-      [VARIANTS_FIELDS.PRICE] : price,
-      [VARIANTS_FIELDS.DISCOUNTED_PRICE] : discounted_price,
+      [VARIANTS_FIELDS.SKU] : sku || '',
+      [VARIANTS_FIELDS.SIZE] : size || '',
+      [VARIANTS_FIELDS.COLOR] : color || '',
+      [VARIANTS_FIELDS.QTY_IN_STOCK] : qty_in_stock || 0,
+      [VARIANTS_FIELDS.PRICE] : price || 0,
+      [VARIANTS_FIELDS.DISCOUNTED_PRICE] : discounted_price || price || 0,
+      [VARIANTS_FIELDS.STATUS] : 1,
     }
     return SqlString.format(`INSERT INTO ${VARIANTS_TABLE_NAME} SET ?`, data)
+  },
+
+  SAVE_PRODUCT_IMAGES: (product_id, url) => {
+    const data = {
+      [PRODUCT_IMAGES_FIELDS.PRODUCT_ID] : product_id,
+      [PRODUCT_IMAGES_FIELDS.URL] : url,
+      [PRODUCT_IMAGES_FIELDS.STATUS] : 1,
+    }
+    return SqlString.format(`INSERT INTO ${PRODUCT_IMAGES_TABLE_NAME} SET ?`, data)
   },
 
   GET_LIST: (sort_by, order, min_price, max_price, category_id, size, offset, limit) => {

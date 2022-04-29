@@ -10,7 +10,7 @@ const add = {};
 * @param {*} next 
 */
 add.validateRequest = async(req, res, next) => {
-  const { title, category, video_url, rating, slug, images, attributes } = req.body;
+  const { title, category, slug, images, attributes } = req.body;
   if(!(title && category && slug && images && attributes )) next(new ApiError(400, 'E0010002', {}, 'Invalid request! Please check your inputs'));
   next();
 }
@@ -22,12 +22,13 @@ add.validateRequest = async(req, res, next) => {
 * @param {*} next 
 */
 add.addProduct = async(req, res, next) => {
-  const { title, category, video_url, rating, slug, images, attributes } = req.body;
+  let { title, description, category, video_url, rating, slug, images, attributes } = req.body;
   const ProductObj = new Product(req._siteId);
-  ProductObj.add(req.body, (err, response) => {
-    req._response = response;
-    next();
-  })
+  let [productId, x] = await ProductObj.saveProduct(title, description, category, video_url, rating, slug);
+  await ProductObj.saveProductVariants(productId, attributes);
+  await ProductObj.saveProductImages(productId, images);
+  req._response = productId;
+  next();
 }
 
 /**
@@ -37,7 +38,7 @@ add.addProduct = async(req, res, next) => {
 * @param {*} next 
 */
 add.sendResponse = async(req, res, next) => {
-  res.status(200).send(req._response);
+  res.status(200).send({result: req._response});
   next();
 }
 

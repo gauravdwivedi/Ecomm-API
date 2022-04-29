@@ -3,9 +3,21 @@ const router = express.Router();
 const detail = require("./detail");
 const detail_ = require("./detail_");
 const list = require("./list");
+const add = require("./add");
 const reviews = require("./reviews");
 const error = require("../error");
 const auths = require("../auths");
+
+router.post(
+  `/add`,
+  auths.setCredentials,
+  auths.verify,
+  auths.verifyAdmin,
+  add.validateRequest,
+  add.addProduct,
+  add.sendResponse,
+  error
+);
 
 router.get(
   `/list`,

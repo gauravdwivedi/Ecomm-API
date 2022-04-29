@@ -1,4 +1,4 @@
-const { Product } = require("../../../core/sql/controller/child");
+const { Product, Category } = require("../../../core/sql/controller/child");
 const { base } = require("./../../../wrapper");
 const ApiError = require("../ApiError");
 const list = {};
@@ -36,14 +36,17 @@ list.validateBody = (req, res, next) => {
 list.productList = async (req, res, next) => {
   let { sort_by, order, min_price, max_price, category_id, size, color, offset, limit } = req.query;
   const ProdObj = new Product(req._siteId);
+  const CatObj = new Category(req._siteId);
   ProdObj.list(sort_by, order, min_price, max_price, category_id, size, offset, limit, async (error, result)=>{
     if(result && result.length){
       let myresult = [];
       for(let index = 0; index < result.length; index++) {
         let product = result[index];
+        const category = await CatObj.fetchDetail(product.category);
+        console.log('myres', category);
         const attributes =  await ProdObj.getProductVariants(product.id, size, color, min_price, max_price);
         const images = await ProdObj.getProductImages(product.id);
-        myresult.push({ ...product, attributes, images });
+        myresult.push({ ...product, attributes, images, category });
       };
       res.status(200).send(base.success({result: myresult}));
       next();

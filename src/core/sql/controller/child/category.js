@@ -33,12 +33,15 @@ class Category extends AbstractSQL{
   }
 
   /**
-  * Fetch List
+  * Fetch Detail
   */
-  fetchDetail(id, callback){
-    this.connection.query(QUERY_BUILDER.FETCH_DETAIL(id), super.getQueryType('SELECT')).then(result => {
-      callback(null, result && result[0] ? result[0] : {})
-    }).catch(error => callback(error, null));
+  fetchDetail = (id) => {
+    return new Promise((resolve, reject) => {
+      this.connection.query(QUERY_BUILDER.FETCH_DETAIL(id), super.getQueryType('SELECT')).then(result => {
+        console.log('result', result[0]);
+        resolve(result && result[0] ? result[0] : {})
+      }).catch(error => reject(error));
+    })
   }
 
   /**
