@@ -24,16 +24,11 @@ class Category extends AbstractSQL{
   }
 
 
-  /**
-   * Upload Icon
-   * @param {*} callback 
-   */
 
-
-uploadIcon = (params) => {
+uploadIcon(params){
   console.log('SQL ICON',params)
   return new Promise((resolve, reject) => {
-  sequelize.query(QUERY_BUILDER.UPLOAD_ICON(params), { type: sequelize.QueryTypes.UPDATE }).then(result => {
+  this.connection.query(QUERY_BUILDER.UPLOAD_ICON(params), super.getQueryType('UPDATE')).then(result => {
     return resolve(result);
   }).catch(error => reject( error ));
 })
@@ -95,9 +90,10 @@ const QUERY_BUILDER = {
      return res;
   },
   UPLOAD_ICON: (params) => {
+    console.log(params)
     let { path, id } = params;
     let data = [path, id];
-    let query = `UPDATE ${CATEGORY_TABLE_NAME} SET ${CATEGORY_FIELDS.ICON} = ? WHERE ${CATEGORY_FIELDS.CATEGORY_ID} = ?`;
+    let query = `UPDATE ${CATEGORY_TABLE_NAME} SET ${CATEGORY_FIELDS.ICON} = ? WHERE ${CATEGORY_FIELDS.ID} = ?`;
     return SqlString.format(query, data);
   },
 

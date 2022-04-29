@@ -7,6 +7,7 @@ let cookieParser = require('cookie-parser');
 const cors = require("cors");
 
 const multer = require('multer');
+const fileUpload = require('express-fileupload');
 
 const multerMid = multer({
   storage: multer.memoryStorage(),
@@ -31,7 +32,7 @@ const sessionConfig = {
 app.use(session(sessionConfig));
 
 app.disable('x-powered-by')
-app.use(multerMid.single('file'))
+app.use(multerMid.single('datafile'))
 
 app.use(cors());
 app.options("*", cors());
@@ -42,6 +43,7 @@ app.get("/", (req, res) => {
   res.header("Pragma", "no-cache");
 });
 app.post("/", (req, res) => {
+  console.log('REQUEST INDEX',req)
   res.header("Cache-Control", "private, no-cache, no-store, must-revalidate");
   res.header("Expires", "-1");
   res.header("Pragma", "no-cache");
@@ -52,6 +54,13 @@ app.patch("/", (req, res) => {
   res.header("Pragma", "no-cache");
 });
 
+app.use(fileUpload({
+  createParentPath: true,
+  useTempFiles: true,
+}));
+
+app.use(express.static(__dirname + '/public'));
+app.use('/uploads', express.static('./public/uploads'));
 
 const bodyParser = require("body-parser");
 app.use(bodyParser.json({limit: "10mb"})); // support json encoded bodies
