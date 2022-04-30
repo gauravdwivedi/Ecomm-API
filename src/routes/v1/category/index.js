@@ -22,8 +22,12 @@ router.get(
 router.post(
   `/uploadicon`,
   auths.setCredentials,
-  upload.icon
-
+  auths.verify,
+  auths.verifyAdmin,
+  auths.setCredentials,
+  upload.icon,
+  upload.sendResponse,
+  error
 )
 
 router.post(
