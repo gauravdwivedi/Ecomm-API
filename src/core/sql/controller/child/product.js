@@ -158,7 +158,8 @@ const QUERY_BUILDER = {
       [PRODUCT_FIELDS.CATEGORY] : category,
       [PRODUCT_FIELDS.VIDEO_URL] : video_url,
       [PRODUCT_FIELDS.RATING] : rating,
-      [PRODUCT_FIELDS.SLUG] : slug
+      [PRODUCT_FIELDS.SLUG] : slug,
+      [PRODUCT_FIELDS.STATUS]:1
     }
     return SqlString.format(`INSERT INTO ${PRODUCT_TABLE_NAME} SET ?`, data)
   },
