@@ -22,13 +22,18 @@ add.validateRequest = async(req, res, next) => {
 * @param {*} next 
 */
 add.addProduct = async(req, res, next) => {
-  let { title, description, category, video_url, rating, slug, images, attributes } = req.body;
-  const ProductObj = new Product(req._siteId);
-  let [productId, x] = await ProductObj.saveProduct(title, description, category, video_url, rating, slug);
-  await ProductObj.saveProductVariants(productId, attributes);
-  await ProductObj.saveProductImages(productId, images);
-  req._response = productId;
-  next();
+  try {
+    let { title, description, category, video_url, rating, slug, images, attributes } = req.body;
+    const ProductObj = new Product(req._siteId);
+    let [productId, x] = await ProductObj.saveProduct(title, description, category, video_url, rating, slug);
+    await ProductObj.saveProductVariants(productId, attributes);
+    await ProductObj.saveProductImages(productId, images);
+    req._response = productId;
+    next();
+  } catch(err) {
+    console.error(err);
+    return next(new ApiError(500, 'E0010001', {}, 'There was some problem'));
+  }
 }
 
 /**

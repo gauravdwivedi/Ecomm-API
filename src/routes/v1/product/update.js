@@ -34,12 +34,17 @@ update.validateUpdateProductVariantRequest = async(req, res, next) => {
 * @param {*} next 
 */
 update.updateProduct = async(req, res, next) => {
-  let { productId, title, category, video_url, rating, slug } = req.body;
-  let params = { title, category, video_url, rating, slug };
-  const ProductObj = new Product(req._siteId);
-  const productUpdate = await ProductObj.updateProduct(productId, params);
-  req._response = productUpdate;
-  next();
+  try {
+    let { productId, title, category, video_url, rating, slug } = req.body;
+    let params = { title, category, video_url, rating, slug };
+    const ProductObj = new Product(req._siteId);
+    const productUpdate = await ProductObj.updateProduct(productId, params);
+    req._response = productUpdate;
+    next();
+  } catch(err) {
+    console.error(err);
+    return next(new ApiError(500, 'E0010001', {}, 'There was some problem'));
+  }
 }
 
 /**
@@ -49,12 +54,17 @@ update.updateProduct = async(req, res, next) => {
 * @param {*} next 
 */
 update.updateProductVariant = async(req, res, next) => {
-  let { variantId, sku, size, color, qty_in_stock, price, discounted_price } = req.body;
-  let params = { sku, size, color, qty_in_stock, price, discounted_price };
-  const ProductObj = new Product(req._siteId);
-  const productUpdate = await ProductObj.updateProductVariant(variantId, params);
-  req._response = productUpdate;
-  next();
+  try {
+    let { variantId, sku, size, color, qty_in_stock, price, discounted_price } = req.body;
+    let params = { sku, size, color, qty_in_stock, price, discounted_price };
+    const ProductObj = new Product(req._siteId);
+    const productUpdate = await ProductObj.updateProductVariant(variantId, params);
+    req._response = productUpdate;
+    next();
+  } catch(err) {
+    console.error(err);
+    return next(new ApiError(500, 'E0010001', {}, 'There was some problem'));
+  }
 }
 
 /**
