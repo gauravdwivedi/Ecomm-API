@@ -23,6 +23,7 @@ addCategory.validateRequest = async(req, res, next) => {
 */
 addCategory.add = async(req, res, next) => {
   const CategoryObj = new Category(req._siteId);
+  
   CategoryObj.addCategory(req.body, (err, response) => {
     req._response = response;
     next();

@@ -17,10 +17,22 @@ class Category extends AbstractSQL{
   * Add Category
   */
    addCategory(params, callback){
+     console.log('params',params)
     this.connection.query(QUERY_BUILDER.SAVE(params), super.getQueryType('INSERT')).then(result => {
       callback(null, result)
     }).catch(error => callback(error, null));
   }
+
+
+
+uploadIcon(params){
+  console.log('SQL ICON',params)
+  return new Promise((resolve, reject) => {
+  this.connection.query(QUERY_BUILDER.UPLOAD_ICON(params), super.getQueryType('UPDATE')).then(result => {
+    return resolve(result);
+  }).catch(error => reject( error ));
+})
+}
 
 
   /**
@@ -73,7 +85,16 @@ const QUERY_BUILDER = {
     VALUES(?,?,?,1)
     ON DUPLICATE KEY
     UPDATE ${CATEGORY_FIELDS.TITLE}=?`;
-    return SqlString.format(query, [title, icon, slug, title])
+     let res= SqlString.format(query, [title, icon, slug, title])
+     console.log(res)
+     return res;
+  },
+  UPLOAD_ICON: (params) => {
+    console.log(params)
+    let { path, id } = params;
+    let data = [path, id];
+    let query = `UPDATE ${CATEGORY_TABLE_NAME} SET ${CATEGORY_FIELDS.ICON} = ? WHERE ${CATEGORY_FIELDS.ID} = ?`;
+    return SqlString.format(query, data);
   },
 
   FETCH_LIST: () => {
