@@ -1,4 +1,4 @@
-const { Product } = require("../../../core/sql/controller/child");
+const { Product,Category } = require("../../../core/sql/controller/child");
 const { base } = require("./../../../wrapper");
 const async = require("async");
 const detail = {};
@@ -24,12 +24,16 @@ detail.validateQuery = (req, res, next) => {
 detail.fetchSQL = async (req, res, next) => {
   let { slug } = req.query;
   const ProductObj = new Product(req._siteId);
-
-  ProductObj.detail(slug, (error, response)=>{
-    console.log('AMAMAMAMAMAM', response);
+  const CatObj = new Category(req._siteId);
+  ProductObj.detail(slug,async (error, response)=>{
+    // console.log('AMAMAMAMAMAM', response);
     if(response && response[0] && response[0].id){
-      res.status(200).send(base.success({result: response[0]}));
-        next();
+      let product = response[0];
+      const category = await CatObj.fetchDetail(product.category);
+      const attributes =  await ProductObj.getProductVariants(product.id,);
+      const images = await ProductObj.getProductImages(product.id);
+      res.status(200).send(base.success({result: { ...product, attributes, images, category }}));
+      next();
     }
     else{
       res.status(200).send(base.success({result: {}}));
