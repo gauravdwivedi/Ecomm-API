@@ -6,15 +6,15 @@ let express = require("express");
 let cookieParser = require('cookie-parser');
 const cors = require("cors");
 
-const multer = require('multer');
+// const multer = require('multer');
 const fileUpload = require('express-fileupload');
 
-const multerMid = multer({
-  storage: multer.memoryStorage(),
-  limits: {
-    fileSize: 10 * 1024 * 1024,
-  },
-})
+// const multerMid = multer({
+//   storage: multer.memoryStorage(),
+//   limits: {
+//     fileSize: 10 * 1024 * 1024,
+//   },
+// })
 
 let app = express();
 app.use(cookieParser());
@@ -32,7 +32,7 @@ const sessionConfig = {
 app.use(session(sessionConfig));
 
 app.disable('x-powered-by')
-app.use(multerMid.single('datafile'))
+// app.use(multerMid.array('datafiles'))
 
 app.use(cors());
 app.options("*", cors());

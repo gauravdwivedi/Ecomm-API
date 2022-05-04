@@ -3,7 +3,7 @@ const { v4: uuidv4 } = require('uuid');
 const fs = require("fs");
 let common = {}
 
-common.uploadReady = (fileName) => {
+common.uploadReady = async (fileName) => {
   return new Promise((resolve, reject) => {
     var result = {};
     let extName = path.extname(fileName);
@@ -14,6 +14,7 @@ common.uploadReady = (fileName) => {
     if (!fs.existsSync(uploadDir)){
         fs.mkdirSync(uploadDir, { recursive: true });
     }
+
     console.log('UPLOAD READY RESULT=>',result)
     return resolve(result);
   })
