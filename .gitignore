@@ -7,3 +7,4 @@ tmp/
 .DS_Store
 newrelic_agent.log
 dump.rdb
+/public/uploads/

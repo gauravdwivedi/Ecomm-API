@@ -7,6 +7,7 @@ const files = require("./files");
 router.post(
   "/files",
   auths.setCredentials,
+  auths.verify,
   files.validateRequest,
   files.uploadFiles,
   files.sendResponse,

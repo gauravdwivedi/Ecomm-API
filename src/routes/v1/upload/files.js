@@ -18,18 +18,28 @@ files.validateRequest = async (req, res, next) => {
  */
 
 files.uploadFiles = async (req, res, next) => {
-  console.log("REQ FILES", req.files.datafiles);
   let myresult = [];
-  for (let i = 0; i < req.files.datafiles.length; i++) {
-    const datafile = req.files.datafiles[i];
+  if(req.files.datafiles.length) {
+    for (let i = 0; i < req.files.datafiles.length; i++) {
+      const datafile = req.files.datafiles[i];
+      const tempPath = datafile.name;
+      const result = await common.uploadReady(tempPath);
+      let newPath = `${process.cwd()}/public/${result.newFilePath}/${result.newFileName}`;
+      let newURL = `/${result.newFilePath}/${result.newFileName}`;
+      datafile.mv(newPath, function(err) {
+        err && console.error('file upload error', err);
+      });
+      myresult.push(newURL);
+    }
+  } else {
+    const datafile = req.files.datafiles;
     const tempPath = datafile.name;
     const result = await common.uploadReady(tempPath);
     let newPath = `${process.cwd()}/public/${result.newFilePath}/${result.newFileName}`;
-    let newURL = `${req.protocol}://${req.get('host')}/${result.newFilePath}/${result.newFileName}`;
+    let newURL = `/${result.newFilePath}/${result.newFileName}`;
     datafile.mv(newPath, function(err) {
       err && console.error('file upload error', err);
     });
-    console.log(newURL);
     myresult.push(newURL);
   }
   req._response = myresult;
