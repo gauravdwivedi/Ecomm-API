@@ -56,6 +56,7 @@ resetPasswordVerify.savePassword = async(req, res, next) => {
 }
 
 resetPasswordVerify.sendResponse = async(req, res, next) => {
+  res.json({message:'success'})
   res.status(200).send();
   next();
 }
