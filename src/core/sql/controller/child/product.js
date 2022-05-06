@@ -216,7 +216,7 @@ const QUERY_BUILDER = {
   },
 
   GET_PRODUCT_IMAGES: (product_id) => {
-    const query = ` SELECT ${PRODUCT_IMAGES_FIELDS.URL}
+    const query = ` SELECT ${PRODUCT_IMAGES_FIELDS.URL},${PRODUCT_IMAGES_FIELDS.ID}
       FROM ${PRODUCT_IMAGES_TABLE_NAME}
       WHERE ${PRODUCT_IMAGES_FIELDS.PRODUCT_ID} = ${product_id}`;
     return SqlString.format(query, [])

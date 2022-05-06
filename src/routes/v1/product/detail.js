@@ -1,6 +1,8 @@
 const { Product,Category } = require("../../../core/sql/controller/child");
 const { base } = require("./../../../wrapper");
 const async = require("async");
+const ApiError = require("../ApiError");
+
 const detail = {};
 
 /**
@@ -10,6 +12,7 @@ const detail = {};
 * @param {*} next
 */
 detail.validateQuery = (req, res, next) => {
+  console.log('REQ Detail',res.pramas)
   let { slug } = req.query;
   if(!slug) return next(new ApiError(400, 'E0010002'));
   next();
