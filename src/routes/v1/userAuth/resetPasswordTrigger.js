@@ -66,6 +66,8 @@ resetPasswordTrigger.sendEmail = async(req, res, next) => {
   try{
     // await emailService.resetPassword(req.body.email, req._token);
     await email.resetPassword(req.body.email,req._token)
+    next();
+
   }catch(e){
     return next(new ApiError(400, 'E0010001', {
       message: 'error in sending email',
@@ -82,7 +84,7 @@ resetPasswordTrigger.sendEmail = async(req, res, next) => {
 * @param {*} next 
 */
 resetPasswordTrigger.sendResponse = async(req, res, next) => {
-  
+    res.json({message:'Email has been sent!'})
   res.status(200).send();
   next();
 }
