@@ -19,7 +19,7 @@ const addUser = {};
 * @param {*} next 
 */
 addUser.validateRequest = async(req, res, next) => {
-  const {password, firstName, lastName, avatar, phone,email,gender} = req.body;
+  const {password, firstName, lastName, avatar, phone, email} = req.body;
   
   if(typeof password !== 'string' || password.length > 100){
     return next(new ApiError(400, 'E0010004'));
@@ -42,10 +42,6 @@ addUser.validateRequest = async(req, res, next) => {
     return next(new ApiError(400, 'E0010004'));
   }
 
-  if(!gender){
-    return next(new ApiError(400, 'E0010004'));
-  }
-
 
   if(Object.keys(req.body).includes('avatar') && typeof avatar !== 'string'){
     return next(new ApiError(400, 'E0010004'));
@@ -63,9 +59,9 @@ addUser.ifSignUp = async(req, res, next) => {
     [USERS_SQL_FIELDS.PASSWORD]: req.body.password,
     [USERS_SQL_FIELDS.FIRST_NAME]: req.body.firstName,
     [USERS_SQL_FIELDS.LAST_NAME]: req.body.lastName,
-    [USERS_SQL_FIELDS.GENDER]:req.body.gender,
     [USERS_SQL_FIELDS.PHONE]: req.body.phone,
     [USERS_SQL_FIELDS.AVATAR]: req.body.avatar,
+    [USERS_SQL_FIELDS.STATUS]: 1,
     [USERS_SQL_FIELDS.CREATED_AT]: req.body.createdAt,
     [USERS_SQL_FIELDS.UPDATED_AT]: req.body.updatedAt,
   });
@@ -83,6 +79,7 @@ addUser.ifSignUp = async(req, res, next) => {
     [iUserBasicInfoRedis.HASH_FIELDS().GENDER]:req.body.gender,
     [iUserBasicInfoRedis.HASH_FIELDS().ROLE]: 2,
     [iUserBasicInfoRedis.HASH_FIELDS().PHONE]: req.body.phone,
+    [iUserBasicInfoRedis.HASH_FIELDS().STATUS]: 1,
     [iUserBasicInfoRedis.HASH_FIELDS().CREATED_AT]: req.body.createdAt,
     [iUserBasicInfoRedis.HASH_FIELDS().UPDATED_AT]: req.body.updatedAt
   };
