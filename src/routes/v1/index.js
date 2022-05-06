@@ -23,7 +23,7 @@ router.use('/category', category);
 router.use('/common', common);
 router.use('/sitemap', sitemap);
 router.use('/liveSessions', require("./liveSessions"));
-router.use('/productMenu', require("./productMenus"));
+// router.use('/productMenu', require("./productMenus"));
 router.use('/config', require("./config"));
 router.use('/upload', require("./upload"));
 

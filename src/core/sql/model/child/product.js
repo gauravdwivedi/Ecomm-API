@@ -8,7 +8,6 @@ const FIELDS = {
   CATEGORY: "category",
   TITLE: "title",
   DESCRIPTION: "description",
-  VIDEO_URL: "video_url",
   RATING: "rating",
   SLUG: "slug",
   STATUS: 'status'

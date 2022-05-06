@@ -25,21 +25,20 @@ detail.fetchSQL = async (req, res, next) => {
   let { slug } = req.query;
   const ProductObj = new Product(req._siteId);
   const CatObj = new Category(req._siteId);
-  ProductObj.detail(slug,async (error, response)=>{
-    // console.log('AMAMAMAMAMAM', response);
-    if(response && response[0] && response[0].id){
-      let product = response[0];
-      const category = await CatObj.fetchDetail(product.category);
-      const attributes =  await ProductObj.getProductVariants(product.id,);
-      const images = await ProductObj.getProductImages(product.id);
-      res.status(200).send(base.success({result: { ...product, attributes, images, category }}));
-      next();
-    }
-    else{
-      res.status(200).send(base.success({result: {}}));
-      next();
-    }
-  })
+  const product = await ProductObj.productDetailBySlug(slug);
+  console.log(product);
+  if(product){
+    const category = await CatObj.fetchDetail(product.category);
+    const attributes =  await ProductObj.getProductVariants(product.id);
+    const images = await ProductObj.getProductImages(product.id);
+    const videos = await ProductObj.getProductVideos(product.id);
+    res.status(200).send(base.success({result: { ...product, attributes, images, category, videos }}));
+    next();
+  }
+  else{
+    res.status(200).send(base.success({result: {}}));
+    next();
+  }
 }
 
 
