@@ -1,5 +1,5 @@
 const ApiError = require("../ApiError");
-const { Product } = require("../../../core/sql/controller/child");
+const { Product, ProductImages, ProductVariants, ProductVideos } = require("../../../core/sql/controller/child");
 
 const update = {};
 
@@ -57,7 +57,7 @@ update.updateProductVariant = async(req, res, next) => {
   try {
     let { variantId, sku, size, color, qty_in_stock, price, discounted_price } = req.body;
     let params = { sku, size, color, qty_in_stock, price, discounted_price };
-    const ProductObj = new Product(req._siteId);
+    const ProductObj = new ProductVariants(req._siteId);
     const productUpdate = await ProductObj.updateProductVariant(variantId, params);
     req._response = productUpdate;
     next();

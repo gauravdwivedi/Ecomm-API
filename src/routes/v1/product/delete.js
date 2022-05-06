@@ -1,4 +1,4 @@
-const { Review, Product } = require("../../../core/sql/controller/child");
+const { Review, Product, ProductImages, ProductVariants, ProductVideos } = require("../../../core/sql/controller/child");
 const { base } = require("./../../../wrapper")
 const deleteAction = {};
 
@@ -23,10 +23,13 @@ deleteAction.validateBody = (req, res, next) => {
 deleteAction.deleteProduct = async (req, res, next) => {
   let { id } = req.body;
   const ProdObj = new Product(req._siteId);
+  const ProdVariantObj = new ProductVariants(req._siteId);
+  const ProdImageObj = new ProductImages(req._siteId);
+  const ProdVideoObj = new ProductVideos(req._siteId);
   await ProdObj.deleteProduct(id);
-  await ProdObj.deleteProductVariantsByProductId(id);
-  await ProdObj.deleteProductImagesByProductId(id);
-  await ProdObj.deleteProductVideosByProductId(id);
+  await ProdVariantObj.deleteProductVariantsByProductId(id);
+  await ProdImageObj.deleteProductImagesByProductId(id);
+  await ProdVideoObj.deleteProductVideosByProductId(id);
   res.status(200).send(base.success());
   next();
 }
@@ -39,7 +42,7 @@ deleteAction.deleteProduct = async (req, res, next) => {
 */
 deleteAction.deleteProductVariant = async (req, res, next) => {
   let { id } = req.body;
-  const ProdObj = new Product(req._siteId);
+  const ProdObj = new ProductVariants(req._siteId);
   await ProdObj.deleteProductVariant(id);
   res.status(200).send(base.success());
   next();
@@ -53,8 +56,22 @@ deleteAction.deleteProductVariant = async (req, res, next) => {
 */
 deleteAction.deleteProductImage = async (req, res, next) => {
   let { id } = req.body;
-  const ProdObj = new Product(req._siteId);
+  const ProdObj = new ProductImages(req._siteId);
   await ProdObj.deleteProductImage(id);
+  res.status(200).send(base.success());
+  next();
+}
+
+/**
+* delete product video
+* @param {*} req
+* @param {*} res
+* @param {*} next
+*/
+deleteAction.deleteProductVideo = async (req, res, next) => {
+  let { id } = req.body;
+  const ProdObj = new ProductVideos(req._siteId);
+  await ProdObj.deleteProductVideo(id);
   res.status(200).send(base.success());
   next();
 }

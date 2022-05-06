@@ -22,6 +22,39 @@ router.post(
 );
 
 router.post(
+  `/addProductImages`,
+  auths.setCredentials,
+  auths.verify,
+  auths.verifyAdmin,
+  add.validateAddImages,
+  add.addProductImages,
+  add.sendResponse,
+  error
+);
+
+router.post(
+  `/addProductVariants`,
+  auths.setCredentials,
+  auths.verify,
+  auths.verifyAdmin,
+  add.validateAddVariants,
+  add.addProductVariants,
+  add.sendResponse,
+  error
+);
+
+router.post(
+  `/addProductVideo`,
+  auths.setCredentials,
+  auths.verify,
+  auths.verifyAdmin,
+  add.validateAddVideo,
+  add.addProductVideo,
+  add.sendResponse,
+  error
+);
+
+router.post(
   `/updateProduct`,
   auths.setCredentials,
   auths.verify,
@@ -70,6 +103,16 @@ router.delete(
   auths.verifyAdmin,
   deleteAction.validateBody,
   deleteAction.deleteProductImage,
+  error
+);
+
+router.delete(
+  `/deleteProductVideo`,
+  auths.setCredentials,
+  auths.verify,
+  auths.verifyAdmin,
+  deleteAction.validateBody,
+  deleteAction.deleteProductVideo,
   error
 );
 
