@@ -44,6 +44,16 @@ router.post(
 );
 
 router.delete(
+  `/deleteProduct`,
+  auths.setCredentials,
+  auths.verify,
+  auths.verifyAdmin,
+  deleteAction.validateBody,
+  deleteAction.deleteProduct,
+  error
+);
+
+router.delete(
   `/deleteVariant`,
   auths.setCredentials,
   auths.verify,

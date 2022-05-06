@@ -126,9 +126,25 @@ class Product extends AbstractSQL{
     })
   }
 
+  deleteProduct = (product_id) => {
+    return new Promise((resolve, reject) => {
+      this.connection.query(QUERY_BUILDER.DELETE_PRODUCT(product_id), super.getQueryType('DELETE')).then(result => {
+        resolve(result);
+      }).catch(error => reject(error));
+    })
+  }
+
   deleteProductVariant = (variant_id) => {
     return new Promise((resolve, reject) => {
       this.connection.query(QUERY_BUILDER.DELETE_PRODUCT_VARIANT(variant_id), super.getQueryType('DELETE')).then(result => {
+        resolve(result);
+      }).catch(error => reject(error));
+    })
+  }
+
+  deleteProductVariantsByProductId = (product_id) => {
+    return new Promise((resolve, reject) => {
+      this.connection.query(QUERY_BUILDER.DELETE_PRODUCT_VARIANTS_BY_PRODUCT_ID(product_id), super.getQueryType('DELETE')).then(result => {
         resolve(result);
       }).catch(error => reject(error));
     })
@@ -142,6 +158,14 @@ class Product extends AbstractSQL{
     })
   }
 
+  deleteProductImagesByProductId = (product_id) => {
+    return new Promise((resolve, reject) => {
+      this.connection.query(QUERY_BUILDER.DELETE_PRODUCT_IMAGES_BY_PRODUCT_ID(product_id), super.getQueryType('DELETE')).then(result => {
+        resolve(result);
+      }).catch(error => reject(error));
+    })
+  }
+
   deleteProductVideo = (video_id) => {
     return new Promise((resolve, reject) => {
       this.connection.query(QUERY_BUILDER.DELETE_PRODUCT_VIDEO(video_id), super.getQueryType('DELETE')).then(result => {
@@ -150,6 +174,13 @@ class Product extends AbstractSQL{
     })
   }
 
+  deleteProductVideosByProductId = (product_id) => {
+    return new Promise((resolve, reject) => {
+      this.connection.query(QUERY_BUILDER.DELETE_PRODUCT_VIDEOS_BY_PRODUCT_ID(product_id), super.getQueryType('DELETE')).then(result => {
+        resolve(result);
+      }).catch(error => reject(error));
+    })
+  }
 }
 
 
@@ -285,12 +316,22 @@ const QUERY_BUILDER = {
     return SqlString.format(query, queryParams)
   },
 
+  DELETE_PRODUCT: (id) => {
+    const query = `DELETE FROM ${PRODUCT_TABLE_NAME} WHERE ${PRODUCT_FIELDS.ID} = ${id}`;
+    return SqlString.format(query, [])
+  },
+
   DELETE_PRODUCT_VARIANT: (variantId) => {
     const query = `DELETE FROM ${VARIANTS_TABLE_NAME}
       WHERE ${VARIANTS_FIELDS.ID} = ?`;
     
     const queryParams = [variantId];
     return SqlString.format(query, queryParams)
+  },
+
+  DELETE_PRODUCT_VARIANTS_BY_PRODUCT_ID: (id) => {
+    const query = `DELETE FROM ${VARIANTS_TABLE_NAME} WHERE ${VARIANTS_FIELDS.PRODUCT_ID} = ${id}`;
+    return SqlString.format(query, [])
   },
 
   DELETE_PRODUCT_IMAGE: (imageId) => {
@@ -301,12 +342,22 @@ const QUERY_BUILDER = {
     return SqlString.format(query, queryParams)
   },
 
+  DELETE_PRODUCT_IMAGES_BY_PRODUCT_ID: (id) => {
+    const query = `DELETE FROM ${PRODUCT_IMAGES_TABLE_NAME} WHERE ${PRODUCT_IMAGES_FIELDS.PRODUCT_ID} = ${id}`;
+    return SqlString.format(query, [])
+  },
+
   DELETE_PRODUCT_VIDEO: (videoId) => {
     const query = `DELETE FROM ${PRODUCT_VIDEOS_TABLE_NAME}
       WHERE ${PRODUCT_VIDEOS_FIELDS.ID} = ?`;
     
     const queryParams = [videoId];
     return SqlString.format(query, queryParams)
+  },
+
+  DELETE_PRODUCT_VIDEOS_BY_PRODUCT_ID: (id) => {
+    const query = `DELETE FROM ${PRODUCT_VIDEOS_TABLE_NAME} WHERE ${PRODUCT_VIDEOS_FIELDS.PRODUCT_ID} = ${id}`;
+    return SqlString.format(query, [])
   },
   
   
