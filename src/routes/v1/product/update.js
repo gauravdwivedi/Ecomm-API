@@ -10,7 +10,7 @@ const update = {};
 * @param {*} next 
 */
 update.validateUpdateProductRequest = async(req, res, next) => {
-  const { productId, title, category, video_url, rating, slug } = req.body;
+  const { productId, title, category, rating, slug } = req.body;
   if(!productId) next(new ApiError(400, 'E0010002', {}, 'Invalid request! Please check your inputs'));
   next();
 }
@@ -35,8 +35,8 @@ update.validateUpdateProductVariantRequest = async(req, res, next) => {
 */
 update.updateProduct = async(req, res, next) => {
   try {
-    let { productId, title, category, video_url, rating, slug } = req.body;
-    let params = { title, category, video_url, rating, slug };
+    let { productId, title, category, rating, slug } = req.body;
+    let params = { title, category, rating, slug };
     const ProductObj = new Product(req._siteId);
     const productUpdate = await ProductObj.updateProduct(productId, params);
     req._response = productUpdate;
