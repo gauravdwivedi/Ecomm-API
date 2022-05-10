@@ -30,7 +30,7 @@ list.validateBody = (req, res, next) => {
 * @param {*} next
 */
 list.fetchSQL = async (req, res, next) => {
-  let { offset, limit, videoId } = req.query;
+  let { offset, limit, productId } = req.query;
   const userId = req._userId;
   const CommentObj = new Comment(req._siteId);
 
@@ -39,7 +39,7 @@ list.fetchSQL = async (req, res, next) => {
   async.series({
 
     COMMENTS_COUNT: cb => {
-      CommentObj.count(videoId, (error, result)=>{
+      CommentObj.count(productId, (error, result)=>{
         total = result;
         cb();
       })
@@ -47,7 +47,7 @@ list.fetchSQL = async (req, res, next) => {
 
     COMMENTS_LIST: cb => {
       if(total){
-        CommentObj.list(videoId, offset, limit, (error, result)=>{
+        CommentObj.list(productId, offset, limit, (error, result)=>{
           comments = result;
           commentIDs = [...new Set(result.map(_obj => _obj.commentId))];
           cb();

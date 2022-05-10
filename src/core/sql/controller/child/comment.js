@@ -18,8 +18,8 @@ class Comment extends AbstractSQL{
   * @param {*} siteId 
   */
 
-  list(videoId, offset, limit, callback) {
-    this.connection.query(QUERY_BUILDER.GET_LIST(videoId, offset, limit), super.getQueryType('SELECT')).then(result => {
+  list(productId, offset, limit, callback) {
+    this.connection.query(QUERY_BUILDER.GET_LIST(productId, offset, limit), super.getQueryType('SELECT')).then(result => {
       callback(null, result)
     }).catch(error => callback(error, null));
   }
@@ -38,11 +38,11 @@ class Comment extends AbstractSQL{
   
   /**
    * This function will could all comments for a video
-   * @param {*} videoId 
+   * @param {*} productId 
    * @param {*} callback 
    */
-  count(videoId, callback) {
-    this.connection.query(QUERY_BUILDER.COUNT(videoId), super.getQueryType('SELECT')).then(result => {
+  count(productId, callback) {
+    this.connection.query(QUERY_BUILDER.COUNT(productId), super.getQueryType('SELECT')).then(result => {
       callback(null, result && result[0] ? result[0].total : 0)
     }).catch(error => callback(error, null));
   }
@@ -97,13 +97,13 @@ class Comment extends AbstractSQL{
 
 const QUERY_BUILDER = {
   
-  GET_LIST: (videoId, offset, limit) => {
-    const query = ` SELECT ${COMMENT_FIELDS.ID} as commentId, ${COMMENT_FIELDS.COMMENT}, ${COMMENT_FIELDS.USER_ID}, ${COMMENT_FIELDS.VIDEO_ID}, ${COMMENT_FIELDS.CREATE_TIME}
+  GET_LIST: (productId, offset, limit) => {
+    const query = ` SELECT ${COMMENT_FIELDS.ID} as commentId, ${COMMENT_FIELDS.COMMENT}, ${COMMENT_FIELDS.USER_ID}, ${COMMENT_FIELDS.PRODUCT_ID}, ${COMMENT_FIELDS.CREATE_TIME}
       FROM ${COMMENT_TABLE_NAME}
-      WHERE ${COMMENT_FIELDS.VIDEO_ID} = ?
+      WHERE ${COMMENT_FIELDS.PRODUCT_ID} = ?
       ORDER BY ${COMMENT_FIELDS.ID} desc
       limit ?,?`;
-    return SqlString.format(query, [videoId, offset, limit])
+    return SqlString.format(query, [productId, offset, limit])
   },
 
   GET_LIKES_USER_IDS: (commentIDs, status) =>{
@@ -113,19 +113,19 @@ const QUERY_BUILDER = {
   return SqlString.format(query, [status])
   },
 
-  COUNT: (videoId) => {
+  COUNT: (productId) => {
     const query = ` SELECT count(${COMMENT_FIELDS.ID}) as total 
     FROM ${COMMENT_TABLE_NAME} as c
-    WHERE c.${COMMENT_FIELDS.VIDEO_ID} = ?`;
-    return SqlString.format(query, [videoId])
+    WHERE c.${COMMENT_FIELDS.PRODUCT_ID} = ?`;
+    return SqlString.format(query, [productId])
   },
 
   SAVE: (userId, params) => {
-    const { comment, videoId } = params;
+    const { comment, productId } = params;
     const data = {
       [COMMENT_FIELDS.COMMENT] : comment,
       [COMMENT_FIELDS.USER_ID] : userId,
-      [COMMENT_FIELDS.VIDEO_ID] : videoId
+      [COMMENT_FIELDS.PRODUCT_ID] : productId
     }
     return SqlString.format(`INSERT INTO ${COMMENT_TABLE_NAME} SET ?`, data)
   },

@@ -9,9 +9,9 @@ const add = {};
 * @param {*} next
 */
 add.validateBody = (req, res, next) => {
-  const { comment, videoId } = req.body;
+  const { comment, productId } = req.body;
   const userId = req._userId;
-  if(!userId || !comment || !videoId) return next(new ApiError(400, 'E0010002'));
+  if(!userId || !comment || !productId) return next(new ApiError(400, 'E0010002'));
   next();
 }
 

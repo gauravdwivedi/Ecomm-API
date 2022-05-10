@@ -7,7 +7,7 @@ const FIELDS = {
   ID: "id", 
   COMMENT: "comment",
   USER_ID: "user_id", 
-  VIDEO_ID: "video_id",     
+  PRODUCT_ID: "product_id",     
   CREATE_TIME: "create_time"
 }
 
