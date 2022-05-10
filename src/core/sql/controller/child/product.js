@@ -4,8 +4,6 @@ const SqlString = require('sqlstring');
 
 const {
   Product: {SCHEMA:{FIELDS: PRODUCT_FIELDS, TABLE_NAME: PRODUCT_TABLE_NAME}},
-  ProductVideos: {SCHEMA:{FIELDS: PRODUCT_VIDEOS_FIELDS, TABLE_NAME: PRODUCT_VIDEOS_TABLE_NAME}},
-  ProductImages: {SCHEMA:{FIELDS: PRODUCT_IMAGES_FIELDS, TABLE_NAME: PRODUCT_IMAGES_TABLE_NAME}},
   Variants: {SCHEMA:{FIELDS: VARIANTS_FIELDS, TABLE_NAME: VARIANTS_TABLE_NAME}},
 } = require("./../../model/child");
 
@@ -47,6 +45,14 @@ class Product extends AbstractSQL{
       this.connection.query(QUERY_BUILDER.GET_PRODUCT_DETAIL_BY_ID(id), super.getQueryType('SELECT')).then(result => {
         resolve(result[0])
       }).catch(error => resolve({}));
+    })
+  }
+
+  count() {
+    return new Promise((resolve, reject) => {
+      this.connection.query(QUERY_BUILDER.COUNT(), super.getQueryType('SELECT')).then(result => {
+        resolve(result && result[0] ? result[0].total : 0)
+      }).catch(error => resolve(0));
     })
   }
 
@@ -109,6 +115,12 @@ const QUERY_BUILDER = {
       FROM ${PRODUCT_TABLE_NAME}
       WHERE ${PRODUCT_FIELDS.ID} = ?`;
     return SqlString.format(query, [id])
+  },
+
+  COUNT: () => {
+    const query = ` SELECT count(${PRODUCT_FIELDS.ID}) as total 
+    FROM ${PRODUCT_TABLE_NAME} as c`;
+    return SqlString.format(query, [])
   },
 
   UPDATE_PRODUCT: (productId, params) => {

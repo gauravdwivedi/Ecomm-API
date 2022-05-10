@@ -1,8 +1,7 @@
-const { Product, ProductImages, ProductVariants, ProductVideos, Category } = require("../../../core/sql/controller/child");
+const { Product, ProductImages, ProductVariants, ProductVideos, Category, ProductThumb } = require("../../../core/sql/controller/child");
 const { base } = require("./../../../wrapper");
 const ApiError = require("../ApiError");
 const list = {};
-
 
 /**
 * Validating JSON Body
@@ -36,11 +35,13 @@ list.validateBody = (req, res, next) => {
 list.productList = async (req, res, next) => {
   try {
     let { sort_by, order, min_price, max_price, category_id, size, color, offset, limit } = req.query;
+    const userId = req._userId;
     const ProdObj = new Product(req._siteId);
     const ProdImageObj = new ProductImages(req._siteId);
     const ProdVariantObj = new ProductVariants(req._siteId);
     const ProdVideoObj = new ProductVideos(req._siteId);
     const CatObj = new Category(req._siteId);
+    const prodThumbObj = new ProductThumb(req._siteId);
     ProdObj.list(sort_by, order, min_price, max_price, category_id, size, offset, limit, async (error, result)=>{
       if(result && result.length){
         let myresult = [];
@@ -50,9 +51,11 @@ list.productList = async (req, res, next) => {
           const attributes =  await ProdVariantObj.getProductVariants(product.id, size, color, min_price, max_price);
           const images = await ProdImageObj.getProductImages(product.id);
           const videos = await ProdVideoObj.getProductVideos(product.id);
-          myresult.push({ ...product, attributes, images, category, videos });
+          const likes = await prodThumbObj.count(product.id);
+          myresult.push({ ...product, attributes, images, category, videos, likes });
         };
-        res.status(200).send(base.success({result: myresult}));
+        const total = await ProdObj.count();
+        res.status(200).send(base.success({result: _wrapper(userId, req.query, myresult, total)}));
         next();
       } else if(error) {
         console.log(error);
@@ -67,6 +70,38 @@ list.productList = async (req, res, next) => {
     console.error(err);
     res.status(200).send(base.error({result: []}));
   }
+}
+
+const _wrapper = (userId, params, responses, total) => {
+  let productList = [];
+  responses.map(product => {
+    const likes = product.likes ? product.likes.get(product.id): []
+    let tuple = {
+      id: product.id,
+      category: product.category,
+      title: product.title,
+      description: product.description,
+      rating: product.rating,
+      slug: product.slug, 
+      attributes: product.attributes,
+      images: product.images,
+      videos: product.videos,
+      likes: product.likes,
+      liked: userId && likes.indexOf(userId) > -1 ? true : false,
+    }
+    productList.push(tuple);
+  })
+
+
+  const resp = {
+    meta:{
+      total: total || 0,
+      pages: total ? Math.ceil(total/params.limit) : 0,
+      currentPage: params.page
+    },
+    list: productList
+  }
+  return resp;
 }
 
 module.exports = list;

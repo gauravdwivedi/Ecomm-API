@@ -7,6 +7,7 @@ module.exports = {
   ProductVariants: require("./productVariants"),
   ProductImages: require("./productImages"),
   ProductVideos: require("./productVideos"),
+  ProductThumb: require("./productThumb"),
   LiveSessions: require('./liveSessions'),
   // ProductMenus: require('./productMenus'),
   // ProductMenuEntity: require('./productMenuEntity'),
