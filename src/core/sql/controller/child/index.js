@@ -1,6 +1,7 @@
 module.exports = {
   // Menu: require("./menu"),
   Comment: require("./comment"),
+  Cart: require("./cart"),
   Users: require("./users"),
   // Review: require("./review"),
   Product: require("./product"),
