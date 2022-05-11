@@ -140,6 +140,7 @@ router.delete(
 router.get(
   `/list`,
   auths.setCredentials,
+  auths.setProfile,
   list.validateBody,
   list.productList,
   error
@@ -148,6 +149,7 @@ router.get(
 router.get(
   `/detail`,
   auths.setCredentials,
+  auths.setProfile,
   detail.validateQuery,
   detail.fetchSQL,
   error
