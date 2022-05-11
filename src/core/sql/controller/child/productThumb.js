@@ -13,18 +13,18 @@ class Product extends AbstractSQL{
     this.connection = super.connection();
   }
 
-  like(id) {
+  like(productId, userId) {
     return new Promise((resolve, reject) => {
-      this.connection.query(QUERY_BUILDER.LIKE(id), super.getQueryType('INSERT')).then(result => {
+      this.connection.query(QUERY_BUILDER.LIKE(productId, userId), super.getQueryType('INSERT')).then(result => {
         resolve(result[0])
       }).catch(error => reject(error));
     })
   }
 
-  unlike(id) {
+  unlike(productId, userId) {
     return new Promise((resolve, reject) => {
-      this.connection.query(QUERY_BUILDER.UNLIKE(id), super.getQueryType('DELETE')).then(result => {
-        resolve(result[0])
+      this.connection.query(QUERY_BUILDER.UNLIKE(productId, userId), super.getQueryType('DELETE')).then(result => {
+        resolve(result)
       }).catch(error => reject(error));
     })
   }

@@ -13,7 +13,6 @@ addToCart.validateRequest = async(req, res, next) => {
   const { productId, variantId, quantity } = req.body;
   const userId = req._userId;
   req.body.userId = userId;
-  console.log(req.body);
   if(!( userId && productId && variantId && quantity )) next(new ApiError(400, 'E0010002', {}, 'Invalid request! Please check your inputs'));
   next();
 }
