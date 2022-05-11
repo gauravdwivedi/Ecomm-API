@@ -1,6 +1,7 @@
 module.exports = {
   Menu: require("./menu"),
   Comment: require("./comment"),
+  Cart: require("./cart"),
   LikeVideo: require("./likeVideo"),
   MenuVideo: require("./menuVideo"),
   ProductVideos: require("./productVideos"),

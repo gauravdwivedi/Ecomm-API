@@ -1,4 +1,4 @@
-const { Product, Category, ProductImages, ProductVariants, ProductVideos } = require("../../../core/sql/controller/child");
+const { Product, Category, ProductImages, ProductVariants, ProductVideos, ProductThumb } = require("../../../core/sql/controller/child");
 const { base } = require("./../../../wrapper");
 const async = require("async");
 const ApiError = require("../ApiError");
@@ -26,19 +26,22 @@ detail.validateQuery = (req, res, next) => {
 */
 detail.fetchSQL = async (req, res, next) => {
   let { slug } = req.query;
+  const userId = req._userId;
   const ProductObj = new Product(req._siteId);
   const ProdImageObj = new ProductImages(req._siteId);
   const ProdVariantObj = new ProductVariants(req._siteId);
   const ProdVideoObj = new ProductVideos(req._siteId);
   const CatObj = new Category(req._siteId);
+  const ProdThumbObj = new ProductThumb(req._siteId);
   const product = await ProductObj.productDetailBySlug(slug);
-  console.log(product);
   if(product){
     const category = await CatObj.fetchDetail(product.category);
     const attributes =  await ProdVariantObj.getProductVariants(product.id);
     const images = await ProdImageObj.getProductImages(product.id);
     const videos = await ProdVideoObj.getProductVideos(product.id);
-    res.status(200).send(base.success({result: { ...product, attributes, images, category, videos }}));
+    const likes = await ProdThumbObj.count(product.id);
+    const liked = userId && likes.indexOf(userId) > -1 ? true : false;
+    res.status(200).send(base.success({result: { ...product, attributes, images, category, videos, likes, liked }}));
     next();
   }
   else{

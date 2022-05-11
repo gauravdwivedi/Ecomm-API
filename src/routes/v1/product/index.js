@@ -4,6 +4,7 @@ const detail = require("./detail");
 const detail_ = require("./detail_");
 const list = require("./list");
 const add = require("./add");
+const likeUnlike = require('./likeUnlike');
 const reviews = require("./reviews");
 const error = require("../error");
 const auths = require("../auths");
@@ -51,6 +52,26 @@ router.post(
   add.validateAddVideo,
   add.addProductVideo,
   add.sendResponse,
+  error
+);
+
+router.post(
+  `/like`,
+  auths.setCredentials,
+  auths.verify,
+  likeUnlike.validateRequest,
+  likeUnlike.likeProduct,
+  likeUnlike.sendResponse,
+  error
+);
+
+router.post(
+  `/unlike`,
+  auths.setCredentials,
+  auths.verify,
+  likeUnlike.validateRequest,
+  likeUnlike.unlikeProduct,
+  likeUnlike.sendResponse,
   error
 );
 

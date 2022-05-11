@@ -11,11 +11,13 @@ const common = require('./common');
 const sitemap = require('./sitemap');
 const userAuth = require('./userAuth');
 const category = require('./category');
+const cart = require('./cart');
 
 router.use('/auth', userAuth);
 router.use('/menu', menu);
 router.use('/video', video);
 router.use('/comment', comment);
+router.use('/cart', cart);
 router.use('/users', users);
 router.use('/reviews', reviews);
 router.use('/product', product);
