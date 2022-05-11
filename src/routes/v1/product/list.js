@@ -51,8 +51,9 @@ list.productList = async (req, res, next) => {
           const attributes =  await ProdVariantObj.getProductVariants(product.id, size, color, min_price, max_price);
           const images = await ProdImageObj.getProductImages(product.id);
           const videos = await ProdVideoObj.getProductVideos(product.id);
-          const likes = await prodThumbObj.count(product.id);
-          myresult.push({ ...product, attributes, images, category, videos, likes });
+          const likesCount = await prodThumbObj.count(product.id);
+          const likes = await prodThumbObj.getLikesUserIds(product.id);
+          myresult.push({ ...product, attributes, images, category, videos, likesCount, likes });
         };
         const total = await ProdObj.count();
         res.status(200).send(base.success({result: _wrapper(userId, req.query, myresult, total)}));
@@ -75,7 +76,6 @@ list.productList = async (req, res, next) => {
 const _wrapper = (userId, params, responses, total) => {
   let productList = [];
   responses.map(product => {
-    const likes = product.likes ? product.likes.get(product.id): []
     let tuple = {
       id: product.id,
       category: product.category,
@@ -86,8 +86,8 @@ const _wrapper = (userId, params, responses, total) => {
       attributes: product.attributes,
       images: product.images,
       videos: product.videos,
-      likes: product.likes,
-      liked: userId && likes.indexOf(userId) > -1 ? true : false,
+      likes: product.likesCount,
+      liked: userId && product.likes.some( like => like.userId === userId ) ? true : false
     }
     productList.push(tuple);
   })

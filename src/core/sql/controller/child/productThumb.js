@@ -36,6 +36,14 @@ class Product extends AbstractSQL{
       }).catch(error => resolve(0));
     })
   }
+
+  getLikesUserIds(productId) {
+    return new Promise((resolve, reject) => {
+      this.connection.query(QUERY_BUILDER.GET_LIKES_USER_IDS(productId), super.getQueryType('SELECT')).then(result => {
+        resolve(result)
+      }).catch(error => resolve([]));
+    })
+  }
 }
 
 
@@ -59,6 +67,13 @@ class Product extends AbstractSQL{
       const query = ` SELECT count(${PRODUCT_THUMB_FIELDS.ID}) as total 
       FROM ${PRODUCT_THUMB_TABLE_NAME} as c WHERE ${PRODUCT_THUMB_FIELDS.PRODUCT_ID} = ${productId}`;
       return SqlString.format(query, [])
+    },
+
+    GET_LIKES_USER_IDS: (productId) => {
+      const query = ` SELECT ${PRODUCT_THUMB_FIELDS.USER_ID} as userId, ${PRODUCT_THUMB_FIELDS.PRODUCT_ID} as productId
+      FROM ${PRODUCT_THUMB_TABLE_NAME}
+      WHERE ${PRODUCT_THUMB_FIELDS.PRODUCT_ID} = ?`;
+    return SqlString.format(query, [productId])
     },
   }
   

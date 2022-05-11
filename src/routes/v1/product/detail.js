@@ -39,9 +39,10 @@ detail.fetchSQL = async (req, res, next) => {
     const attributes =  await ProdVariantObj.getProductVariants(product.id);
     const images = await ProdImageObj.getProductImages(product.id);
     const videos = await ProdVideoObj.getProductVideos(product.id);
-    const likes = await ProdThumbObj.count(product.id);
-    const liked = userId && likes.indexOf(userId) > -1 ? true : false;
-    res.status(200).send(base.success({result: { ...product, attributes, images, category, videos, likes, liked }}));
+    const likesCount = await ProdThumbObj.count(product.id);
+    const likes = await ProdThumbObj.getLikesUserIds(product.id);
+    const liked = userId && likes.some( like => like.userId === userId ) ? true : false
+    res.status(200).send(base.success({result: { ...product, attributes, images, category, videos, likes: likesCount, liked }}));
     next();
   }
   else{
