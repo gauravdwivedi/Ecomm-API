@@ -2,6 +2,9 @@ const AbstractSQL = require("../abstract");
 const SqlString = require("sqlstring");
 const {
   Cart: { SCHEMA: { FIELDS: CART_FIELDS, TABLE_NAME: CART_TABLE_NAME }},
+  Product: { SCHEMA: { FIELDS: PRODUCT_FIELDS, TABLE_NAME: PRODUCT_TABLE_NAME }},
+  Variants: { SCHEMA: { FIELDS: VARIANT_FIELDS, TABLE_NAME: VARIANT_TABLE_NAME }},
+  ProductImages: { SCHEMA: { FIELDS: PRODUCT_IMAGE_FIELDS, TABLE_NAME: PRODUCT_IMAGE_TABLE_NAME }},
 } = require("./../../model/child");
 
 class Cart extends AbstractSQL {
@@ -39,6 +42,20 @@ class Cart extends AbstractSQL {
     })
   }
 
+  /**
+   * List Cart Products
+   */
+   listCart(userId) {
+    return new Promise((resolve, reject) => {
+      this.connection
+        .query(QUERY_BUILDER.LIST_CART(userId), super.getQueryType("SELECT"))
+        .then((result) => {
+          resolve(result);
+        })
+        .catch((error) => reject(error));
+    })
+  }
+
 }
 
 const QUERY_BUILDER = {
@@ -56,6 +73,15 @@ const QUERY_BUILDER = {
     const query = `DELETE FROM ${CART_TABLE_NAME} WHERE ${CART_FIELDS.ID} = ?`;
     return SqlString.format(query, [id]);
   },
+
+  LIST_CART: (userId) => {
+    const query = `SELECT DISTINCT c.${CART_FIELDS.ID}, c.${CART_FIELDS.QUANTITY} as quanity, p.${PRODUCT_FIELDS.ID} as productId, p.${PRODUCT_FIELDS.TITLE} as title, p.${PRODUCT_FIELDS.SLUG} as slug, v.${VARIANT_FIELDS.COLOR}, v.${VARIANT_FIELDS.SIZE}, v.${VARIANT_FIELDS.SKU}, v.${VARIANT_FIELDS.PRICE}, v.${VARIANT_FIELDS.DISCOUNTED_PRICE}
+    FROM ${CART_TABLE_NAME} AS c
+    LEFT JOIN ${PRODUCT_TABLE_NAME} AS p ON p.${PRODUCT_FIELDS.ID} = c.${CART_FIELDS.PRODUCT_ID}
+    LEFT JOIN ${VARIANT_TABLE_NAME} AS v ON v.${VARIANT_FIELDS.ID} = c.${CART_FIELDS.VARIANT_ID}
+    WHERE c.${CART_FIELDS.USER_ID} = ?`;
+    return SqlString.format(query, [userId]);
+  }
 };
 
 module.exports = Cart;
