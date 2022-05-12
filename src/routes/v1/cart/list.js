@@ -28,8 +28,8 @@ list.listCart = async(req, res, next) => {
     for (let i = 0; i < response.length; i++) {
       const cart = response[i];
       const pImages = await new ProductImages(req._siteId).getProductImages(cart.productId);
-      const pImage = pImages && pImages.length ? pImages[0]?.url : '';
-      myResp.push({...cart, pImage});
+      const thumbnail = pImages && pImages.length ? pImages[0]?.url : '';
+      myResp.push({...cart, thumbnail});
     }
     req._response = myResp;
     next();

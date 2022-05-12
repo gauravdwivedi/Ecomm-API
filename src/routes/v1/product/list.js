@@ -1,4 +1,4 @@
-const { Product, ProductImages, ProductVariants, ProductVideos, Category, ProductThumb } = require("../../../core/sql/controller/child");
+const { Product, ProductImages, ProductVariants, ProductVideos, Category, ProductThumb, Cart } = require("../../../core/sql/controller/child");
 const { base } = require("./../../../wrapper");
 const ApiError = require("../ApiError");
 const list = {};
@@ -36,27 +36,22 @@ list.productList = async (req, res, next) => {
   try {
     let { sort_by, order, min_price, max_price, category_id, size, color, offset, limit } = req.query;
     const userId = req._userId;
-    const ProdObj = new Product(req._siteId);
-    const ProdImageObj = new ProductImages(req._siteId);
-    const ProdVariantObj = new ProductVariants(req._siteId);
-    const ProdVideoObj = new ProductVideos(req._siteId);
-    const CatObj = new Category(req._siteId);
-    const prodThumbObj = new ProductThumb(req._siteId);
-    ProdObj.list(sort_by, order, min_price, max_price, category_id, size, offset, limit, async (error, result)=>{
+    new Product(req._siteId).list(sort_by, order, min_price, max_price, category_id, size, offset, limit, async (error, result)=>{
       if(result && result.length){
         let myresult = [];
         for(let index = 0; index < result.length; index++) {
           let product = result[index];
-          const category = await CatObj.fetchDetail(product.category);
-          const attributes =  await ProdVariantObj.getProductVariants(product.id, size, color, min_price, max_price);
-          const images = await ProdImageObj.getProductImages(product.id);
-          const videos = await ProdVideoObj.getProductVideos(product.id);
-          const likesCount = await prodThumbObj.count(product.id);
-          const likes = await prodThumbObj.getLikesUserIds(product.id);
+          const category = await new Category(req._siteId).fetchDetail(product.category);
+          const attributes =  await new ProductVariants(req._siteId).getProductVariants(product.id, size, color, min_price, max_price);
+          const images = await new ProductImages(req._siteId).getProductImages(product.id);
+          const videos = await new ProductVideos(req._siteId).getProductVideos(product.id);
+          const likesCount = await new ProductThumb(req._siteId).count(product.id);
+          const likes = await new ProductThumb(req._siteId).getLikesUserIds(product.id);
           myresult.push({ ...product, attributes, images, category, videos, likesCount, likes });
         };
-        const total = await ProdObj.count();
-        res.status(200).send(base.success({result: _wrapper(userId, req.query, myresult, total)}));
+        const cartList = await new Cart(req._siteId).listCart(userId);
+        const total = await new Product(req._siteId).count();
+        res.status(200).send(base.success({result: _wrapper(userId, req.query, myresult, total, cartList)}));
         next();
       } else if(error) {
         console.log(error);
@@ -73,7 +68,7 @@ list.productList = async (req, res, next) => {
   }
 }
 
-const _wrapper = (userId, params, responses, total) => {
+const _wrapper = (userId, params, responses, total, cartList) => {
   let productList = [];
   responses.map(product => {
     let tuple = {
@@ -87,7 +82,8 @@ const _wrapper = (userId, params, responses, total) => {
       images: product.images,
       videos: product.videos,
       likes: product.likesCount,
-      liked: userId && product.likes.some( like => like.userId === userId ) ? true : false
+      liked: userId && product.likes.some( like => like.userId === userId ) ? true : false,
+      productInCart: userId && cartList.some( cart => cart.productId === product.id ) ? true : false
     }
     productList.push(tuple);
   })
