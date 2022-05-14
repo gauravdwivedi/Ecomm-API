@@ -36,21 +36,29 @@ list.productList = async (req, res, next) => {
   try {
     let { sort_by, order, min_price, max_price, category_id, size, color, offset, limit } = req.query;
     const userId = req._userId;
-    new Product(req._siteId).list(sort_by, order, min_price, max_price, category_id, size, offset, limit, async (error, result)=>{
+    const ProdObj = new Product(req._siteId);
+    const ProdImageObj = new ProductImages(req._siteId);
+    const ProdVariantObj = new ProductVariants(req._siteId);
+    const ProdVideoObj = new ProductVideos(req._siteId);
+    const CatObj = new Category(req._siteId);
+    const prodThumbObj = new ProductThumb(req._siteId);
+
+
+    ProdObj.list(sort_by, order, min_price, max_price, category_id, size, offset, limit, async (error, result)=>{
       if(result && result.length){
         let myresult = [];
         for(let index = 0; index < result.length; index++) {
           let product = result[index];
-          const category = await new Category(req._siteId).fetchDetail(product.category);
-          const attributes =  await new ProductVariants(req._siteId).getProductVariants(product.id, size, color, min_price, max_price);
-          const images = await new ProductImages(req._siteId).getProductImages(product.id);
-          const videos = await new ProductVideos(req._siteId).getProductVideos(product.id);
-          const likesCount = await new ProductThumb(req._siteId).count(product.id);
-          const likes = await new ProductThumb(req._siteId).getLikesUserIds(product.id);
+          const category = await CatObj.fetchDetail(product.category);
+          const attributes =  await ProdVariantObj.getProductVariants(product.id, size, color, min_price, max_price);
+          const images = await ProdImageObj.getProductImages(product.id);
+          const videos = await  ProdVideoObj.getProductVideos(product.id);
+          const likesCount = await prodThumbObj.count(product.id);
+          const likes = await  prodThumbObj.getLikesUserIds(product.id);
           myresult.push({ ...product, attributes, images, category, videos, likesCount, likes });
         };
         const cartList = await new Cart(req._siteId).listCart(userId);
-        const total = await new Product(req._siteId).count();
+        const total = await ProdObj.count();
         res.status(200).send(base.success({result: _wrapper(userId, req.query, myresult, total, cartList)}));
         next();
       } else if(error) {
