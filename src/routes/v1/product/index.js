@@ -86,6 +86,16 @@ router.post(
   error
   )
 
+  router.post(
+    `/delete`,
+    auths.setCredentials,
+    auths.verify,
+    save.validateRequest,
+    save.deleteProduct,
+    save.sendResponse,
+    error
+    )
+
 router.post(
   `/updateProduct`,
   auths.setCredentials,

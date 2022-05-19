@@ -34,6 +34,22 @@ save.saveProduct = async(req, res, next) => {
   }
 }
 
+save.deleteProduct = async(req, res, next) => {
+    try {
+      const { productId } = req.body;
+      const userId = req._userId;
+      const ProdSaveObj = new ProductSave(req._siteId);
+      const result = await ProdSaveObj.delete(productId, userId);
+      req._response = JSON.stringify(result);
+      
+      console.log('RESPONSE',req._response)
+      next();
+    } catch(err) {
+      console.log(err);
+      req._response = {err};
+      next();
+    }
+  }
 
 /**
 * sending response
