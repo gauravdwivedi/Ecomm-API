@@ -42,6 +42,7 @@ list.productList = async (req, res, next) => {
     const ProdVideoObj = new ProductVideos(req._siteId);
     const CatObj = new Category(req._siteId);
     const prodThumbObj = new ProductThumb(req._siteId);
+    const cartObj = new Cart(req._siteId);
 
 
     ProdObj.list(sort_by, order, min_price, max_price, category_id, size, offset, limit, async (error, result)=>{
@@ -57,7 +58,7 @@ list.productList = async (req, res, next) => {
           const likes = await  prodThumbObj.getLikesUserIds(product.id);
           myresult.push({ ...product, attributes, images, category, videos, likesCount, likes });
         };
-        const cartList = await new Cart(req._siteId).listCart(userId);
+        const cartList = await cartObj.listCart(userId);
         const total = await ProdObj.count();
         res.status(200).send(base.success({result: _wrapper(userId, req.query, myresult, total, cartList)}));
         next();

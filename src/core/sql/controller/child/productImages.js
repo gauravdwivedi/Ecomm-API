@@ -49,8 +49,6 @@ class ProductImages extends AbstractSQL{
   }
 }
 
-
-
 const QUERY_BUILDER = {
   SAVE_PRODUCT_IMAGES: (product_id, url) => {
     const data = {

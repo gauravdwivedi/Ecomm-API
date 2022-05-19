@@ -19,4 +19,5 @@ module.exports = {
   LiveSessions: require('./liveSessions'),
   Pages: require('./pages'),
   Category: require('./category'),
+  ProductSave:require('./saveProduct')
 }
