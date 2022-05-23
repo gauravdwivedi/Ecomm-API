@@ -1,4 +1,4 @@
-const { Product, ProductImages, ProductVariants, ProductVideos, Category, ProductThumb, Cart } = require("../../../core/sql/controller/child");
+const { Product, ProductImages, ProductVariants, ProductVideos, Category, ProductThumb, Cart,ProductSave } = require("../../../core/sql/controller/child");
 const { base } = require("./../../../wrapper");
 const ApiError = require("../ApiError");
 const list = {};
@@ -43,8 +43,9 @@ list.productList = async (req, res, next) => {
     const CatObj = new Category(req._siteId);
     const prodThumbObj = new ProductThumb(req._siteId);
     const cartObj = new Cart(req._siteId);
-
-
+    const favouriteList = new ProductSave(req._siteId);
+    
+    
     ProdObj.list(sort_by, order, min_price, max_price, category_id, size, offset, limit, async (error, result)=>{
       if(result && result.length){
         let myresult = [];
@@ -60,7 +61,9 @@ list.productList = async (req, res, next) => {
         };
         const cartList = await cartObj.listCart(userId);
         const total = await ProdObj.count();
-        res.status(200).send(base.success({result: _wrapper(userId, req.query, myresult, total, cartList)}));
+        const saved = await favouriteList.list(userId)
+        
+        res.status(200).send(base.success({result: _wrapper(userId, req.query, myresult, total, cartList,saved)}));
         next();
       } else if(error) {
         console.log(error);
@@ -77,7 +80,7 @@ list.productList = async (req, res, next) => {
   }
 }
 
-const _wrapper = (userId, params, responses, total, cartList) => {
+const _wrapper = (userId, params, responses, total, cartList,saved) => {
   let productList = [];
   responses.map(product => {
     let tuple = {
@@ -92,7 +95,8 @@ const _wrapper = (userId, params, responses, total, cartList) => {
       videos: product.videos,
       likes: product.likesCount,
       liked: userId && product.likes.some( like => like.userId === userId ) ? true : false,
-      productInCart: userId && cartList.some( cart => cart.productId === product.id ) ? true : false
+      productInCart: userId && cartList.some( cart => cart.productId === product.id ) ? true : false,
+      favourite:userId && saved.some(fav =>fav.userId === userId) ? true:false
     }
     productList.push(tuple);
   })

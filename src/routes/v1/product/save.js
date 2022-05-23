@@ -51,6 +51,25 @@ save.deleteProduct = async(req, res, next) => {
     }
   }
 
+  save.list = async(req,res,next) => {
+    try{
+
+        const userId = req._userId;
+        const ProdSaveObj = new ProductSave(req._siteId);
+        const result = await ProdSaveObj.list(userId);
+        console.log('RESULT FAVOURITE',result)
+        req._response =JSON.stringify(result);
+
+        res.status(200).send(req._response);
+        next();
+        
+    }catch(err){
+      console.log(err);
+      req._response = {err};
+      next();
+    }
+  }
+
 /**
 * sending response
 * @param {*} req 

@@ -30,9 +30,30 @@ class ProductSave extends AbstractSQL{
     })
   }
 
+  getFavouritesUserIds(productId){
+    return new Promise((resolve, reject) => {
+        this.connection.query(QUERY_BUILDER.GET_SAVED_USER_IDS(productId), super.getQueryType('SELECT')).then(result => {
+          resolve(result)
+        }).catch(error => resolve([]));
+      })
+  }
+
+  list(userId){
+    return new Promise((resolve,reject)=>{
+      this.connection.query(QUERY_BUILDER.LIST(userId),super.getQueryType('SELECT')).then(result => {
+        console.log('Favourite list',result)
+        resolve(result)
+      }).catch(error => resolve([]))
+    })
+  }
+
   }
 
   const QUERY_BUILDER ={
+
+    LIST:(userId)=>{
+        return SqlString.format(`SELECT * FROM ${PRODUCT_SAVE_TABLE_NAME} WHERE ${PRODUCT_SAVE_FIELDS.USER_ID} = ${userId}`)
+    },
 
     SAVE:(productId, userId) =>{
         const data ={
@@ -48,6 +69,14 @@ class ProductSave extends AbstractSQL{
       const query = `DELETE FROM ${PRODUCT_SAVE_TABLE_NAME} 
         WHERE ${PRODUCT_SAVE_FIELDS.PRODUCT_ID} = ${productId} AND ${PRODUCT_SAVE_FIELDS.USER_ID} = ${userId}`;
       return SqlString.format(query, [])
+    },
+
+    GET_SAVED_USER_IDS: (productId) =>{
+        const query = `SELECT ${PRODUCT_SAVE_FIELDS.USER_ID} as userId, ${PRODUCT_SAVE_FIELDS.PRODUCT_ID} as productId 
+        FROM ${PRODUCT_SAVE_TABLE_NAME}
+        WHERE ${PRODUCT_SAVE_FIELDS.PRODUCT_ID} = ?`;
+
+        return SqlString.format(query,[productId])
     }
   }
   

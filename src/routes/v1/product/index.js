@@ -167,6 +167,13 @@ router.get(
   error
 );
 
+router.get(`/favourites`,
+        auths.setCredentials,
+        auths.setProfile,
+        save.list,
+        error
+)
+
 router.get(
   `/detail`,
   auths.setCredentials,
