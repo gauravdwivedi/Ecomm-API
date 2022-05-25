@@ -9,6 +9,7 @@ const deleteUser = require("./delete");
 const updateUserRole = require("./updateUserRole");
 const updateUserDetails = require("./updateUserDetails")
 const addUser = require("../users/add")
+const address = require("./add-address")
 
 router.get(
   '/list',
@@ -65,6 +66,15 @@ router.delete(
   deleteUser.validateRequest,
   deleteUser.deleteUser,
   deleteUser.sendResponse,
+  error
+)
+
+router.post("/add-address",
+  auths.setCredentials,
+  auths.verify,
+  address.validateRequest,
+  address.addAddress,
+  address.sendResponse,
   error
 )
 
