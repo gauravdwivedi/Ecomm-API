@@ -63,6 +63,21 @@ address.addAddress = async(req,res,next) => {
 
 }
 
+address.list = async(req,res,next) =>{
+    try{    
+
+          const listAddObj = new Address(req._siteId);
+          const response = await listAddObj.list(req._userId)  
+
+          req._response =response
+          next();
+
+    }catch(err){
+        console.error(err);
+    return next(new ApiError(500, 'E0010001', {}, 'There was some problem'));
+    }
+}
+
 address.sendResponse = async(req, res, next) => {
     res.status(200).send({result: req._response});
     next();

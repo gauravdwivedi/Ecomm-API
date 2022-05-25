@@ -78,4 +78,13 @@ router.post("/add-address",
   error
 )
 
+
+router.get("/list-address",
+  auths.setCredentials,
+  auths.verify,
+  address.list,
+  address.sendResponse,
+  error
+)
+
 module.exports = router;

@@ -4,7 +4,9 @@ const SqlString = require("sqlstring")
 const {
     Address : { SCHEMA :{ FIELDS : ADDRESS_FIELDS, TABLE_NAME:ADDRESS_TABLE_NAME}}
 
-} = require("../../model/child")
+} = require("../../model/child");
+const { resolveLevel } = require('bunyan');
+const { resolve } = require('path');
 
 class Address extends AbstractSQL {
     constructor(siteId){
@@ -25,7 +27,15 @@ class Address extends AbstractSQL {
             }).catch(error => resolve(error));
         })
     }
-}
+
+    list(userId){
+        return new Promise((resolve,reject)=>{
+            this.connection.query(QUERY_BUILDER.LIST(userId),super.getQueryType('SELECT')).then(result=>{
+                resolve(result);
+            }).catch(error => resolve(error));
+        })
+    }
+    }
 
 
 const QUERY_BUILDER = {
@@ -44,7 +54,15 @@ const QUERY_BUILDER = {
         }
 
         return SqlString.format(`INSERT INTO ${ADDRESS_TABLE_NAME} SET ?`,data)
+    },
+
+    LIST:(userId)=>{
+      const query = `SELECT * FROM ${ADDRESS_TABLE_NAME} WHERE ${ADDRESS_FIELDS.USER_ID} =?`;
+      return SqlString.format(query,[userId])
+
     }
+
+
 }
 
 
