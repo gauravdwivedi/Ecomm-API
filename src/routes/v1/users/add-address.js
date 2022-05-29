@@ -4,8 +4,6 @@ const ApiError = require("../ApiError");
 
 const address ={};
 
-
-
 address.validateRequest = async(req,res,next) =>{
     console.log(req.body)
     const { firstName,lastName, address, city,state,zipcode} = req.body;
@@ -75,6 +73,26 @@ address.list = async(req,res,next) =>{
     }catch(err){
         console.error(err);
     return next(new ApiError(500, 'E0010001', {}, 'There was some problem'));
+    }
+}
+
+address.edit = async (req,res,next) =>{
+    try{
+        let { id,firstName,lastName, address, city, state, zipcode,primary} = req.body;
+        
+        let params ={
+           id, firstName,lastName,address,city,state,zipcode,primary,
+            userId:req._userId
+        }
+
+        const listEditAddObj = new Address(req._siteId);
+        const response = await listEditAddObj.editAddress(params)
+        req._response = response;
+        next();
+        
+
+    }catch(err){
+        return next(new ApiError(500,'E0010001',{},'There was some problem!'));
     }
 }
 

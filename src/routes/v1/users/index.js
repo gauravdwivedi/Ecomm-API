@@ -87,4 +87,12 @@ router.get("/list-address",
   error
 )
 
+router.post("/edit-address",
+auths.setCredentials,
+auths.verify,
+address.edit,
+address.sendResponse,
+error
+)
+
 module.exports = router;

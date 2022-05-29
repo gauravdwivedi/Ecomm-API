@@ -24,8 +24,6 @@ list.validateBody = (req, res, next) => {
   next();
 }
 
-
-
 /**
 * Saving in MySQL
 * @param {*} req
