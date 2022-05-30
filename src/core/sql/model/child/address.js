@@ -5,7 +5,7 @@ const FIELDS ={
 
     ID:"id",
     USER_ID:"user_id",
-    PRIMARY:"primary",
+    ADD_PRIMARY:"add_primary",
     ADDRESS_1:"address_1",
     ADDRESS_2:"address_2",
     CITY:"city",

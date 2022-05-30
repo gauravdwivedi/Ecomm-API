@@ -44,7 +44,7 @@ list(userId){
 
 
 const QUERY_BUILDER = {
-    SAVE:(firstName,lastName, address, city, state, zipcode,userId,primary,address_2) =>{
+    SAVE:(firstName,lastName, address, city, state, zipcode,userId,add_primary,address_2) =>{
 
         const data = {
             [ADDRESS_FIELDS.FIRST_NAME] :firstName,
@@ -55,7 +55,7 @@ const QUERY_BUILDER = {
             [ADDRESS_FIELDS.STATE]:state,
             [ADDRESS_FIELDS.POSTCODE]:zipcode,
             [ADDRESS_FIELDS.USER_ID]:userId,
-            [ADDRESS_FIELDS.PRIMARY]:primary||0
+            [ADDRESS_FIELDS.ADD_PRIMARY]:add_primary||0
         }
         return SqlString.format(`INSERT INTO ${ADDRESS_TABLE_NAME} SET ?`,data)
     },
@@ -67,60 +67,20 @@ const QUERY_BUILDER = {
     },
 
     EDIT:(params) =>{
+        console.log('Params',params);
+        const {id,firstName,lastName,address,city, state, zipcode,userId} = params;
+        const query = `UPDATE ${ADDRESS_TABLE_NAME}
+            SET ${ADDRESS_FIELDS.FIRST_NAME} = ? ,
+            ${ADDRESS_FIELDS.LAST_NAME} = ? ,
+            ${ADDRESS_FIELDS.ADDRESS_1} = ?,
+            ${ADDRESS_FIELDS.CITY} = ? ,
+            ${ADDRESS_FIELDS.STATE} = ? ,
+            ${ADDRESS_FIELDS.POSTCODE} = ? 
+            WHERE ${ADDRESS_FIELDS.ID} = ? AND ${ADDRESS_FIELDS.USER_ID} = ?`;
 
-        console.log('PRAMS',params)
-            let {firstName,lastName, address, city, state, zipcode,userId,primary,address_2} = params;
-            let values =[];
-            let query = `UPDATE ${ADDRESS_TABLE_NAME} `;
-            if(firstName){
-                query += ` SET ${ADDRESS_FIELDS.FIRST_NAME} = ?`;
-                values.push(firstName);
-            }
-
-            if(lastName){
-                query += `, ${ADDRESS_FIELDS.LAST_NAME} = ?`;
-                values.push(lastName);
-            }
-
-
-            if(address){
-                query += `, ${ADDRESS_FIELDS.ADDRESS_1} = ?`;
-                values.push(address);
-            }
-
-
-            if(city){
-                query += `, ${ADDRESS_FIELDS.CITY} = ?`;
-                values.push(city);
-            }
-
-
-            if(state){
-                query += `,${ADDRESS_FIELDS.STATE} = ?`;
-                values.push(state);
-            }
-
-
-            if(zipcode){
-                query += `, ${ADDRESS_FIELDS.POSTCODE} = ?`;
-                values.push(zipcode);
-            }
-
-
-            if(primary){
-                query += `, ${ADDRESS_FIELDS.PRIMARY} = ?`;
-                values.push(primary);
-            }
-
-            query += ` WHERE ${ADDRESS_FIELDS.USER_ID} = ? `;
-            values.push(userId)
-
-            // query += `AND ${ADDRESS_FIELDS.ID} = ?`;
-            // values.push(id);
-        
-
-
-        return SqlString.format(query,values);
+            const queryParams = [firstName,lastName,address,city,state,zipcode,id,userId];
+            const res = SqlString.format(query,queryParams)
+            return res;
     }
 }
 
