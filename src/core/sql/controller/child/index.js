@@ -13,4 +13,6 @@ module.exports = {
   // ProductMenus: require('./productMenus'),
   // ProductMenuEntity: require('./productMenuEntity'),
   Category: require("./category"),
+  ProductSave:require("./productSave"),
+  Address: require("./address")
 }

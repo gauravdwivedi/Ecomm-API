@@ -10,6 +10,7 @@ const error = require("../error");
 const auths = require("../auths");
 const update = require("./update");
 const deleteAction = require("./delete");
+const save = require('./save');
 
 router.post(
   `/add`,
@@ -74,6 +75,26 @@ router.post(
   likeUnlike.sendResponse,
   error
 );
+
+router.post(
+  `/save`,
+  auths.setCredentials,
+  auths.verify,
+  save.validateRequest,
+  save.saveProduct,
+  save.sendResponse,
+  error
+  )
+
+  router.post(
+    `/delete`,
+    auths.setCredentials,
+    auths.verify,
+    save.validateRequest,
+    save.deleteProduct,
+    save.sendResponse,
+    error
+    )
 
 router.post(
   `/updateProduct`,
@@ -145,6 +166,13 @@ router.get(
   list.productList,
   error
 );
+
+router.get(`/favourites`,
+        auths.setCredentials,
+        auths.setProfile,
+        save.list,
+        error
+)
 
 router.get(
   `/detail`,

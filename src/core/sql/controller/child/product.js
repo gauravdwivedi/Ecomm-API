@@ -143,7 +143,4 @@ const QUERY_BUILDER = {
 }
 
 
-
-
-
 module.exports = Product;

@@ -1,5 +1,7 @@
 const { Review, Product, ProductImages, ProductVariants, ProductVideos } = require("../../../core/sql/controller/child");
+const ApiError = require("../ApiError");
 const { base } = require("./../../../wrapper")
+
 const deleteAction = {};
 
 /**
@@ -9,6 +11,8 @@ const deleteAction = {};
 * @param {*} next
 */
 deleteAction.validateBody = (req, res, next) => {
+
+  console.log('DELETE REQ BODY',req.body)
   let { id } = req.body;
   if(!id) return next(new ApiError(400, 'E0010002'));
   next();

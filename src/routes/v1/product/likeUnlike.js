@@ -22,7 +22,10 @@ likeUnlike.likeProduct = async(req, res, next) => {
     const userId = req._userId;
     const ProdThumbObj = new ProductThumb(req._siteId);
     const result = await ProdThumbObj.like(productId, userId);
+
+    
     req._response = result;
+    console.log('RESPONSE',req._response)
     next();
   } catch(err) {
     console.log(err);
@@ -38,11 +41,13 @@ likeUnlike.unlikeProduct = async(req, res, next) => {
     const userId = req._userId;
     const ProdThumbObj = new ProductThumb(req._siteId);
     const result = await ProdThumbObj.unlike(productId, userId);
-    req._response = result;
+    req._response = JSON.stringify(result);
+    
+    console.log('RESPONSE',req._response)
     next();
   } catch(err) {
     console.log(err);
-    req._response = {};
+    req._response = {err};
     next();
   }
 }
@@ -54,6 +59,7 @@ likeUnlike.unlikeProduct = async(req, res, next) => {
 * @param {*} next 
 */
 likeUnlike.sendResponse = async(req, res, next) => {
+  
   res.status(200).send({result: req._response});
   next();
 }
