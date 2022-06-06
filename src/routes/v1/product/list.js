@@ -32,7 +32,7 @@ list.validateBody = (req, res, next) => {
 */
 list.productList = async (req, res, next) => {
   try {
-    let { sort_by, order, min_price, max_price, category_id, size, color, offset, limit } = req.query;
+    let { sort_by, order, min_price, max_price, category_id, category, size, color, offset, limit } = req.query;
     const userId = req._userId;
     const ProdObj = new Product(req._siteId);
     const ProdImageObj = new ProductImages(req._siteId);
@@ -42,14 +42,17 @@ list.productList = async (req, res, next) => {
     const prodThumbObj = new ProductThumb(req._siteId);
     const cartObj = new Cart(req._siteId);
     const favouriteList = new ProductSave(req._siteId);
-    
+
+    if(category) {
+      category_id = await CatObj.fetchDetail({slug: category})?.id;
+    }
     
     ProdObj.list(sort_by, order, min_price, max_price, category_id, size, offset, limit, async (error, result)=>{
       if(result && result.length){
         let myresult = [];
         for(let index = 0; index < result.length; index++) {
           let product = result[index];
-          const category = await CatObj.fetchDetail(product.category);
+          const category = await CatObj.fetchDetail({id: product.category});
           const attributes =  await ProdVariantObj.getProductVariants(product.id, size, color, min_price, max_price);
           const images = await ProdImageObj.getProductImages(product.id);
           const videos = await  ProdVideoObj.getProductVideos(product.id);

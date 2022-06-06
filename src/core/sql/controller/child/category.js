@@ -53,10 +53,10 @@ class Category extends AbstractSQL {
   /**
    * Fetch Detail
    */
-  fetchDetail = (id) => {
+  fetchDetail = (params) => {
     return new Promise((resolve, reject) => {
       this.connection
-        .query(QUERY_BUILDER.FETCH_DETAIL(id), super.getQueryType("SELECT"))
+        .query(QUERY_BUILDER.FETCH_DETAIL(params), super.getQueryType("SELECT"))
         .then((result) => {
           console.log("result", result[0]);
           resolve(result && result[0] ? result[0] : {});
@@ -121,9 +121,10 @@ const QUERY_BUILDER = {
     return SqlString.format(query, []);
   },
 
-  FETCH_DETAIL: (id) => {
-    const query = `SELECT * FROM ${CATEGORY_TABLE_NAME} WHERE id=?`;
-    return SqlString.format(query, [id]);
+  FETCH_DETAIL: (params) => {
+    const {id, slug} = params;
+    if(id) return SqlString.format(`SELECT * FROM ${CATEGORY_TABLE_NAME} WHERE id=?`, [id]);
+    else if(slug) return SqlString.format(`SELECT * FROM ${CATEGORY_TABLE_NAME} WHERE slug=?`, [slug]);
   },
 
   UPDATE_DETAIL_BY_ID: (params) => {
