@@ -44,9 +44,9 @@ list.productList = async (req, res, next) => {
     const favouriteList = new ProductSave(req._siteId);
 
     if(category) {
-      category_id = await CatObj.fetchDetail({slug: category})?.id;
+      let mycategory = await CatObj.fetchDetail({slug: category});
+      category_id = await mycategory?.id
     }
-    
     ProdObj.list(sort_by, order, min_price, max_price, category_id, size, offset, limit, async (error, result)=>{
       if(result && result.length){
         let myresult = [];
