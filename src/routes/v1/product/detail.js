@@ -29,7 +29,7 @@ detail.fetchSQL = async (req, res, next) => {
   const userId = req._userId;
   const product = await new Product(req._siteId).productDetailBySlug(slug);
   if(product){
-    const category = await new Category(req._siteId).fetchDetail(product.category);
+    const category = await new Category(req._siteId).fetchDetail({id: product.category});
     const attributes =  await new ProductVariants(req._siteId).getProductVariants(product.id);
     const images = await new ProductImages(req._siteId).getProductImages(product.id);
     const videos = await new ProductVideos(req._siteId).getProductVideos(product.id);

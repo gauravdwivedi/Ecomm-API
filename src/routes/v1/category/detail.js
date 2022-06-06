@@ -10,8 +10,8 @@ const detail = {};
 * @param {*} next 
 */
 detail.validateRequest = async(req, res, next) => {
-  const { categoryId } = req.body;
-  if(!categoryId) next(new ApiError(400, 'E0010002', {}, 'Invalid request! Please check your inputs'));
+  const { categoryId, slug } = req.body;
+  if(!(categoryId || slug)) next(new ApiError(400, 'E0010002', {}, 'Invalid request! Please check your inputs'));
   next();
 }
 
@@ -22,9 +22,11 @@ detail.validateRequest = async(req, res, next) => {
 * @param {*} next 
 */
 detail.getCategoryDetail = async(req, res, next) => {
-  const { categoryId } = req.body;
+  const { categoryId, slug } = req.body;
   const CategoryObj = new Category(req._siteId);
-  const result = await CategoryObj.fetchDetail(categoryId);
+  let result = "";
+  if(categoryId) result = await CategoryObj.fetchDetail({id: categoryId});
+  if(slug) result = await CategoryObj.fetchDetail({slug});
   req._response = result;
   next();
 }
