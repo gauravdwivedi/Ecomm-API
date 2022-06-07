@@ -85,7 +85,7 @@ const QUERY_BUILDER = {
       [PRODUCT_FIELDS.SLUG] : slug,
       [PRODUCT_FIELDS.STATUS]:1
     }
-    return SqlString.format(`INSERT INTO ${PRODUCT_TABLE_NAME} SET ?`, data)
+    return SqlString.format(`INSERT INTO ${PRODUCT_TABLE_NAME} SET ${ [PRODUCT_FIELDS.ID]} = MD5(RAND()) , ?`, data)
   },
 
   GET_LIST: (sort_by, order, min_price, max_price, category_id, size, offset, limit) => {

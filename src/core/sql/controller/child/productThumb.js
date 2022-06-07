@@ -54,7 +54,7 @@ class Product extends AbstractSQL{
         [PRODUCT_THUMB_FIELDS.USER_ID] : userId,
         [PRODUCT_THUMB_FIELDS.STATUS] : 1
       }
-      return SqlString.format(`INSERT INTO ${PRODUCT_THUMB_TABLE_NAME} SET ?`, data)
+      return SqlString.format(`INSERT INTO ${PRODUCT_THUMB_TABLE_NAME} SET ${ [PRODUCT_THUMB_FIELDS.ID]} = MD5(RAND()) ,  ?`, data)
     },
   
     UNLIKE: (productId, userId) => {

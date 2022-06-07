@@ -206,7 +206,7 @@ const QUERY_BUILDER = {
       [REVIEW_FIELDS.STAR]: 0,
       [REVIEW_FIELDS.STATUS] : 'purchased'
     }
-    return SqlString.format(`INSERT INTO ${REVIEW_TABLE_NAME} SET ?`, data)
+    return SqlString.format(`INSERT INTO ${REVIEW_TABLE_NAME} SET ${ [REVIEW_FIELDS.ID]} = MD5(RAND()) ,  ?`, data)
   },
 
   SAVE: (userId, params) => {

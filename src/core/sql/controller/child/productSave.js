@@ -62,7 +62,7 @@ class ProductSave extends AbstractSQL{
             [PRODUCT_SAVE_FIELDS.STATUS]:1
         }
 
-        return SqlString.format(`INSERT INTO ${PRODUCT_SAVE_TABLE_NAME} SET ?`, data)
+        return SqlString.format(`INSERT INTO ${PRODUCT_SAVE_TABLE_NAME} SET ${ [PRODUCT_SAVE_FIELDS.ID]} = MD5(RAND()) , ?`, data)
     },
   
     DELETE: (productId, userId) => {
