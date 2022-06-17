@@ -16,10 +16,10 @@ class Address extends AbstractSQL {
      * Add Address
      */
 
-addAddress(firstName,lastName, address, city, state, zipcode,userId,primary){
+addAddress(firstName,lastName, address, city, state, zipcode,userId,primary,longitude,latitude){
         
         return new Promise((resolve, reject) => {
-            this.connection.query(QUERY_BUILDER.SAVE(firstName,lastName, address, city, state, zipcode,userId,primary),super.getQueryType('INSERT')).then(result => {
+            this.connection.query(QUERY_BUILDER.SAVE(firstName,lastName, address, city, state, zipcode,userId,primary,longitude,latitude),super.getQueryType('INSERT')).then(result => {
                 resolve(result);
             }).catch(error => resolve(error));
         })
@@ -44,17 +44,19 @@ list(userId){
 
 
 const QUERY_BUILDER = {
-    SAVE:(firstName,lastName, address, city, state, zipcode,userId,add_primary,address_2) =>{
-
+    SAVE:(firstName,lastName, address, city, state, zipcode,userId,add_primary,longitude,latitude) =>{
+        // address_2
         const data = {
             [ADDRESS_FIELDS.FIRST_NAME] :firstName,
             [ADDRESS_FIELDS.LAST_NAME]:lastName,
             [ADDRESS_FIELDS.ADDRESS_1]:address,
-            [ADDRESS_FIELDS.ADDRESS_2]:address_2||'',
+            [ADDRESS_FIELDS.ADDRESS_2]:'',
             [ADDRESS_FIELDS.CITY]:city,
             [ADDRESS_FIELDS.STATE]:state,
             [ADDRESS_FIELDS.POSTCODE]:zipcode,
             [ADDRESS_FIELDS.USER_ID]:userId,
+            [ADDRESS_FIELDS.LONGITUDE]:longitude,
+            [ADDRESS_FIELDS.LATITUDE]:latitude,
             [ADDRESS_FIELDS.ADD_PRIMARY]:add_primary||0
         }
         return SqlString.format(`INSERT INTO ${ADDRESS_TABLE_NAME} SET ?`,data)
@@ -68,17 +70,19 @@ const QUERY_BUILDER = {
 
     EDIT:(params) =>{
         console.log('Params',params);
-        const {id,firstName,lastName,address,city, state, zipcode,userId} = params;
+        const {id,firstName,lastName,address,city, state, zipcode,userId,longitude,latitude} = params;
         const query = `UPDATE ${ADDRESS_TABLE_NAME}
             SET ${ADDRESS_FIELDS.FIRST_NAME} = ? ,
             ${ADDRESS_FIELDS.LAST_NAME} = ? ,
             ${ADDRESS_FIELDS.ADDRESS_1} = ?,
             ${ADDRESS_FIELDS.CITY} = ? ,
             ${ADDRESS_FIELDS.STATE} = ? ,
-            ${ADDRESS_FIELDS.POSTCODE} = ? 
+            ${ADDRESS_FIELDS.POSTCODE} = ? ,
+            ${ADDRESS_FIELDS.LONGITUDE} = ? ,
+            ${ADDRESS_FIELDS.LATITUDE} = ? 
             WHERE ${ADDRESS_FIELDS.ID} = ? AND ${ADDRESS_FIELDS.USER_ID} = ?`;
 
-            const queryParams = [firstName,lastName,address,city,state,zipcode,id,userId];
+            const queryParams = [firstName,lastName,address,city,state,zipcode,longitude,latitude,id,userId];
             const res = SqlString.format(query,queryParams)
             return res;
     }
