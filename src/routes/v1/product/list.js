@@ -14,7 +14,7 @@ list.validateBody = (req, res, next) => {
   if(!sort_by) req.query.sort_by = 'id';
   if(!order) req.query.order = 'desc';
   if(!limit) limit = 20;
-
+  req.query.sort_by = (req.query.sort_by ==="price") ? "v.price" : req.query.sort_by
   page = page ? Number(page) : 1;
 
   req.query.page = page;
@@ -47,6 +47,7 @@ list.productList = async (req, res, next) => {
       let mycategory = await CatObj.fetchDetail({slug: category});
       category_id = await mycategory?.id
     }
+    console.log("sort_by, order,",{sort_by, order,})
     ProdObj.list(sort_by, order, min_price, max_price, category_id, size, offset, limit, async (error, result)=>{
       if(result && result.length){
         let myresult = [];
