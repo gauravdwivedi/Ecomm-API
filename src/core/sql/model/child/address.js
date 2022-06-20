@@ -13,7 +13,9 @@ const FIELDS ={
     STATE:"state",
     COUNTRY:"country",
     FIRST_NAME:"first_name",
-    LAST_NAME:"last_name"
+    LAST_NAME:"last_name",
+    LONGITUDE:"longitude",
+    LATITUDE:"latitude"
 }
 
 let address ={};
