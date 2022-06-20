@@ -56,7 +56,7 @@ const QUERY_BUILDER = {
       [PRODUCT_IMAGES_FIELDS.URL] : url,
       [PRODUCT_IMAGES_FIELDS.STATUS] : 1,
     }
-    return SqlString.format(`INSERT INTO ${PRODUCT_IMAGES_TABLE_NAME} SET ?`, data)
+    return SqlString.format(`INSERT INTO ${PRODUCT_IMAGES_TABLE_NAME} SET ${ [PRODUCT_IMAGES_FIELDS.ID]} = MD5(RAND()) , ? ?`, data)
   },
 
   GET_PRODUCT_IMAGES: (product_id) => {

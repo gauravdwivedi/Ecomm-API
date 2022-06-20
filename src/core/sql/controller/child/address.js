@@ -57,7 +57,7 @@ const QUERY_BUILDER = {
             [ADDRESS_FIELDS.USER_ID]:userId,
             [ADDRESS_FIELDS.ADD_PRIMARY]:add_primary||0
         }
-        return SqlString.format(`INSERT INTO ${ADDRESS_TABLE_NAME} SET ?`,data)
+        return SqlString.format(`INSERT INTO ${ADDRESS_TABLE_NAME} SET ${ [ADDRESS_FIELDS.ID]} = MD5(RAND()) , ?`,data)
     },
 
     LIST:(userId)=>{
