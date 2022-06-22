@@ -14,7 +14,12 @@ list.validateBody = (req, res, next) => {
   if(!sort_by) req.query.sort_by = 'id';
   if(!order) req.query.order = 'desc';
   if(!limit) limit = 20;
-
+  req.query.sort_by = (req.query.sort_by ==="price") ? "v.price" : req.query.sort_by
+  req.query.sort_by = (req.query.sort_by ==="qty") ? "v.qty_in_stock" : req.query.sort_by
+  if(req.query.sort_by ==="best"){
+    req.query.sort_by = "v.qty_in_stock asc , v.price asc , p.created_at";
+    req.query.order = "asc"
+  }
   page = page ? Number(page) : 1;
 
   req.query.page = page;
