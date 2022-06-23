@@ -50,7 +50,6 @@ const QUERY_BUILDER = {
             [ADDRESS_FIELDS.FIRST_NAME] :firstName,
             [ADDRESS_FIELDS.LAST_NAME]:lastName,
             [ADDRESS_FIELDS.ADDRESS_1]:address,
-            [ADDRESS_FIELDS.ADDRESS_2]:'',
             [ADDRESS_FIELDS.CITY]:city,
             [ADDRESS_FIELDS.STATE]:state,
             [ADDRESS_FIELDS.POSTCODE]:zipcode,
