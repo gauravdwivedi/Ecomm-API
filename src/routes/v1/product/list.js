@@ -63,13 +63,15 @@ list.productList = async (req, res, next) => {
           const videos = await  ProdVideoObj.getProductVideos(product.id);
           const likesCount = await prodThumbObj.count(product.id);
           const likes = await  prodThumbObj.getLikesUserIds(product.id);
-          myresult.push({ ...product, attributes, images, category, videos, likesCount, likes });
+          const saved = await favouriteList.getFavouritesUserIds(product.id);
+          myresult.push({ ...product, attributes, images, category, videos, likesCount, likes ,saved});
         };
+
         const cartList = await cartObj.listCart(userId);
         const total = await ProdObj.count();
-        const saved = await favouriteList.list(userId)
+        // const saved = await favouriteList.list(userId)
         
-        res.status(200).send(base.success({result: _wrapper(userId, req.query, myresult, total, cartList,saved)}));
+        res.status(200).send(base.success({result: _wrapper(userId, req.query, myresult, total, cartList)}));
         next();
       } else if(error) {
         console.log(error);
@@ -86,9 +88,10 @@ list.productList = async (req, res, next) => {
   }
 }
 
-const _wrapper = (userId, params, responses, total, cartList,saved) => {
+const _wrapper = (userId, params, responses, total, cartList) => {
   let productList = [];
   responses.map(product => {
+
     let tuple = {
       id: product.id,
       category: product.category,
@@ -102,7 +105,9 @@ const _wrapper = (userId, params, responses, total, cartList,saved) => {
       likes: product.likesCount,
       liked: userId && product.likes.some( like => like.userId === userId ) ? true : false,
       productInCart: userId && cartList.some( cart => cart.productId === product.id ) ? true : false,
-      favourite:userId && saved.some(fav =>fav.userId === userId) ? true:false
+      favourite:userId && product.saved.some( fav => fav.userId === userId) ? true:false
+
+      
     }
     productList.push(tuple);
   })

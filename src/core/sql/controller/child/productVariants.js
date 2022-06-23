@@ -74,7 +74,7 @@ const QUERY_BUILDER = {
       [VARIANTS_FIELDS.DISCOUNTED_PRICE] : discounted_price || price || 0,
       [VARIANTS_FIELDS.STATUS] : 1,
     }
-    return SqlString.format(`INSERT INTO ${VARIANTS_TABLE_NAME} SET ?`, data)
+    return SqlString.format(`INSERT INTO ${VARIANTS_TABLE_NAME} SET ${ [VARIANTS_FIELDS.ID]} = MD5(RAND()) , ?`, data)
   },
 
   GET_PRODUCT_VARIANTS: (product_id, size, color, min_price, max_price) => {

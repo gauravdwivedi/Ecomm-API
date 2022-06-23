@@ -50,7 +50,6 @@ const QUERY_BUILDER = {
             [ADDRESS_FIELDS.FIRST_NAME] :firstName,
             [ADDRESS_FIELDS.LAST_NAME]:lastName,
             [ADDRESS_FIELDS.ADDRESS_1]:address,
-            [ADDRESS_FIELDS.ADDRESS_2]:'',
             [ADDRESS_FIELDS.CITY]:city,
             [ADDRESS_FIELDS.STATE]:state,
             [ADDRESS_FIELDS.POSTCODE]:zipcode,
@@ -59,7 +58,7 @@ const QUERY_BUILDER = {
             [ADDRESS_FIELDS.LATITUDE]:latitude,
             [ADDRESS_FIELDS.ADD_PRIMARY]:add_primary||0
         }
-        return SqlString.format(`INSERT INTO ${ADDRESS_TABLE_NAME} SET ?`,data)
+        return SqlString.format(`INSERT INTO ${ADDRESS_TABLE_NAME} SET ${ [ADDRESS_FIELDS.ID]} = MD5(RAND()) , ?`,data)
     },
 
     LIST:(userId)=>{

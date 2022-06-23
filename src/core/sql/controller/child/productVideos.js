@@ -57,7 +57,7 @@ const QUERY_BUILDER = {
       [PRODUCT_VIDEOS_FIELDS.DESCRIPTION] : video?.description || '',
       [PRODUCT_VIDEOS_FIELDS.SLUG] : video?.slug
     }
-    return SqlString.format(`INSERT INTO ${PRODUCT_VIDEOS_TABLE_NAME} SET ?`, data)
+    return SqlString.format(`INSERT INTO ${PRODUCT_VIDEOS_TABLE_NAME} SET  ${ [PRODUCT_VIDEOS_FIELDS.ID]} = MD5(RAND()) , ?`, data)
   },
 
   GET_PRODUCT_VIDEOS: (product_id) => {
