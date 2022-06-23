@@ -1,7 +1,7 @@
 
 const AbstractSQL = require("../abstract");
 const SqlString = require('sqlstring');
-
+const {v4 : uuidv4} = require('uuid')
 const {
   ProductSave: {SCHEMA:{FIELDS: PRODUCT_SAVE_FIELDS, TABLE_NAME: PRODUCT_SAVE_TABLE_NAME}},
 } = require("./../../model/child");
@@ -62,7 +62,7 @@ class ProductSave extends AbstractSQL{
             [PRODUCT_SAVE_FIELDS.STATUS]:1
         }
 
-        return SqlString.format(`INSERT INTO ${PRODUCT_SAVE_TABLE_NAME} SET ${ [PRODUCT_SAVE_FIELDS.ID]} = MD5(RAND()) , ?`, data)
+        return SqlString.format(`INSERT INTO ${PRODUCT_SAVE_TABLE_NAME} SET ${ [PRODUCT_SAVE_FIELDS.ID]} = ${uuidv4()} , ?`, data)
     },
   
     DELETE: (productId, userId) => {

@@ -1,6 +1,6 @@
 const AbstractSQL = require('../abstract')
 const SqlString = require("sqlstring")
-
+const {v4 : uuidv4} = require('uuid')
 const {
     Address : { SCHEMA :{ FIELDS : ADDRESS_FIELDS, TABLE_NAME:ADDRESS_TABLE_NAME}}
 } = require("../../model/child");
@@ -58,7 +58,7 @@ const QUERY_BUILDER = {
             [ADDRESS_FIELDS.LATITUDE]:latitude,
             [ADDRESS_FIELDS.ADD_PRIMARY]:add_primary||0
         }
-        return SqlString.format(`INSERT INTO ${ADDRESS_TABLE_NAME} SET ${ [ADDRESS_FIELDS.ID]} = MD5(RAND()) , ?`,data)
+        return SqlString.format(`INSERT INTO ${ADDRESS_TABLE_NAME} SET ${ [ADDRESS_FIELDS.ID]} = ${uuidv4()} , ?`,data)
     },
 
     LIST:(userId)=>{

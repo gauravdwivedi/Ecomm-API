@@ -1,7 +1,7 @@
 
 const AbstractSQL = require("../abstract");
 const SqlString = require('sqlstring');
-
+const {v4 : uuidv4} = require('uuid')
 const {
   Review: {SCHEMA:{FIELDS: REVIEW_FIELDS, TABLE_NAME: REVIEW_TABLE_NAME}},
   ProductVideo: {SCHEMA:{FIELDS: PV_FIELDS, TABLE_NAME: PV_TABLE_NAME}},
@@ -206,7 +206,7 @@ const QUERY_BUILDER = {
       [REVIEW_FIELDS.STAR]: 0,
       [REVIEW_FIELDS.STATUS] : 'purchased'
     }
-    return SqlString.format(`INSERT INTO ${REVIEW_TABLE_NAME} SET ${ [REVIEW_FIELDS.ID]} = MD5(RAND()) ,  ?`, data)
+    return SqlString.format(`INSERT INTO ${REVIEW_TABLE_NAME} SET ${ [REVIEW_FIELDS.ID]} = ${uuidv4()} ,  ?`, data)
   },
 
   SAVE: (userId, params) => {

@@ -1,7 +1,7 @@
 
 const AbstractSQL = require("../abstract");
 const SqlString = require('sqlstring');
-
+const {v4 : uuidv4} = require('uuid')
 const {
   ProductVideos: {SCHEMA:{FIELDS: PRODUCT_VIDEOS_FIELDS, TABLE_NAME: PRODUCT_VIDEOS_TABLE_NAME}},
 } = require("../../model/child");
@@ -57,7 +57,7 @@ const QUERY_BUILDER = {
       [PRODUCT_VIDEOS_FIELDS.DESCRIPTION] : video?.description || '',
       [PRODUCT_VIDEOS_FIELDS.SLUG] : video?.slug
     }
-    return SqlString.format(`INSERT INTO ${PRODUCT_VIDEOS_TABLE_NAME} SET  ${ [PRODUCT_VIDEOS_FIELDS.ID]} = MD5(RAND()) , ?`, data)
+    return SqlString.format(`INSERT INTO ${PRODUCT_VIDEOS_TABLE_NAME} SET  ${ [PRODUCT_VIDEOS_FIELDS.ID]} = ${uuidv4()} , ?`, data)
   },
 
   GET_PRODUCT_VIDEOS: (product_id) => {

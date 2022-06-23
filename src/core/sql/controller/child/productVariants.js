@@ -1,7 +1,7 @@
 
 const AbstractSQL = require("../abstract");
 const SqlString = require('sqlstring');
-
+const {v4 : uuidv4} = require('uuid')
 const {
   Variants: {SCHEMA:{FIELDS: VARIANTS_FIELDS, TABLE_NAME: VARIANTS_TABLE_NAME}},
 } = require("./../../model/child");
@@ -74,7 +74,7 @@ const QUERY_BUILDER = {
       [VARIANTS_FIELDS.DISCOUNTED_PRICE] : discounted_price || price || 0,
       [VARIANTS_FIELDS.STATUS] : 1,
     }
-    return SqlString.format(`INSERT INTO ${VARIANTS_TABLE_NAME} SET ${ [VARIANTS_FIELDS.ID]} = MD5(RAND()) , ?`, data)
+    return SqlString.format(`INSERT INTO ${VARIANTS_TABLE_NAME} SET ${ [VARIANTS_FIELDS.ID]} = ${uuidv4()} , ?`, data)
   },
 
   GET_PRODUCT_VARIANTS: (product_id, size, color, min_price, max_price) => {
