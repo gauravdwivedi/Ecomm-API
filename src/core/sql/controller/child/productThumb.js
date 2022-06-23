@@ -29,6 +29,14 @@ class Product extends AbstractSQL{
       }).catch(error => reject(error));
     })
   }
+
+  getLike(productId, userId) {
+    return new Promise((resolve, reject) => {
+      this.connection.query(QUERY_BUILDER.GET_LIKE(productId, userId), super.getQueryType('SELECT')).then(result => {
+        resolve(result)
+      }).catch(error => reject(error));
+    })
+  }
   
   count(productId) {
     return new Promise((resolve, reject) => {
@@ -62,6 +70,12 @@ class Product extends AbstractSQL{
     UNLIKE: (productId, userId) => {
       const query = `DELETE FROM ${PRODUCT_THUMB_TABLE_NAME} 
         WHERE ${PRODUCT_THUMB_FIELDS.PRODUCT_ID} = ? AND ${PRODUCT_THUMB_FIELDS.USER_ID} = ?`;
+      return SqlString.format(query, [productId, userId])
+    },
+
+    GET_LIKE: (productId, userId) => {
+      const query = ` SELECT ${PRODUCT_THUMB_FIELDS.ID} 
+      FROM ${PRODUCT_THUMB_TABLE_NAME} as c WHERE ${PRODUCT_THUMB_FIELDS.PRODUCT_ID} = ? AND ${PRODUCT_THUMB_FIELDS.USER_ID} = ?`;
       return SqlString.format(query, [productId, userId])
     },
 
