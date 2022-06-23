@@ -17,8 +17,9 @@ class ProductVariants extends AbstractSQL{
     return new Promise((resolve, reject) => {
       let a = [];
       attributes.map(attribute => {
-        this.connection.query(QUERY_BUILDER.SAVE_PRODUCT_VARIANT(productId, attribute), super.getQueryType('INSERT')).then(result => {
-          a.push(result && result[0] ? result[0] : "");
+        let id = uuidv4();
+        this.connection.query(QUERY_BUILDER.SAVE_PRODUCT_VARIANT(id, productId, attribute), super.getQueryType('INSERT')).then(result => {
+          a.push(id);
         }).catch(error => console.log(error));
       })
       resolve(a);
@@ -62,9 +63,10 @@ class ProductVariants extends AbstractSQL{
 
 const QUERY_BUILDER = {
 
-  SAVE_PRODUCT_VARIANT: (product_id, params) => {
+  SAVE_PRODUCT_VARIANT: (id, product_id, params) => {
     const { sku, size, color, qty_in_stock, price, discounted_price } = params;
     const data = {
+      [VARIANTS_FIELDS.ID] : id,
       [VARIANTS_FIELDS.PRODUCT_ID] : product_id,
       [VARIANTS_FIELDS.SKU] : sku || '',
       [VARIANTS_FIELDS.SIZE] : size || '',
@@ -74,11 +76,11 @@ const QUERY_BUILDER = {
       [VARIANTS_FIELDS.DISCOUNTED_PRICE] : discounted_price || price || 0,
       [VARIANTS_FIELDS.STATUS] : 1,
     }
-    return SqlString.format(`INSERT INTO ${VARIANTS_TABLE_NAME} SET ${ [VARIANTS_FIELDS.ID]} = ${uuidv4()} , ?`, data)
+    return SqlString.format(`INSERT INTO ${VARIANTS_TABLE_NAME} SET ?`, data)
   },
 
   GET_PRODUCT_VARIANTS: (product_id, size, color, min_price, max_price) => {
-    let myQuery = `${VARIANTS_FIELDS.PRODUCT_ID} = ${product_id}`;
+    let myQuery = `${VARIANTS_FIELDS.PRODUCT_ID} = \'${product_id}\'`;
     myQuery += min_price ? ` AND ${VARIANTS_FIELDS.PRICE} >= ${min_price}` : '';
     myQuery += max_price ? ` AND ${VARIANTS_FIELDS.PRICE} <= ${max_price}` : '';
     myQuery += size ? ` AND ${VARIANTS_FIELDS.SIZE} = \'${size}\'` : '';
@@ -113,8 +115,8 @@ const QUERY_BUILDER = {
   },
 
   DELETE_PRODUCT_VARIANTS_BY_PRODUCT_ID: (id) => {
-    const query = `DELETE FROM ${VARIANTS_TABLE_NAME} WHERE ${VARIANTS_FIELDS.PRODUCT_ID} = ${id}`;
-    return SqlString.format(query, [])
+    const query = `DELETE FROM ${VARIANTS_TABLE_NAME} WHERE ${VARIANTS_FIELDS.PRODUCT_ID} = ?`;
+    return SqlString.format(query, [id])
   },
 }
 

@@ -89,9 +89,10 @@ class Comment extends AbstractSQL{
   }
   
   addNewReview (userId, pid) {
+    let id = uuidv4();
     return new Promise((resolve, reject) => {
-      this.connection.query(QUERY_BUILDER.ADD_NEW_REVIEW(userId, pid), super.getQueryType('INSERT')).then(result => {
-        return resolve(result);
+      this.connection.query(QUERY_BUILDER.ADD_NEW_REVIEW(id, userId, pid), super.getQueryType('INSERT')).then(result => {
+        return resolve(id);
       }).catch(error => resolve({error}));
     })
   }
@@ -199,14 +200,15 @@ const QUERY_BUILDER = {
     return SqlString.format(query, [productId])
   },
 
-  ADD_NEW_REVIEW: (userId, pid) => {
+  ADD_NEW_REVIEW: (id, userId, pid) => {
     const data = {
+      [REVIEW_FIELDS.ID] : id,
       [REVIEW_FIELDS.PRODUCT_ID] : pid,
       [REVIEW_FIELDS.USER_ID] : userId,
       [REVIEW_FIELDS.STAR]: 0,
       [REVIEW_FIELDS.STATUS] : 'purchased'
     }
-    return SqlString.format(`INSERT INTO ${REVIEW_TABLE_NAME} SET ${ [REVIEW_FIELDS.ID]} = ${uuidv4()} ,  ?`, data)
+    return SqlString.format(`INSERT INTO ${REVIEW_TABLE_NAME} SET ?`, data)
   },
 
   SAVE: (userId, params) => {

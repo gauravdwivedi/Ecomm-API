@@ -15,9 +15,10 @@ class ProductSave extends AbstractSQL{
   }
 
   save(productId,userId){
+    let id = uuidv4();
     return new Promise((resolve, reject) => {
-        this.connection.query(QUERY_BUILDER.SAVE(productId, userId), super.getQueryType('INSERT')).then(result => {
-          resolve(result[0])
+        this.connection.query(QUERY_BUILDER.SAVE(id, productId, userId), super.getQueryType('INSERT')).then(result => {
+          resolve(id)
         }).catch(error => reject(error));
       })
   }
@@ -52,23 +53,24 @@ class ProductSave extends AbstractSQL{
   const QUERY_BUILDER ={
 
     LIST:(userId)=>{
-        return SqlString.format(`SELECT * FROM ${PRODUCT_SAVE_TABLE_NAME} WHERE ${PRODUCT_SAVE_FIELDS.USER_ID} = ${userId}`)
+        return SqlString.format(`SELECT * FROM ${PRODUCT_SAVE_TABLE_NAME} WHERE ${PRODUCT_SAVE_FIELDS.USER_ID} = ?`, [userId])
     },
 
-    SAVE:(productId, userId) =>{
+    SAVE:(id, productId, userId) =>{
         const data ={
+            [PRODUCT_SAVE_FIELDS.ID]: id,
             [PRODUCT_SAVE_FIELDS.PRODUCT_ID]:productId,
             [PRODUCT_SAVE_FIELDS.USER_ID]:userId,
             [PRODUCT_SAVE_FIELDS.STATUS]:1
         }
 
-        return SqlString.format(`INSERT INTO ${PRODUCT_SAVE_TABLE_NAME} SET ${ [PRODUCT_SAVE_FIELDS.ID]} = ${uuidv4()} , ?`, data)
+        return SqlString.format(`INSERT INTO ${PRODUCT_SAVE_TABLE_NAME} SET ?`, data)
     },
   
     DELETE: (productId, userId) => {
       const query = `DELETE FROM ${PRODUCT_SAVE_TABLE_NAME} 
-        WHERE ${PRODUCT_SAVE_FIELDS.PRODUCT_ID} = ${productId} AND ${PRODUCT_SAVE_FIELDS.USER_ID} = ${userId}`;
-      return SqlString.format(query, [])
+        WHERE ${PRODUCT_SAVE_FIELDS.PRODUCT_ID} = ? AND ${PRODUCT_SAVE_FIELDS.USER_ID} = ?`;
+      return SqlString.format(query, [productId, userId])
     },
 
     GET_SAVED_USER_IDS: (productId) =>{

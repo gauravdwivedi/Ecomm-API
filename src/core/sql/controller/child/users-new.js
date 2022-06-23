@@ -15,8 +15,9 @@ class Users extends AbstractSQL{
   * Add User
   */
    addUser(params, callback){
-    this.connection.query(QUERY_BUILDER.SAVE(params), super.getQueryType('INSERT')).then(result => {
-      callback(null, result)
+    let id = uuidv4();
+    this.connection.query(QUERY_BUILDER.SAVE(id, params), super.getQueryType('INSERT')).then(result => {
+      callback(null, id)
     }).catch(error => callback(error, null));
   }
 
@@ -87,14 +88,14 @@ class Users extends AbstractSQL{
 
 const QUERY_BUILDER = {
   
-  SAVE: (params) => {
+  SAVE: (id, params) => {
     let { email, password, options } = params;
     const query = `INSERT INTO ${USERS_TABLE_NAME}
-    (${USERS_FIELDS.ID} =  ${uuidv4()}  , ${USERS_FIELDS.EMAIL}, ${USERS_FIELDS.PASSWORD}, ${USERS_FIELDS.FIRST_NAME}, ${USERS_FIELDS.LAST_NAME}, ${USERS_FIELDS.IS_SUPERUSER}, ${USERS_FIELDS.EMAIL_VERIFIED}, ${USERS_FIELDS.STATUS})
+    (${USERS_FIELDS.ID}, ${USERS_FIELDS.EMAIL}, ${USERS_FIELDS.PASSWORD}, ${USERS_FIELDS.FIRST_NAME}, ${USERS_FIELDS.LAST_NAME}, ${USERS_FIELDS.EMAIL_VERIFIED}, ${USERS_FIELDS.STATUS})
     VALUES(?,?,?,?,?,?,?)
     ON DUPLICATE KEY
     UPDATE ${USERS_FIELDS.FIRST_NAME}=?`;
-    return SqlString.format(query, [email, password, options[USERS_FIELDS.FIRST_NAME], options[USERS_FIELDS.LAST_NAME], 0, 0, 1, options[USERS_FIELDS.FIRST_NAME]])
+    return SqlString.format(query, [id, email, password, options[USERS_FIELDS.FIRST_NAME], options[USERS_FIELDS.LAST_NAME], 0, 1, options[USERS_FIELDS.FIRST_NAME]])
   },
   CHECK_EMAIL: (email) => {
     const query = `SELECT email, password FROM ${USERS_TABLE_NAME} WHERE ${USERS_FIELDS.EMAIL} = ?`;

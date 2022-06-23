@@ -72,7 +72,7 @@ register.ifSignUp = async(req, res, next) => {
   req.body.createdAt = moment().format("YYYY-MM-DD HH:mm:ss");
   req.body.updatedAt = moment().format("YYYY-MM-DD HH:mm:ss");
   
-  const [userId, x] = await new UsersSQL(req._siteId).register(req.body.email, req.body.password, {
+  const userId = await new UsersSQL(req._siteId).register(req.body.email, req.body.password, {
     [USERS_SQL_FIELDS.SITE_ID]: req._siteId,
     [USERS_SQL_FIELDS.EMAIL]: req.body.email,
     [USERS_SQL_FIELDS.PASSWORD]: req.body.password,

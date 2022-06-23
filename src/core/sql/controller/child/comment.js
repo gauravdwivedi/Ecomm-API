@@ -54,9 +54,10 @@ class Comment extends AbstractSQL{
    * @returns 
    */
   save (userId, params) {
+    let id = uuidv4();
     return new Promise((resolve, reject) => {
-      this.connection.query(QUERY_BUILDER.SAVE(userId, params), super.getQueryType('INSERT')).then(result => {
-        return resolve({result});
+      this.connection.query(QUERY_BUILDER.SAVE(id, userId, params), super.getQueryType('INSERT')).then(result => {
+        return resolve({result: id});
       }).catch(error => resolve({error}));
     })
   }
@@ -75,17 +76,19 @@ class Comment extends AbstractSQL{
   }
 
   like (commentId, userId) {
+    let id = uuidv4();
     return new Promise((resolve, reject) => {
-      this.connection.query(QUERY_BUILDER.LIKE(commentId, userId), super.getQueryType('INSERT')).then(result => {
-        return resolve({result});
+      this.connection.query(QUERY_BUILDER.LIKE(id, commentId, userId), super.getQueryType('INSERT')).then(result => {
+        return resolve({result: id});
       }).catch(error => resolve({error}));
     })
   }
 
   dislike (commentId, userId) {
+    let id = uuidv4();
     return new Promise((resolve, reject) => {
-      this.connection.query(QUERY_BUILDER.DISLIKE(commentId, userId), super.getQueryType('INSERT')).then(result => {
-        return resolve({result});
+      this.connection.query(QUERY_BUILDER.DISLIKE(id, commentId, userId), super.getQueryType('INSERT')).then(result => {
+        return resolve({result: id});
       }).catch(error => resolve({error}));
     })
   }
@@ -120,14 +123,15 @@ const QUERY_BUILDER = {
     return SqlString.format(query, [productId])
   },
 
-  SAVE: (userId, params) => {
+  SAVE: (id, userId, params) => {
     const { comment, productId } = params;
     const data = {
+      [COMMENT_FIELDS.ID] : id,
       [COMMENT_FIELDS.COMMENT] : comment,
       [COMMENT_FIELDS.USER_ID] : userId,
       [COMMENT_FIELDS.PRODUCT_ID] : productId
     }
-    return SqlString.format(`INSERT INTO ${COMMENT_TABLE_NAME} SET ${ [COMMENT_FIELDS.ID]} = ${uuidv4()} , ?`, data)
+    return SqlString.format(`INSERT INTO ${COMMENT_TABLE_NAME} SET ?`, data)
   },
 
   DELETE: (id) => {
@@ -136,22 +140,22 @@ const QUERY_BUILDER = {
     return SqlString.format(query, params)
   },
 
-  LIKE: (commentId, userId) =>{
+  LIKE: (id, commentId, userId) =>{
     const query = `INSERT INTO \`${COMMENT_THUMB_TABLE_NAME}\`
-    (${COMMENT_THUMB_FIELDS.ID} = ${uuidv4()} , ${COMMENT_THUMB_FIELDS.COMMENT_ID}, ${COMMENT_THUMB_FIELDS.USER_ID}, ${COMMENT_THUMB_FIELDS.STATUS})
-    VALUES(?,?,?)
+    (${COMMENT_THUMB_FIELDS.ID}, ${COMMENT_THUMB_FIELDS.COMMENT_ID}, ${COMMENT_THUMB_FIELDS.USER_ID}, ${COMMENT_THUMB_FIELDS.STATUS})
+    VALUES(?,?,?,?)
     ON DUPLICATE KEY
     UPDATE ${COMMENT_THUMB_FIELDS.STATUS} = ? `;
-    return SqlString.format(query, [commentId, userId, 1, 1])
+    return SqlString.format(query, [id, commentId, userId, 1, 1])
   },
 
-  DISLIKE: (commentId, userId) =>{
+  DISLIKE: (id, commentId, userId) =>{
     const query = `INSERT INTO \`${COMMENT_THUMB_TABLE_NAME}\`
-    (${COMMENT_THUMB_FIELDS.ID} = ${uuidv4()} , ${COMMENT_THUMB_FIELDS.COMMENT_ID}, ${COMMENT_THUMB_FIELDS.USER_ID}, ${COMMENT_THUMB_FIELDS.STATUS})
-    VALUES(?,?,?)
+    (${COMMENT_THUMB_FIELDS.ID}, ${COMMENT_THUMB_FIELDS.COMMENT_ID}, ${COMMENT_THUMB_FIELDS.USER_ID}, ${COMMENT_THUMB_FIELDS.STATUS})
+    VALUES(?,?,?,?)
     ON DUPLICATE KEY
     UPDATE ${COMMENT_THUMB_FIELDS.STATUS} = ? `;
-    return SqlString.format(query, [commentId, userId, 2, 2])
+    return SqlString.format(query, [id, commentId, userId, 2, 2])
   }
 }
 

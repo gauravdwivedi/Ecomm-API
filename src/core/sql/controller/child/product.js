@@ -20,9 +20,14 @@ class Product extends AbstractSQL{
 
   saveProduct(title, description, category, rating, slug) {
     return new Promise((resolve, reject) => {
-      this.connection.query(QUERY_BUILDER.SAVE_PRODUCT(title, description, category, rating, slug), super.getQueryType('INSERT')).then(result => {
-        resolve(result);
-      }).catch(error => resolve(error));
+      let id = uuidv4();
+      this.connection.query(QUERY_BUILDER.SAVE_PRODUCT(id, title, description, category, rating, slug), super.getQueryType('INSERT')).then(result => {
+        console.log(result);
+        resolve(id);
+      }).catch(error => {
+        console.log(error);
+        resolve(error)
+      });
     })
   }
   
@@ -76,8 +81,9 @@ class Product extends AbstractSQL{
 
 
 const QUERY_BUILDER = {
-  SAVE_PRODUCT: (title, description, category, rating, slug) => {
+  SAVE_PRODUCT: (id, title, description, category, rating, slug) => {
     const data = {
+      [PRODUCT_FIELDS.ID] : id,
       [PRODUCT_FIELDS.TITLE] : title,
       [PRODUCT_FIELDS.DESCRIPTION] : description,
       [PRODUCT_FIELDS.CATEGORY] : category,
@@ -85,12 +91,12 @@ const QUERY_BUILDER = {
       [PRODUCT_FIELDS.SLUG] : slug,
       [PRODUCT_FIELDS.STATUS]:1
     }
-    return SqlString.format(`INSERT INTO ${PRODUCT_TABLE_NAME} SET ${ [PRODUCT_FIELDS.ID]} = ${uuidv4()} , ?`, data)
+    return SqlString.format(`INSERT INTO ${PRODUCT_TABLE_NAME} SET ?`, data)
   },
 
   GET_LIST: (sort_by, order, min_price, max_price, category_id, size, offset, limit) => {
     let myQuery = `p.${PRODUCT_FIELDS.STATUS} = 1`;
-    myQuery += category_id ? ` AND p.${PRODUCT_FIELDS.CATEGORY} = ${category_id}`: '';
+    myQuery += category_id ? ` AND p.${PRODUCT_FIELDS.CATEGORY} = \'${category_id}\'`: '';
     myQuery += min_price ? ` AND v.${VARIANTS_FIELDS.PRICE} >= ${min_price}` : '';
     myQuery += max_price ? ` AND v.${VARIANTS_FIELDS.PRICE} <= ${max_price}` : '';
     myQuery += size ? ` AND v.${VARIANTS_FIELDS.SIZE} = \'${size}\'` : '';
@@ -137,8 +143,8 @@ const QUERY_BUILDER = {
   },
 
   DELETE_PRODUCT: (id) => {
-    const query = `DELETE FROM ${PRODUCT_TABLE_NAME} WHERE ${PRODUCT_FIELDS.ID} = ${id}`;
-    return SqlString.format(query, [])
+    const query = `DELETE FROM ${PRODUCT_TABLE_NAME} WHERE ${PRODUCT_FIELDS.ID} = ?`;
+    return SqlString.format(query, [id])
   }
 }
 

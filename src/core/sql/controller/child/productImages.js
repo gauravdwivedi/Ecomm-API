@@ -16,8 +16,9 @@ class ProductImages extends AbstractSQL{
     return new Promise((resolve, reject) => {
       let a = [];
       images.map(image => {
-        this.connection.query(QUERY_BUILDER.SAVE_PRODUCT_IMAGES(productId, image), super.getQueryType('INSERT')).then(result => {
-          a.push(result && result[0] ? result[0] : "");
+        let id = uuidv4();
+        this.connection.query(QUERY_BUILDER.SAVE_PRODUCT_IMAGES(id, productId, image), super.getQueryType('INSERT')).then(result => {
+          a.push(id);
         }).catch(error => console.log(error));
       })
       resolve(a);
@@ -50,20 +51,21 @@ class ProductImages extends AbstractSQL{
 }
 
 const QUERY_BUILDER = {
-  SAVE_PRODUCT_IMAGES: (product_id, url) => {
+  SAVE_PRODUCT_IMAGES: (id, product_id, url) => {
     const data = {
+      [PRODUCT_IMAGES_FIELDS.ID] : id,
       [PRODUCT_IMAGES_FIELDS.PRODUCT_ID] : product_id,
       [PRODUCT_IMAGES_FIELDS.URL] : url,
       [PRODUCT_IMAGES_FIELDS.STATUS] : 1,
     }
-    return SqlString.format(`INSERT INTO ${PRODUCT_IMAGES_TABLE_NAME} SET ${ [PRODUCT_IMAGES_FIELDS.ID]} = ${uuidv4()} , ? ?`, data)
+    return SqlString.format(`INSERT INTO ${PRODUCT_IMAGES_TABLE_NAME} SET ?`, data)
   },
 
   GET_PRODUCT_IMAGES: (product_id) => {
     const query = ` SELECT ${PRODUCT_IMAGES_FIELDS.URL},${PRODUCT_IMAGES_FIELDS.ID}
       FROM ${PRODUCT_IMAGES_TABLE_NAME}
-      WHERE ${PRODUCT_IMAGES_FIELDS.PRODUCT_ID} = ${product_id}`;
-    return SqlString.format(query, [])
+      WHERE ${PRODUCT_IMAGES_FIELDS.PRODUCT_ID} = ?`;
+    return SqlString.format(query, [product_id])
   },
 
   DELETE_PRODUCT_IMAGE: (imageId) => {
@@ -75,8 +77,8 @@ const QUERY_BUILDER = {
   },
 
   DELETE_PRODUCT_IMAGES_BY_PRODUCT_ID: (id) => {
-    const query = `DELETE FROM ${PRODUCT_IMAGES_TABLE_NAME} WHERE ${PRODUCT_IMAGES_FIELDS.PRODUCT_ID} = ${id}`;
-    return SqlString.format(query, [])
+    const query = `DELETE FROM ${PRODUCT_IMAGES_TABLE_NAME} WHERE ${PRODUCT_IMAGES_FIELDS.PRODUCT_ID} = ?`;
+    return SqlString.format(query, [id])
   }  
 }
 

@@ -21,10 +21,11 @@ class Orders extends AbstractSQL {
    */
    newOrder(params) {
     return new Promise((resolve, reject) => {
+      let id = uuidv4();
       this.connection
-        .query(QUERY_BUILDER.NEW_ORDER(params), super.getQueryType("INSERT"))
+        .query(QUERY_BUILDER.NEW_ORDER(id, params), super.getQueryType("INSERT"))
         .then((result) => {
-          resolve(result);
+          resolve(id);
         })
         .catch((error) => reject(error));
     })
@@ -68,10 +69,11 @@ class Orders extends AbstractSQL {
    */
    payment(params) {
     return new Promise((resolve, reject) => {
+      let id = uuidv4();
       this.connection
-        .query(QUERY_BUILDER.PAYMENT(params), super.getQueryType("INSERT"))
+        .query(QUERY_BUILDER.PAYMENT(id, params), super.getQueryType("INSERT"))
         .then((result) => {
-          resolve(result);
+          resolve(id);
         })
         .catch((error) => reject(error));
     })
@@ -93,12 +95,12 @@ class Orders extends AbstractSQL {
 }
 
 const QUERY_BUILDER = {
-  NEW_ORDER: (params) => {
+  NEW_ORDER: (id, params) => {
     let { userid, variantId, productId, quantity, status, deliveryStatus, addressId, priceBeforeTax, priceAfterTax, discount, notes, tax } = params;
     const query = `INSERT INTO ${ORDERS_TABLE_NAME} 
     (${ORDERS_FIELDS.ID}, ${ORDERS_FIELDS.USER_ID}, ${ORDERS_FIELDS.VARIANT_ID}, ${ORDERS_FIELDS.PRODUCT_ID}, ${ORDERS_FIELDS.QUANTITY}, ${ORDERS_FIELDS.STATUS}, ${ORDERS_FIELDS.DELIVERY_STATUS}, ${ORDERS_FIELDS.ADDRESS_ID}, ${ORDERS_FIELDS.PRICE_BEFORE_TAX}, ${ORDERS_FIELDS.PRICE_AFTER_TAX}, ${ORDERS_FIELDS.DISCOUNT}, ${ORDERS_FIELDS.NOTES}, ${ORDERS_FIELDS.TAX}) 
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
-    return SqlString.format(query, [uuidv4(),userid, variantId, productId, quantity, status, deliveryStatus, addressId, priceBeforeTax, priceAfterTax, discount, notes, tax]);
+    return SqlString.format(query, [id,userid, variantId, productId, quantity, status, deliveryStatus, addressId, priceBeforeTax, priceAfterTax, discount, notes, tax]);
   },
 
   
@@ -123,8 +125,8 @@ const QUERY_BUILDER = {
     return SqlString.format(query, [method, userId ,status ])
   },
 
-  PAYMENT: (params) => {
-    let {  id,order_id,invoice_id,orderId,methodId,status } = params;
+  PAYMENT: (id, params) => {
+    let { order_id,invoice_id,orderId,methodId,status } = params;
     let query = `INSERT INTO  ${PAYMENTS_TABLE_NAME} (${PAYMENTS_FIELDS.ID}, ${PAYMENTS_FIELDS.INVOICE_ID}, ${PAYMENTS_FIELDS.RAZOR_PAY_ORDER_ID}, ${PAYMENTS_FIELDS.ORDER_ID}, ${PAYMENTS_FIELDS.PAYMENT_METHOD_ID}, ${PAYMENTS_FIELDS.PAYMENT_STATUS}) 
                 VALUES (?,?,?,?,?,?)`;
     return SqlString.format(query, [id,invoice_id,order_id,orderId,methodId,status]);

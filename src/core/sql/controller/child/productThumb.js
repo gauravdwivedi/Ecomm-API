@@ -14,9 +14,10 @@ class Product extends AbstractSQL{
   }
 
   like(productId, userId) {
+    let id = uuidv4();
     return new Promise((resolve, reject) => {
-      this.connection.query(QUERY_BUILDER.LIKE(productId, userId), super.getQueryType('INSERT')).then(result => {
-        resolve(result[0])
+      this.connection.query(QUERY_BUILDER.LIKE(id, productId, userId), super.getQueryType('INSERT')).then(result => {
+        resolve(id)
       }).catch(error => reject(error));
     })
   }
@@ -48,25 +49,26 @@ class Product extends AbstractSQL{
 
 
   const QUERY_BUILDER = {  
-    LIKE: (productId, userId) => {
+    LIKE: (id, productId, userId) => {
       const data = {
+        [PRODUCT_THUMB_FIELDS.ID] : id,
         [PRODUCT_THUMB_FIELDS.PRODUCT_ID] : productId,
         [PRODUCT_THUMB_FIELDS.USER_ID] : userId,
         [PRODUCT_THUMB_FIELDS.STATUS] : 1
       }
-      return SqlString.format(`INSERT INTO ${PRODUCT_THUMB_TABLE_NAME} SET ${ [PRODUCT_THUMB_FIELDS.ID]} = ${uuidv4()} ,  ?`, data)
+      return SqlString.format(`INSERT INTO ${PRODUCT_THUMB_TABLE_NAME} SET ?`, data)
     },
   
     UNLIKE: (productId, userId) => {
       const query = `DELETE FROM ${PRODUCT_THUMB_TABLE_NAME} 
-        WHERE ${PRODUCT_THUMB_FIELDS.PRODUCT_ID} = ${productId} AND ${PRODUCT_THUMB_FIELDS.USER_ID} = ${userId}`;
-      return SqlString.format(query, [])
+        WHERE ${PRODUCT_THUMB_FIELDS.PRODUCT_ID} = ? AND ${PRODUCT_THUMB_FIELDS.USER_ID} = ?`;
+      return SqlString.format(query, [productId, userId])
     },
 
     COUNT: (productId) => {
       const query = ` SELECT count(${PRODUCT_THUMB_FIELDS.ID}) as total 
-      FROM ${PRODUCT_THUMB_TABLE_NAME} as c WHERE ${PRODUCT_THUMB_FIELDS.PRODUCT_ID} = ${productId}`;
-      return SqlString.format(query, [])
+      FROM ${PRODUCT_THUMB_TABLE_NAME} as c WHERE ${PRODUCT_THUMB_FIELDS.PRODUCT_ID} = ?`;
+      return SqlString.format(query, [productId])
     },
 
     GET_LIKES_USER_IDS: (productId) => {

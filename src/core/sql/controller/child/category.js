@@ -18,11 +18,11 @@ class Category extends AbstractSQL {
    * Add Category
    */
   addCategory(params, callback) {
-    console.log("params", params);
+    let id = uuidv4();
     this.connection
-      .query(QUERY_BUILDER.SAVE(params), super.getQueryType("INSERT"))
+      .query(QUERY_BUILDER.SAVE(id, params), super.getQueryType("INSERT"))
       .then((result) => {
-        callback(null, result);
+        callback(null, id);
       })
       .catch((error) => callback(error, null));
   }
@@ -98,14 +98,14 @@ class Category extends AbstractSQL {
 }
 
 const QUERY_BUILDER = {
-  SAVE: (params) => {
+  SAVE: (id,params) => {
     let { title, icon, slug } = params;
     const query = `INSERT INTO ${CATEGORY_TABLE_NAME}
-    ( ${CATEGORY_FIELDS.ID} = ${uuidv4()} , ${CATEGORY_FIELDS.TITLE}, ${CATEGORY_FIELDS.ICON} , ${CATEGORY_FIELDS.SLUG}, ${CATEGORY_FIELDS.STATUS})
-    VALUES(?,?,?,1)
+    ( ${CATEGORY_FIELDS.ID}, ${CATEGORY_FIELDS.TITLE}, ${CATEGORY_FIELDS.ICON} , ${CATEGORY_FIELDS.SLUG}, ${CATEGORY_FIELDS.STATUS})
+    VALUES(?,?,?,?,1)
     ON DUPLICATE KEY
     UPDATE ${CATEGORY_FIELDS.TITLE}=?`;
-    let res = SqlString.format(query, [title, icon, slug, title]);
+    let res = SqlString.format(query, [id, title, icon, slug, title]);
     console.log(res);
     return res;
   },

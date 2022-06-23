@@ -64,15 +64,17 @@ class Users extends AbstractSQL{
   * @param {*} options 
   */
   async register(email, password, options = {}){
+    let id = uuidv4();
     const query = `INSERT INTO \`${this.tableName}\`
-    (${USERS_FIELDS.ID} =  ${uuidv4()}  , ${USERS_FIELDS.SITE_ID}, ${USERS_FIELDS.EMAIL}, ${USERS_FIELDS.PASSWORD}, ${USERS_FIELDS.FIRST_NAME}, ${USERS_FIELDS.LAST_NAME}, ${USERS_FIELDS.PHONE}, ${USERS_FIELDS.ROLE}, ${USERS_FIELDS.EMAIL_VERIFIED}, ${USERS_FIELDS.STATUS})
-    VALUES(?,?,?,?,?,?,?,?,?)
+    (${USERS_FIELDS.ID}, ${USERS_FIELDS.SITE_ID}, ${USERS_FIELDS.EMAIL}, ${USERS_FIELDS.PASSWORD}, ${USERS_FIELDS.FIRST_NAME}, ${USERS_FIELDS.LAST_NAME}, ${USERS_FIELDS.PHONE}, ${USERS_FIELDS.ROLE}, ${USERS_FIELDS.EMAIL_VERIFIED}, ${USERS_FIELDS.STATUS})
+    VALUES(?,?,?,?,?,?,?,?,?,?)
     ON DUPLICATE KEY
     UPDATE ${USERS_FIELDS.FIRST_NAME}=?`;
 
-    const params =  [options[USERS_FIELDS.SITE_ID], email, password, options[USERS_FIELDS.FIRST_NAME], options[USERS_FIELDS.LAST_NAME], options[USERS_FIELDS.PHONE], 2, 0, 1, options[USERS_FIELDS.FIRST_NAME]]
+    const params =  [id, options[USERS_FIELDS.SITE_ID], email, password, options[USERS_FIELDS.FIRST_NAME], options[USERS_FIELDS.LAST_NAME], options[USERS_FIELDS.PHONE], 2, 0, 1, options[USERS_FIELDS.FIRST_NAME]]
 
-    return await this.connection.query(SqlString.format(query,params), super.getQueryType('INSERT'));
+    await this.connection.query(SqlString.format(query,params), super.getQueryType('INSERT'));
+    return id;
   }
   
   /**

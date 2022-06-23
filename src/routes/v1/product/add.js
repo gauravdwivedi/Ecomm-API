@@ -48,7 +48,7 @@ add.addProduct = async(req, res, next) => {
     const ProductObj = new Product(req._siteId);
     const ProdVariantObj = new ProductVariants(req._siteId);
     const ProdImageObj = new ProductImages(req._siteId);
-    let [productId, x] = await ProductObj.saveProduct(title, description, category, rating, slug);
+    let productId = await ProductObj.saveProduct(title, description, category, rating, slug);
     await ProdVariantObj.saveProductVariants(productId, attributes);
     await ProdImageObj.saveProductImages(productId, images);
     req._response = productId;

@@ -20,10 +20,11 @@ class Cart extends AbstractSQL {
    */
   addToCart(params) {
     return new Promise((resolve, reject) => {
+      let id = uuidv4();
       this.connection
-        .query(QUERY_BUILDER.ADD_TO_CART(params), super.getQueryType("INSERT"))
+        .query(QUERY_BUILDER.ADD_TO_CART(id, params), super.getQueryType("INSERT"))
         .then((result) => {
-          resolve(result);
+          resolve(id);
         })
         .catch((error) => reject(error));
     })
@@ -60,14 +61,14 @@ class Cart extends AbstractSQL {
 }
 
 const QUERY_BUILDER = {
-  ADD_TO_CART: (params) => {
+  ADD_TO_CART: (id, params) => {
     let { userId, productId, variantId, quantity } = params;
     const query = `INSERT INTO ${CART_TABLE_NAME}
-    (${CART_FIELDS.ID} = ${uuidv4()} , ${CART_FIELDS.USER_ID}, ${CART_FIELDS.PRODUCT_ID} , ${CART_FIELDS.VARIANT_ID}, ${CART_FIELDS.QUANTITY}, ${CART_FIELDS.STATUS})
-    VALUES(?,?,?,?,1)
+    (${CART_FIELDS.ID} , ${CART_FIELDS.USER_ID}, ${CART_FIELDS.PRODUCT_ID} , ${CART_FIELDS.VARIANT_ID}, ${CART_FIELDS.QUANTITY}, ${CART_FIELDS.STATUS})
+    VALUES(?,?,?,?,?,1)
     ON DUPLICATE KEY
     UPDATE ${CART_FIELDS.QUANTITY}=?`;
-    return SqlString.format(query, [userId, productId, variantId, quantity, quantity]);
+    return SqlString.format(query, [id, userId, productId, variantId, quantity, quantity]);
   },
 
   REMOVE_FROM_CART: (id) => {
