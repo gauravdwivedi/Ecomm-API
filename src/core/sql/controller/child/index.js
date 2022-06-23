@@ -14,5 +14,6 @@ module.exports = {
   // ProductMenuEntity: require('./productMenuEntity'),
   Category: require("./category"),
   ProductSave:require("./productSave"),
-  Address: require("./address")
+  Address: require("./address"),
+  Orders:require('./orders')
 }
