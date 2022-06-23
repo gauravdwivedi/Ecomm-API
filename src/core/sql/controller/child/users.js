@@ -1,5 +1,6 @@
 const AbstractSQL = require("../abstract");
 const SqlString = require('sqlstring');
+const {v4 : uuidv4} = require('uuid')
 const {Users: {FIELDS: USERS_FIELDS, TABLE_NAME: USERS_TABLE_NAME}} = require("../../model/child");
 
 class Users extends AbstractSQL{
@@ -64,7 +65,7 @@ class Users extends AbstractSQL{
   */
   async register(email, password, options = {}){
     const query = `INSERT INTO \`${this.tableName}\`
-    (${USERS_FIELDS.ID} = MD5(RAND()) , ${USERS_FIELDS.SITE_ID}, ${USERS_FIELDS.EMAIL}, ${USERS_FIELDS.PASSWORD}, ${USERS_FIELDS.FIRST_NAME}, ${USERS_FIELDS.LAST_NAME}, ${USERS_FIELDS.PHONE}, ${USERS_FIELDS.ROLE}, ${USERS_FIELDS.EMAIL_VERIFIED}, ${USERS_FIELDS.STATUS})
+    (${USERS_FIELDS.ID} =  ${uuidv4()}  , ${USERS_FIELDS.SITE_ID}, ${USERS_FIELDS.EMAIL}, ${USERS_FIELDS.PASSWORD}, ${USERS_FIELDS.FIRST_NAME}, ${USERS_FIELDS.LAST_NAME}, ${USERS_FIELDS.PHONE}, ${USERS_FIELDS.ROLE}, ${USERS_FIELDS.EMAIL_VERIFIED}, ${USERS_FIELDS.STATUS})
     VALUES(?,?,?,?,?,?,?,?,?)
     ON DUPLICATE KEY
     UPDATE ${USERS_FIELDS.FIRST_NAME}=?`;

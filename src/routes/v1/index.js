@@ -12,6 +12,7 @@ const sitemap = require('./sitemap');
 const userAuth = require('./userAuth');
 const category = require('./category');
 const cart = require('./cart');
+const orders = require('./orders');
 
 router.use('/auth', userAuth);
 router.use('/menu', menu);
@@ -24,6 +25,7 @@ router.use('/product', product);
 router.use('/category', category);
 router.use('/common', common);
 router.use('/sitemap', sitemap);
+router.use('/orders', orders);
 router.use('/liveSessions', require("./liveSessions"));
 // router.use('/productMenu', require("./productMenus"));
 router.use('/config', require("./config"));

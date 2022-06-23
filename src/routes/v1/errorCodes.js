@@ -61,6 +61,31 @@ const _errors = {
       }
     }
   },
+  E0010006: {
+    title: 'Invaild Variant ID',
+    message: 'Invalid / Product is not found',
+    info: {
+      type: "fullScreen",
+      data: {
+        description: "Product is not found",
+        cta: "retry",
+        label: "Retry"
+      }
+    }
+  },
+
+  E0010007: {
+    title: 'Order not available fo user',
+    message: 'Invalid / Order is not found',
+    info: {
+      type: "fullScreen",
+      data: {
+        description: "Order is not found",
+        cta: "retry",
+        label: "Retry"
+      }
+    }
+  },
 };
 
 module.exports = {

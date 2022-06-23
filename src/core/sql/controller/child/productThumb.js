@@ -1,7 +1,7 @@
 
 const AbstractSQL = require("../abstract");
 const SqlString = require('sqlstring');
-
+const {v4 : uuidv4} = require('uuid')
 const {
   Product: {SCHEMA:{FIELDS: PRODUCT_FIELDS, TABLE_NAME: PRODUCT_TABLE_NAME}},
   ProductThumb: {SCHEMA:{FIELDS: PRODUCT_THUMB_FIELDS, TABLE_NAME: PRODUCT_THUMB_TABLE_NAME}},
@@ -54,7 +54,7 @@ class Product extends AbstractSQL{
         [PRODUCT_THUMB_FIELDS.USER_ID] : userId,
         [PRODUCT_THUMB_FIELDS.STATUS] : 1
       }
-      return SqlString.format(`INSERT INTO ${PRODUCT_THUMB_TABLE_NAME} SET ${ [PRODUCT_THUMB_FIELDS.ID]} = MD5(RAND()) ,  ?`, data)
+      return SqlString.format(`INSERT INTO ${PRODUCT_THUMB_TABLE_NAME} SET ${ [PRODUCT_THUMB_FIELDS.ID]} = ${uuidv4()} ,  ?`, data)
     },
   
     UNLIKE: (productId, userId) => {

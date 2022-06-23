@@ -1,5 +1,6 @@
 const AbstractSQL = require("../abstract");
 const SqlString = require("sqlstring");
+const {v4 : uuidv4} = require('uuid')
 const {
   Category: {
     SCHEMA: { FIELDS: CATEGORY_FIELDS, TABLE_NAME: CATEGORY_TABLE_NAME },
@@ -100,7 +101,7 @@ const QUERY_BUILDER = {
   SAVE: (params) => {
     let { title, icon, slug } = params;
     const query = `INSERT INTO ${CATEGORY_TABLE_NAME}
-    ( ${CATEGORY_FIELDS.ID} = MD5(RAND()) , ${CATEGORY_FIELDS.TITLE}, ${CATEGORY_FIELDS.ICON} , ${CATEGORY_FIELDS.SLUG}, ${CATEGORY_FIELDS.STATUS})
+    ( ${CATEGORY_FIELDS.ID} = ${uuidv4()} , ${CATEGORY_FIELDS.TITLE}, ${CATEGORY_FIELDS.ICON} , ${CATEGORY_FIELDS.SLUG}, ${CATEGORY_FIELDS.STATUS})
     VALUES(?,?,?,1)
     ON DUPLICATE KEY
     UPDATE ${CATEGORY_FIELDS.TITLE}=?`;

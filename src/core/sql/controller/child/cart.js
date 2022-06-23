@@ -1,5 +1,6 @@
 const AbstractSQL = require("../abstract");
 const SqlString = require("sqlstring");
+const {v4 : uuidv4} = require('uuid')
 const {
   Cart: { SCHEMA: { FIELDS: CART_FIELDS, TABLE_NAME: CART_TABLE_NAME }},
   Product: { SCHEMA: { FIELDS: PRODUCT_FIELDS, TABLE_NAME: PRODUCT_TABLE_NAME }},
@@ -62,7 +63,7 @@ const QUERY_BUILDER = {
   ADD_TO_CART: (params) => {
     let { userId, productId, variantId, quantity } = params;
     const query = `INSERT INTO ${CART_TABLE_NAME}
-    (${CART_FIELDS.ID} = MD5(RAND()) , ${CART_FIELDS.USER_ID}, ${CART_FIELDS.PRODUCT_ID} , ${CART_FIELDS.VARIANT_ID}, ${CART_FIELDS.QUANTITY}, ${CART_FIELDS.STATUS})
+    (${CART_FIELDS.ID} = ${uuidv4()} , ${CART_FIELDS.USER_ID}, ${CART_FIELDS.PRODUCT_ID} , ${CART_FIELDS.VARIANT_ID}, ${CART_FIELDS.QUANTITY}, ${CART_FIELDS.STATUS})
     VALUES(?,?,?,?,1)
     ON DUPLICATE KEY
     UPDATE ${CART_FIELDS.QUANTITY}=?`;

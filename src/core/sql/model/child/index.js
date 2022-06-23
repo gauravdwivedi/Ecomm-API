@@ -20,5 +20,8 @@ module.exports = {
   Pages: require('./pages'),
   Category: require('./category'),
   ProductSave:require('./saveProduct'),
-  Address:require('./address')
+  Address:require('./address'),
+  Payments: require('./payments'),
+  PaymentMethods:require('./paymentmethods'),
+  Orders:require('./orders')
 }
