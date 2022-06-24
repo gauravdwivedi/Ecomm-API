@@ -21,6 +21,8 @@ save.saveProduct = async(req, res, next) => {
     const { productId } = req.body;
     const userId = req._userId;
     const ProdSaveObj = new ProductSave(req._siteId);
+    const row = await ProdSaveObj.duplicateCheck(productId, userId);
+    if(row.total > 0) return next(new ApiError(404, 'E0010002', {}, 'Invalid request! Please check your inputs'));
     const result = await ProdSaveObj.save(productId, userId);
 
     

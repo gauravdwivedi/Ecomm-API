@@ -48,6 +48,14 @@ class ProductSave extends AbstractSQL{
     })
   }
 
+  duplicateCheck(productId,userId){
+    return new Promise((resolve, reject) => {
+        this.connection.query(QUERY_BUILDER.DUPLICATE_CHECK(productId,userId), super.getQueryType('SELECT')).then(result => {
+          console.log(result[0]);
+          resolve(result[0])
+        }).catch(error => resolve([]));
+      })
+  }
   }
 
   const QUERY_BUILDER ={
@@ -79,7 +87,12 @@ class ProductSave extends AbstractSQL{
         WHERE ${PRODUCT_SAVE_FIELDS.PRODUCT_ID} = ?`;
 
         return SqlString.format(query,[productId])
-    }
+    },
+
+    DUPLICATE_CHECK: (productId, userId) =>{
+      const query = `SELECT ${PRODUCT_SAVE_FIELDS.ID} , COUNT(*) AS total FROM ${PRODUCT_SAVE_TABLE_NAME} WHERE ${PRODUCT_SAVE_FIELDS.PRODUCT_ID} = ? AND  ${PRODUCT_SAVE_FIELDS.USER_ID} = ? `;
+      return SqlString.format(query,[productId, userId])
+  }
   }
   
   module.exports = ProductSave;

@@ -49,9 +49,13 @@ add.addProduct = async(req, res, next) => {
     const ProdVariantObj = new ProductVariants(req._siteId);
     const ProdImageObj = new ProductImages(req._siteId);
     let productId = await ProductObj.saveProduct(title, description, category, rating, slug);
-    await ProdVariantObj.saveProductVariants(productId, attributes);
-    await ProdImageObj.saveProductImages(productId, images);
-    req._response = productId;
+    if(productId === "error"){
+      next(new ApiError(400, 'E0010002', {}, 'Invalid request! Please check your inputs'));
+    }else{
+      await ProdVariantObj.saveProductVariants(productId, attributes);
+      await ProdImageObj.saveProductImages(productId, images);
+      req._response = productId; 
+    }
     next();
   } catch(err) {
     console.error(err);
