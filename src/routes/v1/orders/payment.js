@@ -11,7 +11,7 @@ const paymentOrder = {};
 */
 paymentOrder.validateRequest = async (req, res, next) => {
     const { id , order_id, invoice_id, status} = req.body;
-    const userId = 2;
+    const userId = req._userId;
     req.body.userId = userId;
     if (!( id  && order_id  && status)) next(new ApiError(400, 'E0010002', {}, 'Invalid request! Please check your inputs'));
     next();

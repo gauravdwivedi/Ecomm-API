@@ -95,4 +95,11 @@ address.sendResponse,
 error
 )
 
+router.post("/primary-address",
+auths.setCredentials,
+auths.verify,
+address.makePrimary,
+address.sendResponse,
+error
+)
 module.exports = router;

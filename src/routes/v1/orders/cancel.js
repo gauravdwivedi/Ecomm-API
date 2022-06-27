@@ -11,8 +11,8 @@ const cancelOrder = {};
 */
 cancelOrder.validateRequest = async(req, res, next) => {
   const {orderId } = req.body;
-  const userId =2;
-//   req.body.userId = userId;
+  const userId = req._userId;
+  req.body.userId = userId;
   if(!( orderId)) next(new ApiError(400, 'E0010002', {}, 'Invalid request! Please check your inputs'));
   next();
 }

@@ -11,7 +11,8 @@ const newOrder = {};
 */
 newOrder.validateRequest = async(req, res, next) => {
   const { productId, variantId, quantity, addressId } = req.body;
-  const userId =2;
+  const userId = req._userId;
+  req.body.userId = userId;
   if(!( userId && productId && variantId && quantity && addressId)) next(new ApiError(400, 'E0010002', {}, 'Invalid request! Please check your inputs'));
   next();
 }
@@ -24,12 +25,12 @@ newOrder.validateRequest = async(req, res, next) => {
 */
 newOrder.new = async(req, res, next) => {
   try {
-    const { productId, variantId, quantity, addressId } = req.body;
+    const { userId,productId, variantId, quantity, addressId } = req.body;
     const OrdersObj = new Orders(req._siteId);
     const product = await OrdersObj.variantsByVariantId(variantId);
     if(product){
         let notes = req.body.notes 
-        let param = {userid:2, variantId, productId, quantity, addressId, notes, status:"pending", deliveryStatus:"processing", priceBeforeTax :product.price, priceAfterTax :product.price, discount : 0, tax : 0}
+        let param = {userid:userId, variantId, productId, quantity, addressId, notes, status:"pending", deliveryStatus:"processing", priceBeforeTax :product.price, priceAfterTax :product.price, discount : 0, tax : 0}
         const response = await OrdersObj.newOrder(param)
         req._response = response;
         next();
