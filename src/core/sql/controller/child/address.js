@@ -33,6 +33,21 @@ class Address extends AbstractSQL {
         })
     }
 
+    removePrimaryAddress(id){
+        return new Promise((resolve,reject) =>{
+            this.connection.query(QUERY_BUILDER.REMOVE_PRIMARY_ADDRESS(id), super.getQueryType('UPDATE')).then(result =>{
+                resolve(result)
+            }).catch(error =>resolve(error))
+        })
+    }
+
+    makePrimaryAddress(id){
+        return new Promise((resolve,reject) =>{
+            this.connection.query(QUERY_BUILDER.MAKE_PRIMARY_ADDRESS(id), super.getQueryType('UPDATE')).then(result =>{
+                resolve(result)
+            }).catch(error =>resolve(error))
+        })
+    }
 list(userId){
         return new Promise((resolve,reject)=>{
             this.connection.query(QUERY_BUILDER.LIST(userId),super.getQueryType('SELECT')).then(result=>{
@@ -70,7 +85,7 @@ const QUERY_BUILDER = {
 
     EDIT:(params) =>{
         console.log('Params',params);
-        const {id,firstName,lastName,address,city, state, zipcode,userId,longitude,latitude} = params;
+        const {id,firstName,lastName,address,city, state, zipcode,primary,userId,longitude,latitude} = params;
         const query = `UPDATE ${ADDRESS_TABLE_NAME}
             SET ${ADDRESS_FIELDS.FIRST_NAME} = ? ,
             ${ADDRESS_FIELDS.LAST_NAME} = ? ,
@@ -79,10 +94,29 @@ const QUERY_BUILDER = {
             ${ADDRESS_FIELDS.STATE} = ? ,
             ${ADDRESS_FIELDS.POSTCODE} = ? ,
             ${ADDRESS_FIELDS.LONGITUDE} = ? ,
-            ${ADDRESS_FIELDS.LATITUDE} = ? 
+            ${ADDRESS_FIELDS.LATITUDE} = ? , 
+            ${ADDRESS_FIELDS.ADD_PRIMARY} = ?  
             WHERE ${ADDRESS_FIELDS.ID} = ? AND ${ADDRESS_FIELDS.USER_ID} = ?`;
 
-            const queryParams = [firstName,lastName,address,city,state,zipcode,longitude,latitude,id,userId];
+            const queryParams = [firstName,lastName,address,city,state,zipcode,longitude,latitude,primary,id,userId];
+            const res = SqlString.format(query,queryParams)
+            return res;
+    },
+
+    REMOVE_PRIMARY_ADDRESS:(userId) =>{
+        console.log('userId',userId);
+        const query = `UPDATE ${ADDRESS_TABLE_NAME} SET ${ADDRESS_FIELDS.ADD_PRIMARY} = 0 WHERE ${ADDRESS_FIELDS.USER_ID} = ? `;
+
+            const queryParams = [userId];
+            const res = SqlString.format(query,queryParams)
+            return res;
+    },
+
+    MAKE_PRIMARY_ADDRESS:(id) =>{
+        console.log('id',id);
+        const query = `UPDATE ${ADDRESS_TABLE_NAME} SET ${ADDRESS_FIELDS.ADD_PRIMARY} = 1 WHERE ${ADDRESS_FIELDS.ID} = ? `;
+
+            const queryParams = [id];
             const res = SqlString.format(query,queryParams)
             return res;
     }

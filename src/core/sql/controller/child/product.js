@@ -26,7 +26,7 @@ class Product extends AbstractSQL{
         resolve(id);
       }).catch(error => {
         console.log(error);
-        resolve(error)
+        resolve("error")
       });
     })
   }

@@ -55,6 +55,7 @@ address.addAddress = async(req,res,next) => {
 
         let { firstName,lastName, address, city, state, zipcode,primary,longitude,latitude} = req.body;
         const AddObj = new Address(req._siteId);
+        if(primary == 1) await AddObj.removePrimaryAddress(req._userId);
       const response = await AddObj.addAddress(firstName,lastName,address,city,state,zipcode,req._userId,primary,longitude,latitude)
       console.log(response)
       req._response = response
@@ -88,11 +89,12 @@ address.edit = async (req,res,next) =>{
         let { id,firstName,lastName, address, city, state, zipcode,primary,longitude,latitude} = req.body;
         
         let params ={
-           id, firstName,lastName,address,city,state,zipcode,primary,longitude,latitude,
+           id, firstName,lastName,address,city,state,zipcode,primary:primary||0,longitude,latitude,
             userId:req._userId
         }
 
         const listEditAddObj = new Address(req._siteId);
+        if(primary == 1) await listEditAddObj.removePrimaryAddress(req._userId);
         const response = await listEditAddObj.editAddress(params)
         req._response = response;
         next();
@@ -103,6 +105,19 @@ address.edit = async (req,res,next) =>{
     }
 }
 
+address.makePrimary = async (req,res,next) =>{
+    try{
+        let { id} = req.body;
+
+        const listEditAddObj = new Address(req._siteId);
+        await listEditAddObj.removePrimaryAddress(req._userId);
+        const response = await listEditAddObj.makePrimaryAddress(id)
+        req._response = response;
+        next();
+    }catch(err){
+        return next(new ApiError(500,'E0010001',{},'There was some problem!'));
+    }
+}
 address.sendResponse = async(req, res, next) => {
     res.status(200).send({result: req._response});
     next();

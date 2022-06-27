@@ -12,7 +12,9 @@ const newOrder = {};
 */
 newOrder.validateRequest = async(req, res, next) => {
   const { productId, variantId, quantity, addressId } = req.body;
-  if(!( productId && variantId && quantity && addressId)) next(new ApiError(400, 'E0010002', {}, 'Invalid request! Please check your inputs'));
+  const userId = req._userId;
+  req.body.userId = userId;
+  if(!( userId && productId && variantId && quantity && addressId)) next(new ApiError(400, 'E0010002', {}, 'Invalid request! Please check your inputs'));
   next();
 }
 

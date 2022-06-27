@@ -11,7 +11,7 @@ const paymentOrder = {};
 */
 paymentOrder.validateRequest = async (req, res, next) => {
     const { id , order_id, invoice_id, status} = req.body;
-    const userId = 2;
+    const userId = req._userId;
     req.body.userId = userId;
     if (!( id  && order_id  && status)) next(new ApiError(400, 'E0010002', {}, 'Invalid request! Please check your inputs'));
     next();
@@ -32,8 +32,13 @@ paymentOrder.payment = async (req, res, next) => {
             let paymentData = {...req.body,orderId:order.id,methodId:order.methodId};
             let qty = Number(variant.qty_in_stock) - (Number(order.quantity))
             const response = await OrdersObj.payment(paymentData);
-            await OrdersObj.quantityUpdate({id:order.variantId,qty})
-            await OrdersObj.orderStatusUpdate({id:order.id , status: "complete"})
+            if(req.body.status ==="failed"){
+                await OrdersObj.orderStatusUpdate({id:order.id , status: "failed"})
+            }else if(req.body.status ==="captured"){
+                await OrdersObj.quantityUpdate({id:order.variantId,qty})
+                await OrdersObj.orderStatusUpdate({id:order.id , status: "success"})
+            }
+            
             req._response = response;
             next();
         } else {
