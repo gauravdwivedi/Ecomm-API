@@ -9,6 +9,7 @@ const FIELDS = {
     VARIANT_ID: "variantId",
     PRODUCT_ID: "productId",
     QUANTITY: "quantity",
+    RAZORPAY_ORDER_ID: "razorpayOrderId",
     STATUS: "status",
     DELIVERY_STATUS: "deliveryStatus",
     ADDRESS_ID: "addressId",

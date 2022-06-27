@@ -1,5 +1,6 @@
 const ApiError = require("../ApiError");
 const {Product, Orders } = require("../../../core/sql/controller/child");
+const Razorpay = require("razorpay");
 
 const newOrder = {};
 
@@ -25,15 +26,26 @@ newOrder.validateRequest = async(req, res, next) => {
 */
 newOrder.new = async(req, res, next) => {
   try {
-    const { userId,productId, variantId, quantity, addressId } = req.body;
+    const { productId, variantId, quantity, addressId } = req.body;
+    const userId = req._userId;
+    
     const OrdersObj = new Orders(req._siteId);
     const product = await OrdersObj.variantsByVariantId(variantId);
     if(product){
-        let notes = req.body.notes 
-        let param = {userid:userId, variantId, productId, quantity, addressId, notes, status:"pending", deliveryStatus:"processing", priceBeforeTax :product.price, priceAfterTax :product.price, discount : 0, tax : 0}
-        const response = await OrdersObj.newOrder(param)
-        req._response = response;
-        next();
+      var instance = new Razorpay({ key_id: process.env['RAZORPAY:KEY_ID'], key_secret: process.env['RAZORPAY:KEY_SECRET'] })
+
+      const createdOrder = await instance.orders.create({
+        amount: 50000,
+        currency: "INR",
+        receipt: "receipt#1"
+      })
+      
+      let notes = req.body.notes 
+      let param = {userid: userId, variantId, productId, quantity, razorpayOrderId: createdOrder?.['id'], addressId, notes, status:"pending", deliveryStatus:"processing", priceBeforeTax :product.price, priceAfterTax :product.price, discount : 0, tax : 0}
+      const response = await OrdersObj.newOrder(param)
+      createdOrder.hoppedinOrderId = response
+      req._response = createdOrder;
+      next();
     }else{
         return next(new ApiError(400, 'E0010006'));
     }
