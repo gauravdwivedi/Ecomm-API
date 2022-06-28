@@ -48,6 +48,8 @@ paymentOrder.payment = async (req, res, next) => {
             const response = await OrdersObj.payment(param);
             req._response = response;
             next();
+        }else if(!order){
+            return next(new ApiError(400, 'E0010007'));
         } else {
             return next(new ApiError(400, 'E0010002'));
         }
