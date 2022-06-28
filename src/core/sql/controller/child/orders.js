@@ -96,11 +96,11 @@ class Orders extends AbstractSQL {
 
 const QUERY_BUILDER = {
   NEW_ORDER: (id, params) => {
-    let { userid, variantId, productId, quantity, status, deliveryStatus, addressId, priceBeforeTax, priceAfterTax, discount, notes, tax } = params;
+    let { userid, variantId, productId, quantity, razorpayOrderId, status, deliveryStatus, addressId, priceBeforeTax, priceAfterTax, discount, notes, tax } = params;
     const query = `INSERT INTO ${ORDERS_TABLE_NAME} 
-    (${ORDERS_FIELDS.ID}, ${ORDERS_FIELDS.USER_ID}, ${ORDERS_FIELDS.VARIANT_ID}, ${ORDERS_FIELDS.PRODUCT_ID}, ${ORDERS_FIELDS.QUANTITY}, ${ORDERS_FIELDS.STATUS}, ${ORDERS_FIELDS.DELIVERY_STATUS}, ${ORDERS_FIELDS.ADDRESS_ID}, ${ORDERS_FIELDS.PRICE_BEFORE_TAX}, ${ORDERS_FIELDS.PRICE_AFTER_TAX}, ${ORDERS_FIELDS.DISCOUNT}, ${ORDERS_FIELDS.NOTES}, ${ORDERS_FIELDS.TAX}) 
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
-    return SqlString.format(query, [id,userid, variantId, productId, quantity, status, deliveryStatus, addressId, priceBeforeTax, priceAfterTax, discount, notes, tax]);
+    (${ORDERS_FIELDS.ID}, ${ORDERS_FIELDS.USER_ID}, ${ORDERS_FIELDS.VARIANT_ID}, ${ORDERS_FIELDS.PRODUCT_ID}, ${ORDERS_FIELDS.QUANTITY}, ${ORDERS_FIELDS.RAZORPAY_ORDER_ID}, ${ORDERS_FIELDS.STATUS}, ${ORDERS_FIELDS.DELIVERY_STATUS}, ${ORDERS_FIELDS.ADDRESS_ID}, ${ORDERS_FIELDS.PRICE_BEFORE_TAX}, ${ORDERS_FIELDS.PRICE_AFTER_TAX}, ${ORDERS_FIELDS.DISCOUNT}, ${ORDERS_FIELDS.NOTES}, ${ORDERS_FIELDS.TAX}) 
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+    return SqlString.format(query, [id,userid, variantId, productId, quantity, razorpayOrderId, status, deliveryStatus, addressId, priceBeforeTax, priceAfterTax, discount, notes, tax]);
   },
 
   
