@@ -10,6 +10,10 @@ const FIELDS = {
     ORDER_ID: `orderId`,
     PAYMENT_METHOD_ID: `paymentMethodId`,
     PAYMENT_STATUS: `paymentStatus`,
+    RAZOR_PAY_PAYMENT_ID: `razorPayPaymentId`,
+    RAZOR_PAY_SIGNATURE: `razorPaySignature`,
+    CREATED_AT: "createdAt",
+    UPDATED_AT: "updated_at"
 }
 
 let payments = {};

@@ -15,5 +15,6 @@ module.exports = {
   Category: require("./category"),
   ProductSave:require("./productSave"),
   Address: require("./address"),
-  Orders:require('./orders')
+  Orders:require('./orders'),
+  OrderDetails:require('./orderDetails')
 }

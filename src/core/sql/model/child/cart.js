@@ -10,6 +10,8 @@ const FIELDS = {
   VARIANT_ID: "variant_id",
   QUANTITY: "quantity",
   STATUS: "status",
+  CREATED_AT: "createdAt",
+  UPDATED_AT: "updated_at"
 }
 
 let cart = {};

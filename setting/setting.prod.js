@@ -20,10 +20,6 @@ const settings = {
       "DB_NAME":process.env["SQL:DB_NAME"],
       "DIALECT":process.env["SQL:DIALECT"],
     },
-    "RAZORPAY": {
-      "KEY_ID": process.env['RAZORPAY:KEY_ID'],
-      "KEY_SECRET": process.env['RAZORPAY:KEY_SECRET'],
-    },
     "JWT": {
       "SECRET": process.env["JWT:SECRET"]
     }

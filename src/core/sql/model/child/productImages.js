@@ -8,6 +8,8 @@ const FIELDS = {
   PRODUCT_ID: "product_id",
   URL: "url",
   STATUS: "status",
+  CREATED_AT: "createdAt",
+  UPDATED_AT: "updated_at"
 }
 
 

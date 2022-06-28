@@ -9,6 +9,8 @@ const FIELDS = {
   ICON: "icon",
   SLUG: "slug",
   STATUS: "status",
+  CREATED_AT: "createdAt",
+  UPDATED_AT: "updated_at"
 }
 
 

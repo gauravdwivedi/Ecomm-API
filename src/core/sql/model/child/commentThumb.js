@@ -7,7 +7,9 @@ const FIELDS = {
   ID: "id", 
   USER_ID: "user_id",
   COMMENT_ID: "comment_id",
-  STATUS: "status"
+  STATUS: "status",
+  CREATED_AT: "createdAt",
+  UPDATED_AT: "updated_at"
 }
 
 let commentThumb = {};

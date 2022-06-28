@@ -10,7 +10,9 @@ const FIELDS = {
   DESCRIPTION: "description",
   RATING: "rating",
   SLUG: "slug",
-  STATUS: 'status'
+  STATUS: 'status',
+  CREATED_AT: "createdAt",
+  UPDATED_AT: "updated_at"
 }
 
 

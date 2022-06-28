@@ -34,7 +34,6 @@
     "nodemon": "^2.0.7",
     "path": "^0.12.7",
     "rand-token": "^1.0.1",
-    "razorpay": "^2.8.1",
     "redis": "^3.0.2",
     "sequelize": "^6.5.1",
     "string-format": "^2.0.0",
