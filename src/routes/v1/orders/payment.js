@@ -1,5 +1,5 @@
 const ApiError = require("../ApiError");
-const { Orders } = require("../../../core/sql/controller/child");
+const { OrderDetails,Orders } = require("../../../core/sql/controller/child");
 
 const paymentOrder = {};
 
@@ -28,14 +28,17 @@ paymentOrder.payment = async (req, res, next) => {
         const OrdersObj = new Orders(req._siteId);
         const order = await OrdersObj.latestOrder({userId : req.body.userId , status: "pending",method:"razorpay" });
         if (order) {
-            const variant = await OrdersObj.variantsByVariantId(order.variantId);
             let paymentData = {...req.body,orderId:order.id,methodId:order.methodId};
-            let qty = Number(variant.qty_in_stock) - (Number(order.quantity))
             const response = await OrdersObj.payment(paymentData);
             if(req.body.status ==="failed"){
                 await OrdersObj.orderStatusUpdate({id:order.id , status: "failed"})
             }else if(req.body.status ==="captured"){
-                await OrdersObj.quantityUpdate({id:order.variantId,qty})
+                const OrderDetailsObj = new OrderDetails(req._siteId);
+                let orderDetails = await OrderDetailsObj.orderDetailsByOrderId(order.id);
+                const promises = orderDetails.map(async (item) => {
+                    await OrdersObj.quantityUpdate({id: item.variantId ,  qty: item.quantity})
+                });
+                await Promise.all(promises);
                 await OrdersObj.orderStatusUpdate({id:order.id , status: "success"})
             }
             

@@ -6,9 +6,6 @@ const TABLE_NAME = "orders";
 const FIELDS = {
     ID: "id",
     USER_ID: "userid",
-    VARIANT_ID: "variantId",
-    PRODUCT_ID: "productId",
-    QUANTITY: "quantity",
     STATUS: "status",
     DELIVERY_STATUS: "deliveryStatus",
     ADDRESS_ID: "addressId",
