@@ -46,7 +46,8 @@ paymentOrder.payment = async (req, res, next) => {
             }
             let param  = {razorPayPaymentId,  razorPaySignature,razorPayInvoiceId:invoice_id || "",razorpayOrderId: order_id,status, orderId:order.id,methodId:order.methodId}
             const response = await OrdersObj.payment(param);
-            req._response = response;
+                let resp = { status, response}
+            req._response = resp;
             next();
         }else if(!order){
             return next(new ApiError(400, 'E0010007'));
