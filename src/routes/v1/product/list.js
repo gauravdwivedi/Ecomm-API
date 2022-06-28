@@ -92,6 +92,8 @@ const _wrapper = (userId, params, responses, total, cartList) => {
   let productList = [];
   responses.map(product => {
 
+    console.log(product.saved,'?? CartList',cartList)
+
     let tuple = {
       id: product.id,
       category: product.category,
@@ -103,15 +105,12 @@ const _wrapper = (userId, params, responses, total, cartList) => {
       images: product.images,
       videos: product.videos,
       likes: product.likesCount,
-      liked: userId && product.likes.some( like => like.userId === userId ) ? true : false,
-      productInCart: userId && cartList.some( cart => cart.productId === product.id ) ? true : false,
-      favourite:userId && product.saved.some( fav => fav.userId === userId) ? true:false
-
-      
+      liked: userId && console.log(product.likes.some( like => like.userId == userId )) ? true : false,
+      productInCart: userId && cartList.some( cart => cart.productId == product.id ) ? true : false,
+      favourite:userId && product.saved.some( fav => fav.userId == userId) ? true:false
     }
     productList.push(tuple);
   })
-
 
   const resp = {
     meta:{

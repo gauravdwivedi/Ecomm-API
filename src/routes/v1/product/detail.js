@@ -37,9 +37,9 @@ detail.fetchSQL = async (req, res, next) => {
     const productInCart = userId && cartList.some( cart => cart.productId === product.id ) ? true : false
     const likesCount = await new ProductThumb(req._siteId).count(product.id);
     const likes = await new ProductThumb(req._siteId).getLikesUserIds(product.id);
-    const liked = userId && likes.some( like => like.userId === userId ) ? true : false
+    const liked = userId && likes.some( like => like.userId == userId ) ? true : false
     const favourite = await new ProductSave(req._siteId).getFavouritesUserIds(product.id);
-    const saved = userId && favourite.some( fav => fav.userId === userId) ? true : false
+    const saved = userId && favourite.some( fav => fav.userId == userId) ? true : false
     res.status(200).send(base.success({result: { ...product, attributes, images, category, videos, likes: likesCount, liked,saved, productInCart }}));
     next();
   }
