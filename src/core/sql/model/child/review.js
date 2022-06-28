@@ -13,7 +13,8 @@ const FIELDS = {
   PRODUCT_ID: "product_id",
   CREATE_TIME: "created_at",
   STATUS: "status",
-  UPDATE_TIME: "updated_at"
+  UPDATE_TIME: "updated_at",
+  CREATED_AT: "createdAt"
 }
 
 let review = {};

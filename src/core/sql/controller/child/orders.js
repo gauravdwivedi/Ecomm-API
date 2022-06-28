@@ -155,14 +155,14 @@ const QUERY_BUILDER = {
   },
 
   ORDER_PRICE_UPDATE: (params) => {
-    let { priceBeforeTax ,priceAfterTax , id } = params;
-    let data = [ priceBeforeTax ,priceAfterTax, id];
-    let query = `UPDATE ${ORDERS_TABLE_NAME} SET ${ORDERS_FIELDS.PRICE_BEFORE_TAX} = ? , ${ORDERS_FIELDS.PRICE_AFTER_TAX} = ? WHERE ${ORDERS_FIELDS.ID} = ?`;
+    let { razorpayOrderId, priceBeforeTax ,priceAfterTax , id } = params;
+    let data = [ razorpayOrderId, priceBeforeTax ,priceAfterTax, id];
+    let query = `UPDATE ${ORDERS_TABLE_NAME} SET ${ORDERS_FIELDS.RAZORPAY_ORDER_ID} = ? ,  ${ORDERS_FIELDS.PRICE_BEFORE_TAX} = ? , ${ORDERS_FIELDS.PRICE_AFTER_TAX} = ? WHERE ${ORDERS_FIELDS.ID} = ?`;
     return SqlString.format(query, data);
   },
 
   GET_VARIANTS_DETAIL_BY_VARIANT_ID: (id) => {
-    const query = ` SELECT ${VARIANTS_FIELDS.PRICE} , ${VARIANTS_FIELDS.QTY_IN_STOCK}
+    const query = ` SELECT ${VARIANTS_FIELDS.DISCOUNTED_PRICE} , ${VARIANTS_FIELDS.QTY_IN_STOCK}
       FROM ${VARIANTS_TABLE_NAME}
       WHERE ${VARIANTS_FIELDS.ID} = ?`;
     return SqlString.format(query, [id])
@@ -176,10 +176,11 @@ const QUERY_BUILDER = {
   },
 
   PAYMENT: (id, params) => {
-    let { order_id,invoice_id,orderId,methodId,status } = params;
-    let query = `INSERT INTO  ${PAYMENTS_TABLE_NAME} (${PAYMENTS_FIELDS.ID}, ${PAYMENTS_FIELDS.INVOICE_ID}, ${PAYMENTS_FIELDS.RAZOR_PAY_ORDER_ID}, ${PAYMENTS_FIELDS.ORDER_ID}, ${PAYMENTS_FIELDS.PAYMENT_METHOD_ID}, ${PAYMENTS_FIELDS.PAYMENT_STATUS}) 
-                VALUES (?,?,?,?,?,?)`;
-    return SqlString.format(query, [id,invoice_id,order_id,orderId,methodId,status]);
+    let { razorpayOrderId,razorPayInvoiceId,orderId,methodId,status,razorPayPaymentId,  razorPaySignature } = params;
+    let query = `INSERT INTO  ${PAYMENTS_TABLE_NAME} 
+    (${PAYMENTS_FIELDS.ID}, ${PAYMENTS_FIELDS.INVOICE_ID}, ${PAYMENTS_FIELDS.RAZOR_PAY_ORDER_ID}, ${PAYMENTS_FIELDS.ORDER_ID}, ${PAYMENTS_FIELDS.PAYMENT_METHOD_ID}, ${PAYMENTS_FIELDS.PAYMENT_STATUS},  ${PAYMENTS_FIELDS.RAZOR_PAY_PAYMENT_ID},   ${PAYMENTS_FIELDS.RAZOR_PAY_SIGNATURE})              
+    VALUES (?,?,?,?,?,?,?,?)`;
+    return SqlString.format(query, [id,razorPayInvoiceId,razorpayOrderId,orderId,methodId,status,razorPayPaymentId,  razorPaySignature]);
   },
 
   QUANTITY_UPDATE: (params) => {

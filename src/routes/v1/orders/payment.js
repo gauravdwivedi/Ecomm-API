@@ -1,6 +1,6 @@
 const ApiError = require("../ApiError");
 const { OrderDetails,Orders } = require("../../../core/sql/controller/child");
-
+const Razorpay = require("razorpay");
 const paymentOrder = {};
 
 /**
@@ -10,10 +10,10 @@ const paymentOrder = {};
 * @param {*} next 
 */
 paymentOrder.validateRequest = async (req, res, next) => {
-    const { id , order_id, invoice_id, status} = req.body;
+    const { razorPayPaymentId ,razorPaySignature } = req.body;
     const userId = req._userId;
     req.body.userId = userId;
-    if (!( id  && order_id  && status)) next(new ApiError(400, 'E0010002', {}, 'Invalid request! Please check your inputs'));
+    if (!( userId && razorPayPaymentId  && razorPaySignature)) next(new ApiError(400, 'E0010002', {}, 'Invalid request! Please check your inputs'));
     next();
 }
 
@@ -28,11 +28,16 @@ paymentOrder.payment = async (req, res, next) => {
         const OrdersObj = new Orders(req._siteId);
         const order = await OrdersObj.latestOrder({userId : req.body.userId , status: "pending",method:"razorpay" });
         if (order) {
-            let paymentData = {...req.body,orderId:order.id,methodId:order.methodId};
-            const response = await OrdersObj.payment(paymentData);
-            if(req.body.status ==="failed"){
+           
+            var instance = new Razorpay({ key_id: process.env['RAZORPAY:KEY_ID'], key_secret: process.env['RAZORPAY:KEY_SECRET'] })
+            let paymentObj = await instance.payments.fetch(req.body.razorPayPaymentId)
+
+            const {invoice_id,order_id,status} = paymentObj;
+            const {razorPayPaymentId,  razorPaySignature} = req.body;
+            
+            if(status ==="failed"){
                 await OrdersObj.orderStatusUpdate({id:order.id , status: "failed"})
-            }else if(req.body.status ==="captured"){
+            }else if(status ==="captured"){
                 const OrderDetailsObj = new OrderDetails(req._siteId);
                 let orderDetails = await OrderDetailsObj.orderDetailsByOrderId(order.id);
                 const promises = orderDetails.map(async (item) => {
@@ -41,7 +46,8 @@ paymentOrder.payment = async (req, res, next) => {
                 await Promise.all(promises);
                 await OrdersObj.orderStatusUpdate({id:order.id , status: "success"})
             }
-            
+            let param  = {razorPayPaymentId,  razorPaySignature,razorPayInvoiceId:invoice_id || "",razorpayOrderId: order_id,status, orderId:order.id,methodId:order.methodId}
+            const response = await OrdersObj.payment(param);
             req._response = response;
             next();
         } else {

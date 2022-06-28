@@ -6,6 +6,7 @@ const TABLE_NAME = "orders";
 const FIELDS = {
     ID: "id",
     USER_ID: "userid",
+    RAZORPAY_ORDER_ID: "razorpayOrderId",
     STATUS: "status",
     DELIVERY_STATUS: "deliveryStatus",
     ADDRESS_ID: "addressId",
@@ -14,7 +15,8 @@ const FIELDS = {
     DISCOUNT: "discount",
     NOTES: "notes",
     TAX: "tax",
-    CREATED_AT: "createdAt"
+    CREATED_AT: "createdAt",
+    UPDATED_AT: "updated_at"
 }
 
 let orders = {};

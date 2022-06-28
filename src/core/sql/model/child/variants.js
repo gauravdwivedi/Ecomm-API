@@ -13,6 +13,8 @@ const FIELDS = {
   PRICE: "price",
   DISCOUNTED_PRICE: "discounted_price",
   STATUS: "status",
+  CREATED_AT: "createdAt",
+  UPDATED_AT: "updated_at"
 }
 
 
