@@ -26,12 +26,10 @@ paymentOrder.validateRequest = async (req, res, next) => {
 paymentOrder.payment = async (req, res, next) => {
     try {
         const OrdersObj = new Orders(req._siteId);
+        var instance = new Razorpay({ key_id: process.env['RAZORPAY:KEY_ID'], key_secret: process.env['RAZORPAY:KEY_SECRET'] })
+        let paymentObj = await instance.payments.fetch(req.body.razorPayPaymentId)
         const order = await OrdersObj.latestOrder({userId : req.body.userId , status: "pending",method:"razorpay" });
-        if (order) {
-           
-            var instance = new Razorpay({ key_id: process.env['RAZORPAY:KEY_ID'], key_secret: process.env['RAZORPAY:KEY_SECRET'] })
-            let paymentObj = await instance.payments.fetch(req.body.razorPayPaymentId)
-
+        if (order && paymentObj) {
             const {invoice_id,order_id,status} = paymentObj;
             const {razorPayPaymentId,  razorPaySignature} = req.body;
             
