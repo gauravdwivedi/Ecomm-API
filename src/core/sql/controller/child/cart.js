@@ -58,6 +58,20 @@ class Cart extends AbstractSQL {
     })
   }
 
+  /**
+   * Delete Cart items on success checkout
+   */
+
+  deleteItems(id,userId){
+    return new Promise((resolve, reject) => {
+      this.connection
+        .query(QUERY_BUILDER.Remove_ITEMS(id,userId), super.getQueryType("DELETE"))
+        .then((result) => {
+          resolve(result);
+        })
+        .catch((error) => reject(error));
+    })
+  }
 }
 
 const QUERY_BUILDER = {
@@ -83,6 +97,11 @@ const QUERY_BUILDER = {
     LEFT JOIN ${VARIANT_TABLE_NAME} AS v ON v.${VARIANT_FIELDS.ID} = c.${CART_FIELDS.VARIANT_ID}
     WHERE c.${CART_FIELDS.USER_ID} = ?`;
     return SqlString.format(query, [userId]);
+  },
+
+  Remove_ITEMS:(id,userId) => {
+    const query = `DELETE FROM ${CART_TABLE_NAME} WHERE ${CART_FIELDS.VARIANT_ID} = ? AND ${CART_FIELDS.USER_ID} = ?`;
+    return SqlString.format(query,[id,userId]);
   }
 };
 

@@ -40,7 +40,7 @@ router.post(
 )
 
 router.get(
-  '/',
+  '/list',
   auths.setCredentials,
   auths.verify,
   list.validateRequest,
