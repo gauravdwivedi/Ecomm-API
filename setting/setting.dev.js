@@ -23,6 +23,10 @@ const settings = {
     "SENDGRID": {
       "API_KEY": process.env['SENDGRID:API_KEY'],
     },
+    "RAZORPAY": {
+      "KEY_ID": process.env['RAZORPAY:KEY_ID'],
+      "KEY_SECRET": process.env['RAZORPAY:KEY_SECRET'],
+    },
     "JWT": {
       "SECRET": process.env["JWT:SECRET"]
     }
