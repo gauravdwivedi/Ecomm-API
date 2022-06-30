@@ -15,7 +15,9 @@ const FIELDS ={
     FIRST_NAME:"first_name",
     LAST_NAME:"last_name",
     LONGITUDE:"longitude",
-    LATITUDE:"latitude"
+    LATITUDE:"latitude",
+    CREATED_AT: "createdAt",
+    UPDATED_AT: "updated_at"
 }
 
 let address ={};

@@ -7,6 +7,8 @@ const FIELDS = {
     ID: "id",
     TYPE: `type`,
     STATUS: `status`,
+    CREATED_AT: "createdAt",
+    UPDATED_AT: "updated_at"
 }
 
 let paymentMethods = {};

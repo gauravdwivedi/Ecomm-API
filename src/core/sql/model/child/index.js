@@ -23,5 +23,6 @@ module.exports = {
   Address:require('./address'),
   Payments: require('./payments'),
   PaymentMethods:require('./paymentmethods'),
-  Orders:require('./orders')
+  Orders:require('./orders'),
+  OrderDetails:require('./orderDetails')
 }

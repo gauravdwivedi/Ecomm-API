@@ -40,7 +40,7 @@ class Orders extends AbstractSQL {
   }
 
   /**
-   * cancel Order
+   *  Order status update
    */
    orderStatusUpdate(params) {
     return new Promise((resolve, reject) => {
@@ -52,6 +52,21 @@ class Orders extends AbstractSQL {
         .catch((error) => reject(error));
     })
   }
+
+  /**
+   *  Order price update
+   */
+   orderPriceUpdate(params) {
+    return new Promise((resolve, reject) => {
+      this.connection
+        .query(QUERY_BUILDER.ORDER_PRICE_UPDATE(params), super.getQueryType("UPDATE"))
+        .then((result) => {
+          resolve(result);
+        })
+        .catch((error) => reject(error));
+    })
+  }
+
 
   /**
    * latest Order
@@ -92,15 +107,43 @@ class Orders extends AbstractSQL {
         .catch((error) => reject(error));
     })
   }
+
+  /**
+   * order list from user
+   */
+   orders(id) {
+    return new Promise((resolve, reject) => {
+      this.connection
+        .query(QUERY_BUILDER.ORDER_LIST_BY_USER_ID(id), super.getQueryType("SELECT"))
+        .then((result) => {
+          resolve(result);
+        })
+        .catch((error) => reject(error));
+    })
+  }
+
+  /**
+   * order details by id
+   */
+   orderDetailsById(id) {
+    return new Promise((resolve, reject) => {
+      this.connection
+        .query(QUERY_BUILDER.ORDER_DETAILS_BY_ID(id), super.getQueryType("SELECT"))
+        .then((result) => {
+          resolve(result[0]);
+        })
+        .catch((error) => reject(error));
+    })
+  }
 }
 
 const QUERY_BUILDER = {
   NEW_ORDER: (id, params) => {
-    let { userid, variantId, productId, quantity, razorpayOrderId, status, deliveryStatus, addressId, priceBeforeTax, priceAfterTax, discount, notes, tax } = params;
+    let { userid, status, deliveryStatus, addressId, priceBeforeTax, priceAfterTax, discount, notes, tax } = params;
     const query = `INSERT INTO ${ORDERS_TABLE_NAME} 
-    (${ORDERS_FIELDS.ID}, ${ORDERS_FIELDS.USER_ID}, ${ORDERS_FIELDS.VARIANT_ID}, ${ORDERS_FIELDS.PRODUCT_ID}, ${ORDERS_FIELDS.QUANTITY}, ${ORDERS_FIELDS.RAZORPAY_ORDER_ID}, ${ORDERS_FIELDS.STATUS}, ${ORDERS_FIELDS.DELIVERY_STATUS}, ${ORDERS_FIELDS.ADDRESS_ID}, ${ORDERS_FIELDS.PRICE_BEFORE_TAX}, ${ORDERS_FIELDS.PRICE_AFTER_TAX}, ${ORDERS_FIELDS.DISCOUNT}, ${ORDERS_FIELDS.NOTES}, ${ORDERS_FIELDS.TAX}) 
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
-    return SqlString.format(query, [id,userid, variantId, productId, quantity, razorpayOrderId, status, deliveryStatus, addressId, priceBeforeTax, priceAfterTax, discount, notes, tax]);
+    (${ORDERS_FIELDS.ID}, ${ORDERS_FIELDS.USER_ID}, ${ORDERS_FIELDS.STATUS}, ${ORDERS_FIELDS.DELIVERY_STATUS}, ${ORDERS_FIELDS.ADDRESS_ID}, ${ORDERS_FIELDS.PRICE_BEFORE_TAX}, ${ORDERS_FIELDS.PRICE_AFTER_TAX}, ${ORDERS_FIELDS.DISCOUNT}, ${ORDERS_FIELDS.NOTES}, ${ORDERS_FIELDS.TAX}) 
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+    return SqlString.format(query, [id,userid, status, deliveryStatus, addressId, priceBeforeTax, priceAfterTax, discount, notes, tax]);
   },
 
   
@@ -111,8 +154,15 @@ const QUERY_BUILDER = {
     return SqlString.format(query, data);
   },
 
+  ORDER_PRICE_UPDATE: (params) => {
+    let { razorpayOrderId, priceBeforeTax ,priceAfterTax , id } = params;
+    let data = [ razorpayOrderId, priceBeforeTax ,priceAfterTax, id];
+    let query = `UPDATE ${ORDERS_TABLE_NAME} SET ${ORDERS_FIELDS.RAZORPAY_ORDER_ID} = ? ,  ${ORDERS_FIELDS.PRICE_BEFORE_TAX} = ? , ${ORDERS_FIELDS.PRICE_AFTER_TAX} = ? WHERE ${ORDERS_FIELDS.ID} = ?`;
+    return SqlString.format(query, data);
+  },
+
   GET_VARIANTS_DETAIL_BY_VARIANT_ID: (id) => {
-    const query = ` SELECT ${VARIANTS_FIELDS.PRICE} , ${VARIANTS_FIELDS.QTY_IN_STOCK}
+    const query = ` SELECT ${VARIANTS_FIELDS.DISCOUNTED_PRICE} , ${VARIANTS_FIELDS.QTY_IN_STOCK}
       FROM ${VARIANTS_TABLE_NAME}
       WHERE ${VARIANTS_FIELDS.ID} = ?`;
     return SqlString.format(query, [id])
@@ -126,17 +176,28 @@ const QUERY_BUILDER = {
   },
 
   PAYMENT: (id, params) => {
-    let { order_id,invoice_id,orderId,methodId,status } = params;
-    let query = `INSERT INTO  ${PAYMENTS_TABLE_NAME} (${PAYMENTS_FIELDS.ID}, ${PAYMENTS_FIELDS.INVOICE_ID}, ${PAYMENTS_FIELDS.RAZOR_PAY_ORDER_ID}, ${PAYMENTS_FIELDS.ORDER_ID}, ${PAYMENTS_FIELDS.PAYMENT_METHOD_ID}, ${PAYMENTS_FIELDS.PAYMENT_STATUS}) 
-                VALUES (?,?,?,?,?,?)`;
-    return SqlString.format(query, [id,invoice_id,order_id,orderId,methodId,status]);
+    let { razorpayOrderId,razorPayInvoiceId,orderId,methodId,status,razorPayPaymentId,  razorPaySignature } = params;
+    let query = `INSERT INTO  ${PAYMENTS_TABLE_NAME} 
+    (${PAYMENTS_FIELDS.ID}, ${PAYMENTS_FIELDS.INVOICE_ID}, ${PAYMENTS_FIELDS.RAZOR_PAY_ORDER_ID}, ${PAYMENTS_FIELDS.ORDER_ID}, ${PAYMENTS_FIELDS.PAYMENT_METHOD_ID}, ${PAYMENTS_FIELDS.PAYMENT_STATUS},  ${PAYMENTS_FIELDS.RAZOR_PAY_PAYMENT_ID},   ${PAYMENTS_FIELDS.RAZOR_PAY_SIGNATURE})              
+    VALUES (?,?,?,?,?,?,?,?)`;
+    return SqlString.format(query, [id,razorPayInvoiceId,razorpayOrderId,orderId,methodId,status,razorPayPaymentId,  razorPaySignature]);
   },
 
   QUANTITY_UPDATE: (params) => {
     let {  qty , id} = params;
-    let query = `UPDATE ${VARIANTS_TABLE_NAME} SET ${VARIANTS_FIELDS.QTY_IN_STOCK}= ? WHERE ${VARIANTS_FIELDS.ID} = ?`;
+    let query = `UPDATE ${VARIANTS_TABLE_NAME} SET ${VARIANTS_FIELDS.QTY_IN_STOCK} = ( ${VARIANTS_FIELDS.QTY_IN_STOCK} - ? ) WHERE ${VARIANTS_FIELDS.ID} = ?`;
     return SqlString.format(query, [qty , id]);
   },
+
+  ORDER_LIST_BY_USER_ID: (id) => {
+     const query = `SELECT ${ORDERS_FIELDS.ID}, ${ORDERS_FIELDS.USER_ID}, ${ORDERS_FIELDS.STATUS}, ${ORDERS_FIELDS.DELIVERY_STATUS}, ${ORDERS_FIELDS.ADDRESS_ID}, ${ORDERS_FIELDS.PRICE_BEFORE_TAX}, ${ORDERS_FIELDS.PRICE_AFTER_TAX}, ${ORDERS_FIELDS.DISCOUNT}, ${ORDERS_FIELDS.NOTES}, ${ORDERS_FIELDS.TAX}  FROM  ${ORDERS_TABLE_NAME}  WHERE  ${ORDERS_FIELDS.USER_ID} =  ? `;
+    return SqlString.format(query, [id])
+  },
+
+  ORDER_DETAILS_BY_ID: (id) => {
+    const query = `SELECT ${ORDERS_FIELDS.ID}, ${ORDERS_FIELDS.USER_ID}, ${ORDERS_FIELDS.STATUS}, ${ORDERS_FIELDS.DELIVERY_STATUS}, ${ORDERS_FIELDS.ADDRESS_ID}, ${ORDERS_FIELDS.PRICE_BEFORE_TAX}, ${ORDERS_FIELDS.PRICE_AFTER_TAX}, ${ORDERS_FIELDS.DISCOUNT}, ${ORDERS_FIELDS.NOTES}, ${ORDERS_FIELDS.TAX}  FROM  ${ORDERS_TABLE_NAME}  WHERE  ${ORDERS_FIELDS.ID} =  ? `;
+   return SqlString.format(query, [id])
+ },
 };
 
 module.exports = Orders;
