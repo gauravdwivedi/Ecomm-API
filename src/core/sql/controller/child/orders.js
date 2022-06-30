@@ -135,6 +135,18 @@ class Orders extends AbstractSQL {
         .catch((error) => reject(error));
     })
   }
+
+  addressIdByPaymentId(id){
+    return new Promise((resolve, reject) => {
+      this.connection
+        .query(QUERY_BUILDER.ORDER_ADDRESSID_BY_PAYMENT_ID(id), super.getQueryType("SELECT"))
+        .then((result) => {
+          resolve(result[0]);
+        })
+        .catch((error) => reject(error));
+    })
+  }
+
 }
 
 const QUERY_BUILDER = {
@@ -146,7 +158,6 @@ const QUERY_BUILDER = {
     return SqlString.format(query, [id,userid, status, deliveryStatus, addressId, priceBeforeTax, priceAfterTax, discount, notes, tax]);
   },
 
-  
   ORDER_STATUS_UPDATE: (params) => {
     let { status, id } = params;
     let data = [status, id];
@@ -198,6 +209,13 @@ const QUERY_BUILDER = {
     const query = `SELECT ${ORDERS_FIELDS.ID}, ${ORDERS_FIELDS.USER_ID}, ${ORDERS_FIELDS.STATUS}, ${ORDERS_FIELDS.DELIVERY_STATUS}, ${ORDERS_FIELDS.ADDRESS_ID}, ${ORDERS_FIELDS.PRICE_BEFORE_TAX}, ${ORDERS_FIELDS.PRICE_AFTER_TAX}, ${ORDERS_FIELDS.DISCOUNT}, ${ORDERS_FIELDS.NOTES}, ${ORDERS_FIELDS.TAX}  FROM  ${ORDERS_TABLE_NAME}  WHERE  ${ORDERS_FIELDS.ID} =  ? `;
    return SqlString.format(query, [id])
  },
+
+ ORDER_ADDRESSID_BY_PAYMENT_ID:(id)=>{
+  const query = `SELECT ${ORDERS_TABLE_NAME}.${ORDERS_FIELDS.ADDRESS_ID} 
+                  FROM ${ORDERS_TABLE_NAME}
+                  JOIN ${PAYMENTS_TABLE_NAME} ON ${PAYMENTS_TABLE_NAME}.${PAYMENTS_FIELDS.ORDER_ID} = ${ORDERS_TABLE_NAME}.${ORDERS_FIELDS.ID} WHERE ${PAYMENTS_TABLE_NAME}.${PAYMENTS_FIELDS.ID} = ? `;
+                  return SqlString.format(query, [id])
+ }
 };
 
 module.exports = Orders;

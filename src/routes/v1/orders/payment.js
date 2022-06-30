@@ -51,8 +51,10 @@ paymentOrder.payment = async (req, res, next) => {
             }
             let param  = {razorPayPaymentId,  razorPaySignature,razorPayInvoiceId:invoice_id || "",razorpayOrderId: order_id,status, orderId:order.id,methodId:order.methodId}
             const response = await OrdersObj.payment(param);
+            const addressId = await OrdersObj.addressIdByPaymentId(response);
+            console.log('Address ID',addressId)
 
-                let resp = { status, response}
+                let resp = { status, response,addressId: addressId.addressId}
             req._response = resp;
             next();
         }else if(!order){

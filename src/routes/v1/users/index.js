@@ -47,9 +47,6 @@ router.post(
   error
   )
 
-
-  
-
 router.patch(
   "/updateUserRole",
   auths.setCredentials,
@@ -78,7 +75,6 @@ router.post("/add-address",
   error
 )
 
-
 router.get("/list-address",
   auths.setCredentials,
   auths.verify,
@@ -101,5 +97,14 @@ auths.verify,
 address.makePrimary,
 address.sendResponse,
 error
+)
+
+router.post("/address-detail",
+  auths.setCredentials,
+  auths.verify,
+  address.addressDetailById,
+  address.sendResponse,
+  error
+  
 )
 module.exports = router;

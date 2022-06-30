@@ -118,6 +118,28 @@ address.makePrimary = async (req,res,next) =>{
         return next(new ApiError(500,'E0010001',{},'There was some problem!'));
     }
 }
+
+
+address.addressDetailById = async (req,res,next) =>{
+    try{
+
+        let { addressId } = req.body;
+        if(addressId){
+        const addDetailObj = new Address(req._siteId);
+        const address = await addDetailObj.addressById(addressId);
+        console.log('Address Detail',address)
+        req._response =address;
+        next();
+        }
+
+        // return next(new ApiError(500,'E0010001',{},'There was some problem!'));
+        next();
+
+
+    }catch(err){
+        return next(new ApiError(500,'E0010001',{},'There was some problem!'));
+    }
+}
 address.sendResponse = async(req, res, next) => {
     res.status(200).send({result: req._response});
     next();

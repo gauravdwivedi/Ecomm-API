@@ -55,6 +55,17 @@ list(userId){
                 }).catch(error => resolve(error));
             })
         }
+
+
+        addressById(id){
+            return new Promise((resolve,reject)=>{
+                this.connection.query(QUERY_BUILDER.ADDRESS_BY_ID(id),super.getQueryType('SELECT')).then(result=>{
+                        resolve(result);
+                    }).catch(error => resolve(error));
+                })
+            }    
+
+
     }
 
 
@@ -119,7 +130,14 @@ const QUERY_BUILDER = {
             const queryParams = [id];
             const res = SqlString.format(query,queryParams)
             return res;
+    },
+
+    ADDRESS_BY_ID:(id) =>{
+        console.log('EXEcuting Address by id',id)
+        const query = ` SELECT * FROM ${ADDRESS_TABLE_NAME} WHERE ${ADDRESS_FIELDS.ID} = ?`;
+        return SqlString.format(query,[id])
     }
+
 }
 
 module.exports =Address;
