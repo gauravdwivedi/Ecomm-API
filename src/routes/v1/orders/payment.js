@@ -36,9 +36,7 @@ paymentOrder.payment = async (req, res, next) => {
             const {invoice_id,order_id,status} = paymentObj;
             const {razorPayPaymentId,  razorPaySignature} = req.body;
             
-            if(status ==="failed"){
-                await OrdersObj.orderStatusUpdate({id:order.id , status: "failed"})
-            }else if(status ==="captured"){
+            if(status ==="captured"){
                 const OrderDetailsObj = new OrderDetails(req._siteId);
                 let orderDetails = await OrderDetailsObj.orderDetailsByOrderId(order.id);
                 const promises = orderDetails.map(async (item) => {
@@ -48,6 +46,8 @@ paymentOrder.payment = async (req, res, next) => {
                 await Promise.all(promises);
                 await OrdersObj.orderStatusUpdate({id:order.id , status: "success"});
                 
+            }else{
+                await OrdersObj.orderStatusUpdate({id:order.id , status})
             }
             let param  = {razorPayPaymentId,  razorPaySignature,razorPayInvoiceId:invoice_id || "",razorpayOrderId: order_id,status, orderId:order.id,methodId:order.methodId}
             const response = await OrdersObj.payment(param);

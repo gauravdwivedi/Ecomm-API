@@ -12,7 +12,7 @@ const FIELDS = {
   SLUG: "slug",
   STATUS: 'status',
   CREATED_AT: "createdAt",
-  UPDATED_AT: "updated_at"
+  UPDATED_AT: "updatedAt"
 }
 
 

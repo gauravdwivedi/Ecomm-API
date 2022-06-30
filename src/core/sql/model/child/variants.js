@@ -5,16 +5,16 @@
 const TABLE_NAME = "variants";
 const FIELDS = {
   ID: "id",
-  PRODUCT_ID: "product_id",
+  PRODUCT_ID: "productId",
   SKU: "sku",
   SIZE: "size",
   COLOR: "color",
-  QTY_IN_STOCK: "qty_in_stock",
+  QTY_IN_STOCK: "qtyInStock",
   PRICE: "price",
-  DISCOUNTED_PRICE: "discounted_price",
+  DISCOUNTED_PRICE: "discountedPrice",
   STATUS: "status",
   CREATED_AT: "createdAt",
-  UPDATED_AT: "updated_at"
+  UPDATED_AT: "updatedAt"
 }
 
 

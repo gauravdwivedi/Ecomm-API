@@ -5,11 +5,11 @@
 const TABLE_NAME = "product_images";
 const FIELDS = {
   ID: "id",
-  PRODUCT_ID: "product_id",
+  PRODUCT_ID: "productId",
   URL: "url",
   STATUS: "status",
   CREATED_AT: "createdAt",
-  UPDATED_AT: "updated_at"
+  UPDATED_AT: "updatedAt"
 }
 
 

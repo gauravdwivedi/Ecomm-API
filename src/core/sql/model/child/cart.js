@@ -5,13 +5,13 @@
 const TABLE_NAME = "cart";
 const FIELDS = {
   ID: "id",
-  USER_ID: "user_id",
-  PRODUCT_ID: "product_id",
-  VARIANT_ID: "variant_id",
+  USER_ID: "userId",
+  PRODUCT_ID: "productId",
+  VARIANT_ID: "variantId",
   QUANTITY: "quantity",
   STATUS: "status",
   CREATED_AT: "createdAt",
-  UPDATED_AT: "updated_at"
+  UPDATED_AT: "updatedAt"
 }
 
 let cart = {};

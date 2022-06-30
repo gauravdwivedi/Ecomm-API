@@ -5,11 +5,11 @@
 const TABLE_NAME = "comment_thumb";
 const FIELDS = {
   ID: "id", 
-  USER_ID: "user_id",
-  COMMENT_ID: "comment_id",
+  USER_ID: "userId",
+  COMMENT_ID: "commentId",
   STATUS: "status",
   CREATED_AT: "createdAt",
-  UPDATED_AT: "updated_at"
+  UPDATED_AT: "updatedAt"
 }
 
 let commentThumb = {};

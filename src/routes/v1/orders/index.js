@@ -8,6 +8,8 @@ const cancelOrder = require('./cancel');
 const paymentOrder = require('./payment');
 const list = require('./list');
 const details = require('./details');
+const allOrders = require('./allOrders');
+const userOrders = require('./userOrders');
 
 router.post(
   '/new',
@@ -46,6 +48,26 @@ router.get(
   list.validateRequest,
   list.orders,
   list.sendResponse,
+  error
+)
+
+router.get(
+  '/allOrders',
+  auths.setCredentials,
+  auths.verify,
+  allOrders.validateRequest,
+  allOrders.orders,
+  allOrders.sendResponse,
+  error
+)
+
+router.get(
+  '/user/:userId',
+  auths.setCredentials,
+  auths.verify,
+  userOrders.validateRequest,
+  userOrders.order,
+  userOrders.sendResponse,
   error
 )
 

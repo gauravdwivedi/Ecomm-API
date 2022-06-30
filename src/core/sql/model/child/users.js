@@ -5,20 +5,20 @@
 const TABLE_NAME = "users";
 const FIELDS = {
   ID: "id",
-  SITE_ID: "site_id",
+  SITE_ID: "siteId",
   EMAIL: "email",
   PASSWORD: "password",
-  FIRST_NAME: "first_name",
-  LAST_NAME: "last_name",
+  FIRST_NAME: "firstName",
+  LAST_NAME: "lastName",
   AVATAR: "avatar",
   STATUS: "status",
   ROLE: "role",
-  EMAIL_VERIFIED: "email_verified",
+  EMAIL_VERIFIED: "emailVerified",
   GENDER: "gender",
   DOB: "dob",
   PHONE: "phone",
-  CREATED_AT: "created_at",
-  UPDATED_AT: "updated_at"
+  CREATED_AT: "createdAt",
+  UPDATED_AT: "updatedAt"
 }
 
 module.exports = {

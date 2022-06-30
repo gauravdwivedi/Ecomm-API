@@ -5,11 +5,11 @@
 const TABLE_NAME = "product_thumb";
 const FIELDS = {
   ID: "id", 
-  USER_ID: "user_id",
-  PRODUCT_ID: "product_id",
+  USER_ID: "userId",
+  PRODUCT_ID: "productId",
   STATUS: "status",
   CREATED_AT: "createdAt",
-  UPDATED_AT: "updated_at"
+  UPDATED_AT: "updatedAt"
 }
 
 let productThumb = {};
