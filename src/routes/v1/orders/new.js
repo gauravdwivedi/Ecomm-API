@@ -25,6 +25,8 @@ newOrder.validateRequest = async (req, res, next) => {
 * @param {*} res 
 * @param {*} next 
 */
+
+
 newOrder.new = async (req, res, next) => {
   try {
     const { userId, addressId,data } = req.body;
@@ -34,6 +36,7 @@ newOrder.new = async (req, res, next) => {
     let notes = req.body.notes
     let param = { userid: userId, addressId, notes, status: "pending", deliveryStatus: "processing", priceBeforeTax: 0, priceAfterTax: 0, discount: 0, tax: 0 }
     const response = await OrdersObj.newOrder(param);
+    console.log(' Response => ',response);
     if (isValidUUID(response)) {
       const promises = data.map(async (item) => {
         let product = await OrdersObj.variantsByVariantId(item.variantId);
@@ -47,17 +50,17 @@ newOrder.new = async (req, res, next) => {
       });
       await Promise.all(promises);
 
-
       var instance = new Razorpay({ key_id: process.env['RAZORPAY:KEY_ID'], key_secret: process.env['RAZORPAY:KEY_SECRET'] })
 
       const createdOrder = await instance.orders.create({
-        amount: newPrice,
+        amount: newPrice*100,
         currency: "INR",
         receipt: "receipt#1"
       })
+
+      console.log('CREATE ORDER RESPONSE',createdOrder)
       
       await OrdersObj.orderPriceUpdate({ id: response, priceBeforeTax: newPrice, priceAfterTax: newPrice, razorpayOrderId:createdOrder?.['id'] })
-
       createdOrder.hoppedinOrderId = response
       req._response = createdOrder;
       next();

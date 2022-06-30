@@ -1,5 +1,5 @@
 const ApiError = require("../ApiError");
-const { OrderDetails,Orders } = require("../../../core/sql/controller/child");
+const { OrderDetails,Orders, Cart } = require("../../../core/sql/controller/child");
 const Razorpay = require("razorpay");
 const paymentOrder = {};
 
@@ -25,7 +25,10 @@ paymentOrder.validateRequest = async (req, res, next) => {
 */
 paymentOrder.payment = async (req, res, next) => {
     try {
+        const userId = req._userId;
         const OrdersObj = new Orders(req._siteId);
+        const CartObj = new Cart(req._siteId);
+
         var instance = new Razorpay({ key_id: process.env['RAZORPAY:KEY_ID'], key_secret: process.env['RAZORPAY:KEY_SECRET'] })
         let paymentObj = await instance.payments.fetch(req.body.razorPayPaymentId)
         const order = await OrdersObj.latestOrder({userId : req.body.userId , status: "pending",method:"razorpay" });
@@ -40,13 +43,19 @@ paymentOrder.payment = async (req, res, next) => {
                 let orderDetails = await OrderDetailsObj.orderDetailsByOrderId(order.id);
                 const promises = orderDetails.map(async (item) => {
                     await OrdersObj.quantityUpdate({id: item.variantId ,  qty: item.quantity})
+                    await CartObj.deleteItems(item.variantId,userId);
                 });
                 await Promise.all(promises);
-                await OrdersObj.orderStatusUpdate({id:order.id , status: "success"})
+                await OrdersObj.orderStatusUpdate({id:order.id , status: "success"});
+                
             }
             let param  = {razorPayPaymentId,  razorPaySignature,razorPayInvoiceId:invoice_id || "",razorpayOrderId: order_id,status, orderId:order.id,methodId:order.methodId}
             const response = await OrdersObj.payment(param);
-            req._response = response;
+            const addressId = await OrdersObj.addressIdByPaymentId(response);
+            console.log('Address ID',addressId)
+
+                let resp = { status, response,addressId: addressId.addressId}
+            req._response = resp;
             next();
         }else if(!order){
             return next(new ApiError(400, 'E0010007'));

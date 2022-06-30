@@ -10,6 +10,7 @@ const list = {};
 * @param {*} next 
 */
 list.validateRequest = async(req, res, next) => {
+  console.log(req.body)
   next();
 }
 
@@ -51,7 +52,7 @@ list.orders = async(req, res, next) => {
 */
 list.sendResponse = async(req, res, next) => {
   res.status(200).send({result: req._response});
-  next();
+  // next();
 }
 
 module.exports = list;
