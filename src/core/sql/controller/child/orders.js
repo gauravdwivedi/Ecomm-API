@@ -147,6 +147,19 @@ class Orders extends AbstractSQL {
     })
   }
 
+  /**
+   * get all orders
+   */
+   allOrders() {
+    return new Promise((resolve, reject) => {
+      this.connection
+        .query(QUERY_BUILDER.ORDER_LIST(), super.getQueryType("SELECT"))
+        .then((result) => {
+          resolve(result);
+        })
+        .catch((error) => reject(error));
+    })
+  }
 }
 
 const QUERY_BUILDER = {
@@ -215,7 +228,12 @@ const QUERY_BUILDER = {
                   FROM ${ORDERS_TABLE_NAME}
                   JOIN ${PAYMENTS_TABLE_NAME} ON ${PAYMENTS_TABLE_NAME}.${PAYMENTS_FIELDS.ORDER_ID} = ${ORDERS_TABLE_NAME}.${ORDERS_FIELDS.ID} WHERE ${PAYMENTS_TABLE_NAME}.${PAYMENTS_FIELDS.ID} = ? `;
                   return SqlString.format(query, [id])
- }
+ },
+
+ ORDER_LIST: () => {
+  const query = `SELECT ${ORDERS_FIELDS.ID}, ${ORDERS_FIELDS.USER_ID}, ${ORDERS_FIELDS.STATUS}, ${ORDERS_FIELDS.DELIVERY_STATUS}, ${ORDERS_FIELDS.ADDRESS_ID}, ${ORDERS_FIELDS.PRICE_BEFORE_TAX}, ${ORDERS_FIELDS.PRICE_AFTER_TAX}, ${ORDERS_FIELDS.DISCOUNT}, ${ORDERS_FIELDS.NOTES}, ${ORDERS_FIELDS.TAX}  FROM  ${ORDERS_TABLE_NAME} `;
+ return SqlString.format(query, [])
+},
 };
 
 module.exports = Orders;

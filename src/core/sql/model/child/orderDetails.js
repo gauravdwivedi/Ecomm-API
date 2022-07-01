@@ -5,13 +5,13 @@
 const TABLE_NAME = "order_details";
 const FIELDS = {
     ID: "id",
-    USER_ID: "userid",
+    USER_ID: "userId",
     ORDER_ID: "orderId",
     VARIANT_ID: "variantId",
     PRODUCT_ID: "productId",
     QUANTITY: "quantity",
     PRICE: "price",
-    UPDATED_AT: "updated_at",
+    UPDATED_AT: "updatedAt",
     CREATED_AT: "createdAt"
 }
 

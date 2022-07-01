@@ -13,7 +13,7 @@ const FIELDS = {
     RAZOR_PAY_PAYMENT_ID: `razorPayPaymentId`,
     RAZOR_PAY_SIGNATURE: `razorPaySignature`,
     CREATED_AT: "createdAt",
-    UPDATED_AT: "updated_at"
+    UPDATED_AT: "updatedAt"
 }
 
 let payments = {};

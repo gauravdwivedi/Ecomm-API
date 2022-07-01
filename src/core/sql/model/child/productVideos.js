@@ -5,14 +5,14 @@
 const TABLE_NAME = "product_videos";
 const FIELDS = {
   ID: "id",
-  PRODUCT_ID: "product_id",
+  PRODUCT_ID: "productId",
   NAME: "name",
   THUMBNAIL: "thumbnail",
   SLUG: "slug",
   DESCRIPTION: "description",
   URL: "url",
-  CREATE_TIME: "created_at",
-  UPDATE_TIME: "updated_at"
+  CREATE_TIME: "createdAt",
+  UPDATE_TIME: "updatedAt"
 }
 
 let video = {};

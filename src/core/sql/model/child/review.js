@@ -9,11 +9,11 @@ const FIELDS = {
   TEXT: "text",
   STAR: "star",
   ATTACHMENTS: "attachments",
-  USER_ID: "user_id",
-  PRODUCT_ID: "product_id",
-  CREATE_TIME: "created_at",
+  USER_ID: "userId",
+  PRODUCT_ID: "productId",
+  CREATE_TIME: "createdAt",
   STATUS: "status",
-  UPDATE_TIME: "updated_at",
+  UPDATE_TIME: "updatedAt",
   CREATED_AT: "createdAt"
 }
 
