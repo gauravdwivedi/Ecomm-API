@@ -41,10 +41,10 @@ newOrder.new = async (req, res, next) => {
       const promises = data.map(async (item) => {
         let product = await OrdersObj.variantsByVariantId(item.variantId);
         if (product) {
-          item.price = product.discounted_price;
+          item.price = product.discountedPrice;
           item.userid = userId;
           item.orderId = response;
-          newPrice = newPrice +( Number(item.quantity) * Number(product.discounted_price));
+          newPrice = newPrice +( Number(item.quantity) * Number(product.discountedPrice));
           await OrderDetailsObj.save(item);
         }
       });
