@@ -32,13 +32,13 @@ address.validateRequest = async(req,res,next) =>{
         return next(new ApiError(400, 'E001004'));
     }
 
-    if(!longitude){
-        return next(new ApiError(400, 'E001004'));
-    }
+    // if(!longitude){
+    //     return next(new ApiError(400, 'E001004'));
+    // }
 
-    if(!latitude){
-        return next(new ApiError(400, 'E001004'));
-    }
+    // if(!latitude){
+    //     return next(new ApiError(400, 'E001004'));
+    // }
     next();
 
 }
