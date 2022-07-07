@@ -100,6 +100,15 @@ const QUERY_BUILDER = {
     myQuery += min_price ? ` AND v.${VARIANTS_FIELDS.PRICE} >= ${min_price}` : '';
     myQuery += max_price ? ` AND v.${VARIANTS_FIELDS.PRICE} <= ${max_price}` : '';
     myQuery += size ? ` AND v.${VARIANTS_FIELDS.SIZE} = \'${size}\'` : '';
+
+    sort_by = (sort_by === "price") ? `v.${VARIANTS_FIELDS.PRICE}` : sort_by
+    sort_by = (sort_by === "qty") ? `v.${VARIANTS_FIELDS.QTY_IN_STOCK}` : sort_by
+    if (sort_by === "best") {
+      sort_by = `v.${VARIANTS_FIELDS.QTY_IN_STOCK} asc , v.${VARIANTS_FIELDS.PRICE} asc , p.${PRODUCT_FIELDS.CREATED_AT}`;
+      order = `asc`
+    }
+
+
     const query = ` SELECT DISTINCT p.${PRODUCT_FIELDS.ID}, p.${PRODUCT_FIELDS.CATEGORY}, p.${PRODUCT_FIELDS.TITLE}, p.${PRODUCT_FIELDS.DESCRIPTION}, p.${PRODUCT_FIELDS.RATING}, p.${PRODUCT_FIELDS.SLUG} 
       FROM ${PRODUCT_TABLE_NAME} as p
       INNER JOIN ${VARIANTS_TABLE_NAME} as v ON v.${VARIANTS_FIELDS.PRODUCT_ID} = p.${PRODUCT_FIELDS.ID}
