@@ -22,7 +22,7 @@ likeUnlike.likeProduct = async(req, res, next) => {
     const userId = req._userId;
     const ProdThumbObj = new ProductThumb(req._siteId);
     const isLikeExists = await ProdThumbObj.getLike(productId, userId);
-    if(isLikeExists.length > 0) return next(new ApiError(404, 'E0010002', {}, 'Invalid request! Please check your inputs'));
+    if(isLikeExists.length > 0) return next(new ApiError(409 , 'E0010008', {}, 'User Already liked this product'));
     const result = await ProdThumbObj.like(productId, userId);
     req._response = result;
     console.log('RESPONSE',req._response)

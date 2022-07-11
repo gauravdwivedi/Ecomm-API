@@ -86,6 +86,19 @@ const _errors = {
       }
     }
   },
+
+  E0010008: {
+    title: 'User Already liked this product',
+    message: 'Already liked',
+    info: {
+      type: "fullScreen",
+      data: {
+        description: "User Already liked this product",
+        cta: "oops !",
+        label: "Oops !"
+      }
+    }
+  },
 };
 
 module.exports = {
