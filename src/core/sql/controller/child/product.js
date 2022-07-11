@@ -99,7 +99,7 @@ const QUERY_BUILDER = {
     myQuery += category_id ? ` AND p.${PRODUCT_FIELDS.CATEGORY} = \'${category_id}\'`: '';
     myQuery += min_price ? ` AND v.${VARIANTS_FIELDS.PRICE} >= ${min_price}` : '';
     myQuery += max_price ? ` AND v.${VARIANTS_FIELDS.PRICE} <= ${max_price}` : '';
-    myQuery += size ? ` AND v.${VARIANTS_FIELDS.SIZE} = \'${size}\'` : '';
+    myQuery += size ? ` AND v.${VARIANTS_FIELDS.SIZE} IN (\"${size}\")` : '';
 
     sort_by = (sort_by === "price") ? `v.${VARIANTS_FIELDS.PRICE}` : sort_by
     sort_by = (sort_by === "qty") ? `v.${VARIANTS_FIELDS.QTY_IN_STOCK}` : sort_by

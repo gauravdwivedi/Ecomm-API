@@ -52,6 +52,9 @@ list.productList = async (req, res, next) => {
       let mycategory = await CatObj.fetchDetail({slug: category});
       category_id = await mycategory?.id
     }
+    if(Array.isArray(JSON.parse(size))){
+        size = JSON.parse(size).join('","')
+    }
     ProdObj.list(sort_by, order, min_price, max_price, category_id, size, offset, limit, async (error, result)=>{
       if(result && result.length){
         let myresult = [];

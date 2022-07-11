@@ -99,6 +99,19 @@ const _errors = {
       }
     }
   },
+
+  E0010009: {
+    title: 'ZipCode Should be Number',
+    message: 'zipCode Should be Numbe',
+    info: {
+      type: "fullScreen",
+      data: {
+        description: "ZipCode Should be Number",
+        cta: "oops !",
+        label: "Oops !"
+      }
+    }
+  },
 };
 
 module.exports = {
