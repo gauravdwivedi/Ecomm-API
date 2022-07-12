@@ -52,7 +52,7 @@ list.productList = async (req, res, next) => {
       let mycategory = await CatObj.fetchDetail({slug: category});
       category_id = await mycategory?.id
     }
-    if(Array.isArray(JSON.parse(size))){
+    if(size && Array.isArray(JSON.parse(size))){
         size = JSON.parse(size).join('","')
     }
     ProdObj.list(sort_by, order, min_price, max_price, category_id, size, offset, limit, async (error, result)=>{
@@ -70,7 +70,7 @@ list.productList = async (req, res, next) => {
           myresult.push({ ...product, attributes, images, category, videos, likesCount, likes ,saved});
         };
 
-        const cartList = await cartObj.listCart(userId);
+        const cartList = (req._userId) ? await cartObj.listCart(userId) : [];
         const total = await ProdObj.count();
         // const saved = await favouriteList.list(userId)
         
