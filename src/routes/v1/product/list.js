@@ -14,12 +14,6 @@ list.validateBody = (req, res, next) => {
   if(!sort_by) req.query.sort_by = 'id';
   if(!order) req.query.order = 'desc';
   if(!limit) limit = 20;
-  // req.query.sort_by = (req.query.sort_by ==="price") ? "v.price" : req.query.sort_by
-  // req.query.sort_by = (req.query.sort_by ==="qty") ? "v.qty_in_stock" : req.query.sort_by
-  // if(req.query.sort_by ==="best"){
-  //   req.query.sort_by = "v.qty_in_stock asc , v.price asc , p.created_at";
-  //   req.query.order = "asc"
-  // }
   page = page ? Number(page) : 1;
 
   req.query.page = page;
@@ -108,7 +102,7 @@ const _wrapper = (userId, params, responses, total, cartList) => {
       images: product.images,
       videos: product.videos,
       likes: product.likesCount,
-      liked: userId && console.log(product.likes.some( like => like.userId == userId )) ? true : false,
+      liked: userId && product.likes.some( like => like.userId == userId ) ? true : false,
       productInCart: userId && cartList.some( cart => cart.productId == product.id ) ? true : false,
       favourite:userId && product.saved.some( fav => fav.userId == userId) ? true:false
     }

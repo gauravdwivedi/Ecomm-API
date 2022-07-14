@@ -67,7 +67,7 @@ auth.setProfile = async(req, res, next) => {
       const decoded = jwt.verify(token, superConfig["JWT"]["SECRET"].format({siteId: req._siteId}));
       const {id} = decoded;
       if(id){
-        req._userId = Number(id);
+        req._userId = id;
         next();
       }
       else next();
