@@ -7,7 +7,7 @@ const address ={};
 address.validateRequest = async(req,res,next) =>{
     console.log(req.body)
     const { firstName,lastName, address, city,state,zipcode,longitude,latitude} = req.body;
-
+    console.log('ZIPCODE',zipcode)
     if(typeof  firstName !== 'string'|| firstName.length>100){
         return next(new ApiError(400, 'E001004'));
     }
@@ -32,17 +32,18 @@ address.validateRequest = async(req,res,next) =>{
         return next(new ApiError(400, 'E001004'));
     }
 
-    if(!isNaN(zipcode)){
+    if(isNaN(zipcode)){
         return next(new ApiError(400, 'E0010009'));
     }
 
-    if(!longitude){
-        return next(new ApiError(400, 'E001004'));
-    }
+    // if(!longitude){
+    //     return next(new ApiError(400, 'E001004'));
+    // }
 
-    if(!latitude){
-        return next(new ApiError(400, 'E001004'));
-    }
+    // if(!latitude){
+    //     return next(new ApiError(400, 'E001004'));
+    // }
+    
     next();
 
 }
