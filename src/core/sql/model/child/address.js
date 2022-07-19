@@ -16,6 +16,8 @@ const FIELDS ={
     LAST_NAME:"lastName",
     LONGITUDE:"longitude",
     LATITUDE:"latitude",
+    COLONY:"colony",
+    LANDMARK:"landmark",
     CREATED_AT: "createdAt",
     UPDATED_AT: "updatedAt"
 }

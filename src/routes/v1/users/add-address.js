@@ -6,7 +6,7 @@ const address ={};
 
 address.validateRequest = async(req,res,next) =>{
     console.log(req.body)
-    const { firstName,lastName, address, city,state,zipcode,longitude,latitude} = req.body;
+    const { firstName,lastName, address, city,state,zipcode,longitude,latitude, colony, landmark} = req.body;
     console.log('ZIPCODE',zipcode)
     if(typeof  firstName !== 'string'|| firstName.length>100){
         return next(new ApiError(400, 'E001004'));
@@ -58,10 +58,10 @@ address.addAddress = async(req,res,next) => {
     console.log('REQUEST',req.body)
     try{
 
-        let { firstName,lastName, address, city, state, zipcode,primary,longitude,latitude} = req.body;
+        let { firstName,lastName, address, city, state, zipcode,primary,longitude,latitude,colony, landmark} = req.body;
         const AddObj = new Address(req._siteId);
         if(primary == 1) await AddObj.removePrimaryAddress(req._userId);
-      const response = await AddObj.addAddress(firstName,lastName,address,city,state,zipcode,req._userId,primary,longitude,latitude)
+      const response = await AddObj.addAddress(firstName,lastName,address,city,state,zipcode,req._userId,primary,longitude,latitude,colony, landmark)
       console.log(response)
       req._response = response
 
@@ -91,10 +91,10 @@ address.list = async(req,res,next) =>{
 
 address.edit = async (req,res,next) =>{
     try{
-        let { id,firstName,lastName, address, city, state, zipcode,primary,longitude,latitude} = req.body;
+        let { id,firstName,lastName, address, city, state, zipcode,primary,longitude,latitude,colony, landmark,} = req.body;
         
         let params ={
-           id, firstName,lastName,address,city,state,zipcode,primary:primary||0,longitude,latitude,
+           id, firstName,lastName,address,city,state,zipcode,primary:primary||0,longitude,latitude,colony, landmark,
             userId:req._userId
         }
 
