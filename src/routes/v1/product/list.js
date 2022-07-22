@@ -1,4 +1,4 @@
-const { Product, ProductImages, ProductVariants, ProductVideos, Category, ProductThumb, Cart,ProductSave } = require("../../../core/sql/controller/child");
+const { Product, ProductImages, ProductVariants, ProductVideos, Category, ProductThumb, Cart,ProductSave,Orders,OrderDetails } = require("../../../core/sql/controller/child");
 const { base } = require("./../../../wrapper");
 const ApiError = require("../ApiError");
 const list = {};
@@ -41,6 +41,8 @@ list.productList = async (req, res, next) => {
     const prodThumbObj = new ProductThumb(req._siteId);
     const cartObj = new Cart(req._siteId);
     const favouriteList = new ProductSave(req._siteId);
+    const OrderObj = new Orders(req._siteId);
+    const OrderDetailsObj = new OrderDetails(req._siteId);
 
     if(category) {
       let mycategory = await CatObj.fetchDetail({slug: category});
@@ -48,6 +50,22 @@ list.productList = async (req, res, next) => {
     }
     if(size && Array.isArray(JSON.parse(size))){
         size = JSON.parse(size).join('","')
+    }
+
+    let userProductIds = [];
+    if (req._userId) {
+      let userOrders = await OrderObj.completedOrders(userId);
+      const promises = userOrders.map(async (item) => {
+        let temp = await OrderDetailsObj.orderDetailsByOrderId(item.id);
+        if (temp) {
+          item.details = temp;
+          userProductIds = userProductIds.concat(temp.map(item => item.productId));
+        } else {
+          item.details = []
+        }
+      });
+      await Promise.all(promises);
+      userProductIds = Array.from(new Set(userProductIds));
     }
     ProdObj.list(sort_by, order, min_price, max_price, category_id, size, offset, limit, async (error, result)=>{
       if(result && result.length){
@@ -68,7 +86,7 @@ list.productList = async (req, res, next) => {
         const total = await ProdObj.count();
         // const saved = await favouriteList.list(userId)
         
-        res.status(200).send(base.success({result: _wrapper(userId, req.query, myresult, total, cartList)}));
+        res.status(200).send(base.success({result: _wrapper(userId, req.query, myresult, total, cartList,userProductIds)}));
         next();
       } else if(error) {
         console.log(error);
@@ -85,7 +103,7 @@ list.productList = async (req, res, next) => {
   }
 }
 
-const _wrapper = (userId, params, responses, total, cartList) => {
+const _wrapper = (userId, params, responses, total, cartList,userProductIds) => {
   let productList = [];
   responses.map(product => {
 
@@ -104,7 +122,8 @@ const _wrapper = (userId, params, responses, total, cartList) => {
       likes: product.likesCount,
       liked: userId && product.likes.some( like => like.userId == userId ) ? true : false,
       productInCart: userId && cartList.some( cart => cart.productId == product.id ) ? true : false,
-      favourite:userId && product.saved.some( fav => fav.userId == userId) ? true:false
+      favourite:userId && product.saved.some( fav => fav.userId == userId) ? true:false,
+      isProductBought: userProductIds.includes(product.id )
     }
     productList.push(tuple);
   })
