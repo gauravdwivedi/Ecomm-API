@@ -57,16 +57,41 @@ list(userId){
         }
 
 
-        addressById(id){
+addressById(id){
             return new Promise((resolve,reject)=>{
                 this.connection.query(QUERY_BUILDER.ADDRESS_BY_ID(id),super.getQueryType('SELECT')).then(result=>{
                         resolve(result);
                     }).catch(error => resolve(error));
                 })
-            }    
+            }
+            
+countrylist(){
+    return new Promise((resolve,reject)=>{
+        this.connection.query(QUERY_BUILDER.COUNTRY_LIST(),super.getQueryType('SELECT')).then(result=>{
+            resolve(result);
+        }).catch(error => resolve(error));
+    })
+}            
 
 
-    }
+getStateByCountry(id){
+    return new Promise((resolve,reject)=>{
+        this.connection.query(QUERY_BUILDER.GET_STATE_BY_COUNTRY(id),super.getQueryType('SELECT')).then(result=>{
+            console.log('States',result);
+            resolve(result);
+        }).catch(error=>resolve(error));
+    })
+}
+
+getCitiesByState(id){
+    return new Promise((resolve,reject)=>{
+        this.connection.query(QUERY_BUILDER.GET_CITIES_BY_STATE(id),super.getQueryType('SELECT')).then(result=>{
+            resolve(result);
+        }).catch(error=> resolve(error));
+    })
+}
+
+ }
 
 
 const QUERY_BUILDER = {
@@ -140,6 +165,21 @@ const QUERY_BUILDER = {
         console.log('EXEcuting Address by id',id)
         const query = ` SELECT * FROM ${ADDRESS_TABLE_NAME} WHERE ${ADDRESS_FIELDS.ID} = ?`;
         return SqlString.format(query,[id])
+    },
+
+    COUNTRY_LIST:() =>{
+        const query = `SELECT * FROM countries ORDER BY id desc`;
+        return SqlString.format(query);
+    },
+
+    GET_STATE_BY_COUNTRY:(id)=>{
+        const query = `SELECT * FROM states WHERE country_id = ? `;
+        return SqlString.format(query,[id])
+    },
+
+    GET_CITIES_BY_STATE:(id)=>{
+        const query = `SELECT * FROM cities WHERE state_id= ?`;
+        return SqlString.format(query,[id]);
     }
 
 }

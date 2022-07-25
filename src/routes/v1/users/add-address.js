@@ -123,6 +123,49 @@ address.makePrimary = async (req,res,next) =>{
         return next(new ApiError(500,'E0010001',{},'There was some problem!'));
     }
 }
+address.countryList =async (req,res,next) =>{
+    try{
+
+        const AddObj = new Address(req._siteId);
+        const result  = await AddObj.countrylist();
+        console.log(result)
+        req._response =result;
+        next();
+
+    }catch(err){
+        return next(new ApiError(500,'E0010001',{},'There was some problem!'));
+    }
+}
+
+address.getStatesByCountry =async (req,res,next) =>{
+    try{
+        let {id}= req.body;
+        const AddObj = new Address(req._siteId);
+        const result = await AddObj.getStateByCountry(id)
+            
+        req._response =result;
+        next();
+        
+    }catch(err){
+        return next(new ApiError(500,'E0010001',{},'There was some problem!'));
+    }
+}
+
+address.getCitiesByState =async (req,res,next) =>{
+    try{
+
+        let {id}= req.body;
+        const AddObj = new Address(req._siteId);
+        const result = await AddObj.getCitiesByState(id)
+            
+        req._response =result;
+        next();
+        
+
+    }catch(err){
+        return next(new ApiError(500,'E0010001',{},'There was some problem!'));
+    }
+}
 
 
 address.addressDetailById = async (req,res,next) =>{
