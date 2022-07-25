@@ -160,6 +160,20 @@ class Orders extends AbstractSQL {
         .catch((error) => reject(error));
     })
   }
+
+  /**
+   * order list from user where order is completed
+   */
+   completedOrders(id) {
+    return new Promise((resolve, reject) => {
+      this.connection
+        .query(QUERY_BUILDER.COMPLETED_ORDER_LIST_BY_USER_ID(id), super.getQueryType("SELECT"))
+        .then((result) => {
+          resolve(result);
+        })
+        .catch((error) => reject(error));
+    })
+  }
 }
 
 const QUERY_BUILDER = {
@@ -234,6 +248,12 @@ const QUERY_BUILDER = {
   const query = `SELECT ${ORDERS_FIELDS.ID}, ${ORDERS_FIELDS.USER_ID}, ${ORDERS_FIELDS.STATUS}, ${ORDERS_FIELDS.DELIVERY_STATUS}, ${ORDERS_FIELDS.ADDRESS_ID}, ${ORDERS_FIELDS.PRICE_BEFORE_TAX}, ${ORDERS_FIELDS.PRICE_AFTER_TAX}, ${ORDERS_FIELDS.DISCOUNT}, ${ORDERS_FIELDS.NOTES}, ${ORDERS_FIELDS.TAX}  FROM  ${ORDERS_TABLE_NAME} `;
  return SqlString.format(query, [])
 },
+
+COMPLETED_ORDER_LIST_BY_USER_ID: (id) => {
+  const query = `SELECT ${ORDERS_FIELDS.ID}, ${ORDERS_FIELDS.USER_ID}, ${ORDERS_FIELDS.STATUS}, ${ORDERS_FIELDS.DELIVERY_STATUS}, ${ORDERS_FIELDS.ADDRESS_ID}, ${ORDERS_FIELDS.PRICE_BEFORE_TAX}, ${ORDERS_FIELDS.PRICE_AFTER_TAX}, ${ORDERS_FIELDS.DISCOUNT}, ${ORDERS_FIELDS.NOTES}, ${ORDERS_FIELDS.TAX}  FROM  ${ORDERS_TABLE_NAME}  WHERE  ${ORDERS_FIELDS.USER_ID} =  ? AND  ${ORDERS_FIELDS.STATUS} = "success" `;
+ return SqlString.format(query, [id])
+},
+
 };
 
 module.exports = Orders;
