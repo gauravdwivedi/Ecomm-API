@@ -16,10 +16,10 @@ class Address extends AbstractSQL {
      * Add Address
      */
 
-    addAddress(firstName,lastName, address, city, state, zipcode,userId,primary,longitude,latitude,colony, landmark){
+    addAddress(firstName,lastName, address, city, state,country, zipcode,userId,primary,longitude,latitude,colony, landmark){
         let id = uuidv4();
         return new Promise((resolve, reject) => {
-            this.connection.query(QUERY_BUILDER.SAVE(id, firstName,lastName, address, city, state, zipcode,userId,primary,longitude,latitude,colony, landmark),super.getQueryType('INSERT')).then(result => {
+            this.connection.query(QUERY_BUILDER.SAVE(id, firstName,lastName, address, city, state,country, zipcode,userId,primary,longitude,latitude,colony, landmark),super.getQueryType('INSERT')).then(result => {
                 resolve(id);
             }).catch(error => resolve(error));
         })
@@ -95,7 +95,7 @@ getCitiesByState(id){
 
 
 const QUERY_BUILDER = {
-    SAVE:(id, firstName,lastName, address, city, state, zipcode,userId,add_primary,longitude,latitude,colony, landmark) =>{
+    SAVE:(id, firstName,lastName, address, city, state,country, zipcode,userId,add_primary,longitude,latitude,colony, landmark) =>{
         // address_2
         const data = {
             [ADDRESS_FIELDS.ID] :id,
@@ -104,6 +104,7 @@ const QUERY_BUILDER = {
             [ADDRESS_FIELDS.ADDRESS_1]:address,
             [ADDRESS_FIELDS.CITY]:city,
             [ADDRESS_FIELDS.STATE]:state,
+            [ADDRESS_FIELDS.COUNTRY]:country,
             [ADDRESS_FIELDS.POSTCODE]:zipcode,
             [ADDRESS_FIELDS.USER_ID]:userId,
             [ADDRESS_FIELDS.LONGITUDE]:longitude,

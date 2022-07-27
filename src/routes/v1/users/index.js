@@ -116,7 +116,7 @@ address.sendResponse,
 error
 )
 
-router.post("/address-detail",
+router.get("/address-detail",
   auths.setCredentials,
   auths.verify,
   address.addressDetailById,
