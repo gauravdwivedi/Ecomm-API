@@ -7,9 +7,10 @@ const list = require('./list');
 const detail = require("./detail");
 const deleteUser = require("./delete");
 const updateUserRole = require("./updateUserRole");
-const updateUserDetails = require("./updateUserDetails")
-const addUser = require("../users/add")
-const address = require("./add-address")
+const updateUserDetails = require("./updateUserDetails");
+const addUser = require("../users/add");
+const address = require("./add-address");
+
 
 router.get(
   '/list',
@@ -75,6 +76,22 @@ router.post("/add-address",
   error
 )
 
+router.get('/countries-list',
+auths.setCredentials,
+address.countryList,
+address.sendResponse,
+error)
+
+router.post('/get-states-by-country',
+address.getStatesByCountry,
+address.sendResponse,
+error);
+
+router.post('/get-cities-by-state',
+address.getCitiesByState,address.sendResponse, error);
+
+
+
 router.get("/list-address",
   auths.setCredentials,
   auths.verify,
@@ -99,7 +116,7 @@ address.sendResponse,
 error
 )
 
-router.post("/address-detail",
+router.get("/address-detail",
   auths.setCredentials,
   auths.verify,
   address.addressDetailById,

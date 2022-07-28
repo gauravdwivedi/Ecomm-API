@@ -58,10 +58,10 @@ address.addAddress = async(req,res,next) => {
     console.log('REQUEST',req.body)
     try{
 
-        let { firstName,lastName, address, city, state, zipcode,primary,longitude,latitude,colony, landmark} = req.body;
+        let { firstName,lastName, address, city, state,country, zipcode,primary,longitude,latitude,colony, landmark} = req.body;
         const AddObj = new Address(req._siteId);
         if(primary == 1) await AddObj.removePrimaryAddress(req._userId);
-      const response = await AddObj.addAddress(firstName,lastName,address,city,state,zipcode,req._userId,primary,longitude,latitude,colony, landmark)
+      const response = await AddObj.addAddress(firstName,lastName,address,city,state,country,zipcode,req._userId,primary,longitude,latitude,colony, landmark)
       console.log(response)
       req._response = response
 
@@ -119,6 +119,48 @@ address.makePrimary = async (req,res,next) =>{
         const response = await listEditAddObj.makePrimaryAddress(id)
         req._response = response;
         next();
+    }catch(err){
+        return next(new ApiError(500,'E0010001',{},'There was some problem!'));
+    }
+}
+address.countryList =async (req,res,next) =>{
+    try{
+
+        const AddObj = new Address(req._siteId);
+        const result  = await AddObj.countrylist();
+        console.log(result)
+        req._response =result;
+        next();
+
+    }catch(err){
+        return next(new ApiError(500,'E0010001',{},'There was some problem!'));
+    }
+}
+
+address.getStatesByCountry =async (req,res,next) =>{
+    try{
+        let {id}= req.body;
+        const AddObj = new Address(req._siteId);
+        const result = await AddObj.getStateByCountry(id)
+            
+        req._response =result;
+        next();
+        
+    }catch(err){
+        return next(new ApiError(500,'E0010001',{},'There was some problem!'));
+    }
+}
+
+address.getCitiesByState =async (req,res,next) =>{
+    try{
+
+        let {id}= req.body;
+        const AddObj = new Address(req._siteId);
+        const result = await AddObj.getCitiesByState(id)
+            console.log(result)
+        req._response =result;
+        next();
+        
     }catch(err){
         return next(new ApiError(500,'E0010001',{},'There was some problem!'));
     }

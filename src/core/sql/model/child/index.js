@@ -24,5 +24,8 @@ module.exports = {
   Payments: require('./payments'),
   PaymentMethods:require('./paymentmethods'),
   Orders:require('./orders'),
-  OrderDetails:require('./orderDetails')
+  OrderDetails:require('./orderDetails'),
+  Countries:require('./countries'),
+  States:require("./states"),
+  Cities:require("./city")
 }
