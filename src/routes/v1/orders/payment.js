@@ -1,6 +1,7 @@
 const ApiError = require("../ApiError");
 const { OrderDetails,Orders, Cart } = require("../../../core/sql/controller/child");
 const Razorpay = require("razorpay");
+const { Hmac, createHmac } = require("crypto");
 const paymentOrder = {};
 
 /**
@@ -37,14 +38,32 @@ paymentOrder.payment = async (req, res, next) => {
             const {razorPayPaymentId,  razorPaySignature} = req.body;
             
             if(status ==="captured"){
-                const OrderDetailsObj = new OrderDetails(req._siteId);
-                let orderDetails = await OrderDetailsObj.orderDetailsByOrderId(order.id);
-                const promises = orderDetails.map(async (item) => {
-                    await OrdersObj.quantityUpdate({id: item.variantId ,  qty: item.quantity})
-                    await CartObj.deleteItems(item.variantId,userId);
-                });
-                await Promise.all(promises);
-                await OrdersObj.orderStatusUpdate({id:order.id , status: "success"});
+
+                //Step :1
+                //Verify Payment Signature
+                const generated_sig =createHmac('sha256',process.env['RAZORPAY:KEY_SECRET'])
+                                        .update(order_id+"|"+razorPayPaymentId)
+                                        .digest('hex')
+
+
+                //STEP 2
+                    if(generated_sig == razorPaySignature){
+                        console.log('SIG',generated_sig,'RasorPay Sig',razorPaySignature);
+
+                        const OrderDetailsObj = new OrderDetails(req._siteId);
+                        let orderDetails = await OrderDetailsObj.orderDetailsByOrderId(order.id);
+                        const promises = orderDetails.map(async (item) => {
+                            await OrdersObj.quantityUpdate({id: item.variantId ,  qty: item.quantity})
+                            await CartObj.deleteItems(item.variantId,userId);
+                        });
+                        await Promise.all(promises);
+                        await OrdersObj.orderStatusUpdate({id:order.id , status: "success"});
+                    }else{
+                        let resp ='Payment signature does not match';
+
+                        req._response = resp;
+                        next();
+                    }
                 
             }else{
                 await OrdersObj.orderStatusUpdate({id:order.id , status})
