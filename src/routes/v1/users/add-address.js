@@ -61,6 +61,8 @@ address.addAddress = async(req,res,next) => {
         let { firstName,lastName, address, city, state,country, zipcode,primary,longitude,latitude,colony, landmark} = req.body;
         const AddObj = new Address(req._siteId);
         if(primary == 1) await AddObj.removePrimaryAddress(req._userId);
+        let checkAddress = await AddObj.checkUserAddress(req._userId);
+        if(checkAddress.Total === 0) primary = 1;
       const response = await AddObj.addAddress(firstName,lastName,address,city,state,country,zipcode,req._userId,primary,longitude,latitude,colony, landmark)
       console.log(response)
       req._response = response
