@@ -63,7 +63,9 @@ list.productList = async (req, res, next) => {
       userProductIds = Array.from(new Set(userProductIds));
     }
         ProdObj.search(search, async (error,result)=>{
-          if(result && result.length){
+
+          console.log('RESULT',result)
+          if(result!=null){
             let myresult=[];
 
             for(let index=0;index<result.length;index++){
@@ -83,9 +85,11 @@ list.productList = async (req, res, next) => {
         // const saved = await favouriteList.list(userId)
         
         res.status(200).send(base.success({result: _wrapper(userId, req.query, myresult, total, cartList,userProductIds)}));
-        next();
+       
           
           }
+          res.status(200).send(base.success({result: "No items found!"}));
+          next();
         }) 
     }else{
 

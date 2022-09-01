@@ -6,6 +6,7 @@ const {
   Product: {SCHEMA:{FIELDS: PRODUCT_FIELDS, TABLE_NAME: PRODUCT_TABLE_NAME}},
   Variants: {SCHEMA:{FIELDS: VARIANTS_FIELDS, TABLE_NAME: VARIANTS_TABLE_NAME}},
 } = require("./../../model/child");
+const { resolve } = require("path");
 
 class Product extends AbstractSQL{
   constructor(siteId){
@@ -36,6 +37,18 @@ class Product extends AbstractSQL{
       callback(null, result)
     }).catch(error => callback(error, null));
   }
+
+  search(params,cb){
+    this.connection.query(QUERY_BUILDER.SEARCH(params),super.getQueryType('SELECT')).then(result=>{
+      console.log('Result',result)
+      if(result && result.length>0){
+        cb(null,result)
+      }
+      cb('No result found!',null)
+      
+    }).catch(error=> cb(error,null));
+  }
+
   
   productDetailBySlug(slug) {
     return new Promise((resolve, reject) => {
@@ -116,6 +129,14 @@ const QUERY_BUILDER = {
       ORDER BY ${sort_by} ${order}
       limit ?,?`;
     return SqlString.format(query, [offset, limit])
+  },
+
+  SEARCH:(params)=>{
+    const query =`SELECT ${PRODUCT_FIELDS.ID}, ${PRODUCT_FIELDS.CATEGORY}, ${PRODUCT_FIELDS.TITLE}, ${PRODUCT_FIELDS.DESCRIPTION}, ${PRODUCT_FIELDS.RATING}, ${PRODUCT_FIELDS.SLUG} 
+        FROM ${PRODUCT_TABLE_NAME}
+        WHERE ${PRODUCT_FIELDS.TITLE} LIKE "%${params}%"` 
+
+    return SqlString.format(query)
   },
 
   GET_PRODUCT_DETAIL_BY_SLUG: (slug) => {
