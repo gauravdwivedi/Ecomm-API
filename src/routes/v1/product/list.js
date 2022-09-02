@@ -48,6 +48,7 @@ list.productList = async (req, res, next) => {
         console.log(search,'SEARCH')
 
     let userProductIds = [];
+    let resultResponse;
     if (req._userId) {
       let userOrders = await OrderObj.completedOrders(userId);
       const promises = userOrders.map(async (item) => {
@@ -62,35 +63,32 @@ list.productList = async (req, res, next) => {
       await Promise.all(promises);
       userProductIds = Array.from(new Set(userProductIds));
     }
-        ProdObj.search(search, async (error,result)=>{
-
-          console.log('RESULT',result)
-          if(result!=null){
-            let myresult=[];
-
-            for(let index=0;index<result.length;index++){
-              let product = result[index];
-          const category = await CatObj.fetchDetail({id: product.category});
-          const attributes =  await ProdVariantObj.getProductVariants(product.id, size, color, min_price, max_price);
-          const images = await ProdImageObj.getProductImages(product.id);
-          const videos = await  ProdVideoObj.getProductVideos(product.id);
-          const likesCount = await prodThumbObj.count(product.id);
-          const likes = await  prodThumbObj.getLikesUserIds(product.id);
-          const saved = await favouriteList.getFavouritesUserIds(product.id);
-          myresult.push({ ...product, attributes, images, category, videos, likesCount, likes ,saved});
-            }
-      
-        const cartList = (req._userId) ? await cartObj.listCart(userId) : [];
-        const total = await ProdObj.count();
-        // const saved = await favouriteList.list(userId)
+      const result = await  ProdObj.search(search);
+      console.log('RESULT',result)
+      if(result && result.length>0){
+        let myresult=[];
+        console.log('Inside IF')
+        for(let index=0;index<result.length;index++){
+          let product = result[index];
+      const category = await CatObj.fetchDetail({id: product.category});
+      const attributes =  await ProdVariantObj.getProductVariants(product.id, size, color, min_price, max_price);
+      const images = await ProdImageObj.getProductImages(product.id);
+      const videos = await  ProdVideoObj.getProductVideos(product.id);
+      const likesCount = await prodThumbObj.count(product.id);
+      const likes = await  prodThumbObj.getLikesUserIds(product.id);
+      const saved = await favouriteList.getFavouritesUserIds(product.id);
+      myresult.push({ ...product, attributes, images, category, videos, likesCount, likes ,saved});
+        }
+  
+    const cartList = (req._userId) ? await cartObj.listCart(userId) : [];
+    const total = await ProdObj.count();
+    // const saved = await favouriteList.list(userId)
+    
+    resultResponse = _wrapper(userId, req.query, myresult, total, cartList,userProductIds)
+      }
+      res.status(200).send(base.success({result:resultResponse }));
+      next();
         
-        res.status(200).send(base.success({result: _wrapper(userId, req.query, myresult, total, cartList,userProductIds)}));
-       
-          
-          }
-          res.status(200).send(base.success({result: "No items found!"}));
-          next();
-        }) 
     }else{
 
     if(category) {

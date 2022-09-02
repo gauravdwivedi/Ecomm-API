@@ -38,15 +38,13 @@ class Product extends AbstractSQL{
     }).catch(error => callback(error, null));
   }
 
-  search(params,cb){
-    this.connection.query(QUERY_BUILDER.SEARCH(params),super.getQueryType('SELECT')).then(result=>{
-      console.log('Result',result)
-      if(result && result.length>0){
-        cb(null,result)
-      }
-      cb('No result found!',null)
-      
-    }).catch(error=> cb(error,null));
+  search(params){
+    return new Promise((resolve,reject)=>{
+      this.connection.query(QUERY_BUILDER.SEARCH(params),super.getQueryType('SELECT')).then(result=>{
+        console.log('res',result)
+        resolve(result)
+      }).catch(error=>resolve({}));
+    })
   }
 
   
