@@ -11,6 +11,7 @@ const auths = require("../auths");
 const update = require("./update");
 const deleteAction = require("./delete");
 const save = require('./save');
+const searchList = require('./search');
 
 router.post(
   `/add`,
@@ -166,6 +167,14 @@ router.get(
   list.productList,
   error
 );
+
+router.get(
+    `/search`,
+    auths.setCredentials,
+    auths.setProfile,
+    searchList.search,
+    error
+)
 
 router.get(`/favourites`,
         auths.setCredentials,
