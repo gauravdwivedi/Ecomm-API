@@ -90,8 +90,6 @@ error);
 router.post('/get-cities-by-state',
 address.getCitiesByState,address.sendResponse, error);
 
-
-
 router.get("/list-address",
   auths.setCredentials,
   auths.verify,
