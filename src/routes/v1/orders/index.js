@@ -54,11 +54,18 @@ router.get(
 router.get(
   '/allOrders',
   auths.setCredentials,
-  auths.verify,
-  allOrders.validateRequest,
+  // auths.verify,
+  // allOrders.validateRequest,
   allOrders.orders,
   allOrders.sendResponse,
   error
+)
+
+router.get('/change-order',
+auths.setCredentials,
+allOrders.changeStatus,
+allOrders.sendResponse,
+error
 )
 
 router.get(
