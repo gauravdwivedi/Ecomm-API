@@ -33,7 +33,7 @@ allOrders.orders = async(req, res, next) => {
     //   }
     // });
     // await Promise.all(promises);
-    console.log('Response ==>',response)
+    // console.log('Response ==>',response)
     req._response = response;
     next();
   } catch(err) {
@@ -46,10 +46,16 @@ allOrders.orders = async(req, res, next) => {
 
 allOrders.changeStatus= async (req,res,next) =>{
   try{
-    const {orderId,new_status} =req;
-    const ordersObj =new Orders(req._siteId);
-    const response = await ordersObj.changeOrderStatus()
 
+    console.log('BODYDDDD',req.body);
+    let { id,status}= req.body;
+
+    const OrdersObj = new Orders(req._siteId);
+    const response = await OrdersObj.orderStatusUpdate(id,status);
+    console.log(response);
+    
+    req._response = response;
+    next();
   }catch(err){
     console.log(err);
     req._response ={};

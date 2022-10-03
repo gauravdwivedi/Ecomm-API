@@ -51,6 +51,8 @@ router.get(
   error
 )
 
+//ADMIN all Orders
+
 router.get(
   '/allOrders',
   auths.setCredentials,
@@ -61,12 +63,18 @@ router.get(
   error
 )
 
-router.get('/change-order',
-auths.setCredentials,
-allOrders.changeStatus,
-allOrders.sendResponse,
-error
+//Change Order status
+router.post(
+  '/change-status',
+  auths.setCredentials,
+  // auths.verify,
+  // allOrders.validateRequest,
+  allOrders.changeStatus,
+  allOrders.sendResponse,
+  error
 )
+
+
 
 router.get(
   '/user/:userId',
@@ -78,12 +86,25 @@ router.get(
   error
 )
 
+
 router.get(
   '/:id',
   auths.setCredentials,
   auths.verify,
   details.validateRequest,
   details.order,
+  details.sendResponse,
+  error
+)
+
+
+
+router.get(
+  '/order-detail/:id',
+  auths.setCredentials,
+  auths.verify,
+  // details.validateRequest,
+  details.adminOrderDetail,
   details.sendResponse,
   error
 )
