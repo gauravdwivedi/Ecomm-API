@@ -51,7 +51,7 @@ allOrders.changeStatus= async (req,res,next) =>{
     let { id,status}= req.body;
 
     const OrdersObj = new Orders(req._siteId);
-    const response = await OrdersObj.orderStatusUpdate(id,status);
+    const response = await OrdersObj.orderStatusUpdate({id,status});
     console.log(response);
     
     req._response = response;

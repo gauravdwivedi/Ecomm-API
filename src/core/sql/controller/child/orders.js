@@ -42,10 +42,10 @@ class Orders extends AbstractSQL {
   /**
    *  Order status update
    */
-   orderStatusUpdate(id,status) {
+   orderStatusUpdate(params) {
     return new Promise((resolve, reject) => {
       this.connection
-        .query(QUERY_BUILDER.ORDER_STATUS_UPDATE(id,status), super.getQueryType("UPDATE"))
+        .query(QUERY_BUILDER.ORDER_STATUS_UPDATE(params), super.getQueryType("UPDATE"))
         .then((result) => {
           resolve(result);
         })
@@ -171,7 +171,7 @@ class Orders extends AbstractSQL {
       .then((result)=>{
         resolve(result)
       })
-      .catch((error)=>reject(error))
+      .catch((error)=>reject(error))  
     })
   }
 
@@ -200,10 +200,10 @@ const QUERY_BUILDER = {
     return SqlString.format(query, [id,userid, status, deliveryStatus, addressId, priceBeforeTax, priceAfterTax, discount, notes, tax]);
   },
 
-  ORDER_STATUS_UPDATE: (id,status) => {
+  ORDER_STATUS_UPDATE: (params) => {
     
-    console.log(status,id)
-    let data = [status, id];
+    let {status,id} = params;
+    let data = [status,id];
     let query = `UPDATE ${ORDERS_TABLE_NAME} SET ${ORDERS_FIELDS.STATUS} = ? WHERE ${ORDERS_FIELDS.ID} = ?`;
     return SqlString.format(query, data);
   },

@@ -75,8 +75,6 @@ details.adminOrderDetail= async (req,res,next) =>{
     res.status(200).send(base.success({result: {}}));
     
   }
-
-
 }
 
 /**
