@@ -46,19 +46,31 @@ allOrders.orders = async(req, res, next) => {
 
 allOrders.changeStatus= async (req,res,next) =>{
   try{
-
     console.log('BODYDDDD',req.body);
     let { id,status}= req.body;
-
     const OrdersObj = new Orders(req._siteId);
     const response = await OrdersObj.orderStatusUpdate({id,status});
     console.log(response);
-    
     req._response = response;
     next();
   }catch(err){
     console.log(err);
     req._response ={};
+    next();
+  }
+}
+
+allOrders.transactions = async (req,res,next) =>{
+  try{
+    console.log('Transactions')
+    const OrderObj = new Orders(req._siteId);
+    const response = await OrderObj.paymentList();
+      req._response = response;
+      next();
+
+  }catch(err){
+    console.log('Here?')
+    req._response={};
     next();
   }
 }
@@ -70,6 +82,7 @@ allOrders.changeStatus= async (req,res,next) =>{
 * @param {*} next 
 */
 allOrders.sendResponse = async(req, res, next) => {
+  console.log('Response')
   res.status(200).send({result: req._response});
   // next();
 }

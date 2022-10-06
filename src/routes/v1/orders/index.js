@@ -86,7 +86,6 @@ router.get(
   error
 )
 
-
 router.get(
   '/:id',
   auths.setCredentials,
@@ -107,5 +106,14 @@ router.get(
   details.adminOrderDetail,
   details.sendResponse,
   error
+)
+
+
+router.get('/transactions/list',
+auths.setCredentials,
+auths.verify,
+allOrders.transactions,
+allOrders.sendResponse,
+error
 )
 module.exports = router;
