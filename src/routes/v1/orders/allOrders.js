@@ -76,6 +76,57 @@ allOrders.transactions = async (req,res,next) =>{
 }
 
 /**
+ * Pending Orders COUNT
+ */
+allOrders.pendingOrders =async (req,res,next) =>{
+  try{
+
+    const orderObj = new Orders(req._siteId);
+    const response = await orderObj.orderCount();
+    req._response = response;
+    next();
+  }catch(err){
+    console.log('Error',err)
+    req._response={};
+    next();
+  }
+}
+
+allOrders.allPendingOrders = async (req,res,next) =>{
+  try{
+    const orderObj = new Orders(req._siteId);
+    const response = await orderObj.allPendingOrders();
+    req._response = response;
+    next();
+  }catch(err){
+    console.log('Error',err)
+    req._response={};
+    next();
+  }
+}
+
+
+/**
+ * 
+ * @param {*} req 
+ * @param {*} res 
+ * @param {*} next 
+ */
+
+allOrders.completedOrders = async (req,res,next) =>{
+  try{
+    const orderObj = new Orders(req._siteId);
+      const res = await orderObj.completedOrderCount();
+      req._response = res;
+      next();
+
+  }catch(err){
+    req._response={};
+    next();
+  }
+}
+
+/**
 * sending response
 * @param {*} req 
 * @param {*} res 

@@ -207,6 +207,44 @@ paymentList(){
   })
 }
 
+
+/**
+ * Order Count
+ */
+
+orderCount(){
+  return new Promise((resolve,reject)=>{
+    this.connection
+    .query(QUERY_BUILDER.ORDER_COUNT(), super.getQueryType("SELECT"))
+    .then((result)=>{
+      resolve(result);
+    })
+    .catch((error) => reject(error));
+  })
+}
+
+completedOrderCount(){
+    return new Promise((resolve,reject)=>{
+      this.connection
+      .query(QUERY_BUILDER.COMPLETED_ORDER_COUNT(), super.getQueryType("SELECT"))
+      .then((result)=>{
+        resolve(result);
+      })
+      .catch((error) => reject(error));
+    })
+}
+
+allPendingOrders(){
+  return new Promise((resolve,reject)=>{
+    this.connection
+    .query(QUERY_BUILDER.ALL_PENDING_ORDERS(), super.getQueryType("SELECT"))
+    .then((result)=>{
+      resolve(result);
+    })
+    .catch((error) => reject(error));
+  })
+}
+
 }
 
 
@@ -224,7 +262,7 @@ const QUERY_BUILDER = {
     
     let {status,id} = params;
     let data = [status,id];
-    let query = `UPDATE ${ORDERS_TABLE_NAME} SET ${ORDERS_FIELDS.STATUS} = ? WHERE ${ORDERS_FIELDS.ID} = ?`;
+    let query = `UPDATE ${ORDERS_TABLE_NAME} SET ${ORDERS_FIELDS.DELIVERY_STATUS} = ? WHERE ${ORDERS_FIELDS.ID} = ?`;
     return SqlString.format(query, data);
   },
 
@@ -295,6 +333,20 @@ COMPLETED_ORDER_LIST_BY_USER_ID: (id) => {
 PAYMENT_LIST:()=>{
   const query = `SELECT * FROM ${PAYMENTS_TABLE_NAME}`;
   return SqlString.format(query)
+},
+
+ORDER_COUNT:()=>{
+  const query = `SELECT COUNT(${ORDERS_FIELDS.ID}) FROM ${ORDERS_TABLE_NAME}`;
+  return SqlString.format(query);
+},
+COMPLETED_ORDER_COUNT:()=>{
+  const query =`SELECT COUNT(${ORDERS_FIELDS.DELIVERY_STATUS}) FROM ${ORDERS_TABLE_NAME} WHERE ${ORDERS_FIELDS.DELIVERY_STATUS}="Delivered"`
+  return SqlString.format(query);
+},
+
+ALL_PENDING_ORDERS:()=>{
+  const query =  `SELECT * FROM ${ORDERS_TABLE_NAME} WHERE ${ORDERS_FIELDS.DELIVERY_STATUS} ="processing"`;
+  return SqlString.format(query);
 }
 
 };
