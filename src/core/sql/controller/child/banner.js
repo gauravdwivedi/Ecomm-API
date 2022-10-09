@@ -31,6 +31,23 @@ class Banner extends AbstractSQL{
         })
     }
 
+
+    /**
+     * Banner List
+     */
+
+    list(){
+        
+        return new Promise((resolve,reject)=>{
+            this.connection
+            .query(QUERY_BUILDER.BANNER_LIST(),super.getQueryType("SELECT"))
+            .then((result)=>{
+                resolve(result);
+            })
+            .catch((error)=>reject(error))
+        })
+    }
+
 }
 
 const QUERY_BUILDER={
@@ -46,6 +63,11 @@ const QUERY_BUILDER={
         }
 
         return SqlString.format(`INSERT INTO ${BANNER_TABLE_NAME} SET ?`,data)
+    },
+
+    BANNER_LIST:()=>{
+        const query =`SELECT * FROM ${BANNER_TABLE_NAME}`;
+        return SqlString.format(`SELECT * FROM ${BANNER_TABLE_NAME}`);
     }
 }
 
