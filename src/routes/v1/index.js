@@ -30,5 +30,6 @@ router.use('/liveSessions', require("./liveSessions"));
 // router.use('/productMenu', require("./productMenus"));
 router.use('/config', require("./config"));
 router.use('/upload', require("./upload"));
+router.use('/banners',require("./banner"));
 
 module.exports= router;

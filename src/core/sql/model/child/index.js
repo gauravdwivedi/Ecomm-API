@@ -27,5 +27,6 @@ module.exports = {
   OrderDetails:require('./orderDetails'),
   Countries:require('./countries'),
   States:require("./states"),
-  Cities:require("./city")
+  Cities:require("./city"),
+  Banner:require("./banner")
 }
