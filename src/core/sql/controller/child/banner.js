@@ -48,6 +48,37 @@ class Banner extends AbstractSQL{
         })
     }
 
+
+    /**
+     * Delete Banner
+     */
+
+     deleteBanner(id){
+        return new Promise((resolve,reject)=>{
+            this.connection
+            .query(QUERY_BUILDER.DELETE_BANNER(id),super.getQueryType("DELETE"))
+            .then((result)=>{
+                resolve(result);
+            })
+            .catch((error)=>reject(error))
+        })
+     }
+
+     /**
+      * Toggle Active
+      */
+
+     toggleActive(id){
+        return new Promise((resolve,reject)=>{
+            this.connection
+            .query(QUERY_BUILDER.ACTIVE_TOGGLE(id),super.getQueryType("UPDATE"))
+            .then((result)=>{
+                resolve(result);
+            })
+            .catch((error)=>reject(error))
+        })
+     }
+
 }
 
 const QUERY_BUILDER={
@@ -68,6 +99,17 @@ const QUERY_BUILDER={
     BANNER_LIST:()=>{
         const query =`SELECT * FROM ${BANNER_TABLE_NAME}`;
         return SqlString.format(`SELECT * FROM ${BANNER_TABLE_NAME}`);
+    },
+
+    DELETE_BANNER:(id)=>{
+       
+        const query =`DELETE FROM ${BANNER_TABLE_NAME} WHERE ${BANNER_FIELDS.ID} =?`;
+        return SqlString.format(query,id)
+    },
+
+    ACTIVE_TOGGLE:(id,status)=>{
+        const query = `UPDATE ${BANNER_TABLE_NAME} SET ${BANNER_FIELDS.ACTIVE}=? WHERE ${BANNER_FIELDS.ID}=?`;
+        return SqlString.format(query,status,id)
     }
 }
 

@@ -11,7 +11,6 @@ bannerList.list=async (req,res,next) =>{
 
         const bannerObj =new Banner(req._siteId);
         const response = await bannerObj.list();
-
         req._response= response;
         next();
 
