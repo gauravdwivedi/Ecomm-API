@@ -1,5 +1,6 @@
 const ApiError = require("../ApiError");
 const {OrderDetails, Orders } = require("../../../core/sql/controller/child");
+const axios = require("axios");
 
 const allOrders = {};
 
@@ -63,9 +64,20 @@ allOrders.changeStatus= async (req,res,next) =>{
 allOrders.transactions = async (req,res,next) =>{
   try{
     console.log('Transactions')
-    const OrderObj = new Orders(req._siteId);
-    const response = await OrderObj.paymentList();
-      req._response = response;
+    // const OrderObj = new Orders(req._siteId);
+    // const response = await OrderObj.paymentList();
+
+    const response = await axios({
+      method:'get',
+      url:'https://api.razorpay.com/v1/payments?count=100',
+      auth:{
+        username:'rzp_test_0C9e0FJUuVdqGn',
+        password:'VsKSMbeF4Aqgq5u9Ius7j59n'
+      }
+    })
+
+    console.log('REAPONSEEE',response.data)
+      req._response = response.data;
       next();
 
   }catch(err){

@@ -109,6 +109,11 @@ router.get(
 )
 
 
+router.get('/transactions/gateway',
+auths.setCredentials,
+auths.verify,
+)
+
 router.get('/transactions/list',
 auths.setCredentials,
 auths.verify,
@@ -140,5 +145,6 @@ allOrders.allPendingOrders,
 allOrders.sendResponse,
 error
 )
+
 
 module.exports = router;
