@@ -5,6 +5,7 @@ const auths =require("../auths");
 const addBanner=require("./add");
 const bannerList = require("./list");
 const deleteBanner =require("./delete");
+const activeBanner = require("./active");
 
 
 router.post('/add',
@@ -30,6 +31,15 @@ auths.verify,
 deleteBanner.delete,
 deleteBanner.sendResponse,
 error)
+
+router.post('/active',
+auths.setCredentials,
+auths.verify,
+activeBanner.validateRequest,
+activeBanner.active,
+activeBanner.sendResponse,
+error
+)
 
 
 module.exports = router;

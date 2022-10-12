@@ -68,10 +68,10 @@ class Banner extends AbstractSQL{
       * Toggle Active
       */
 
-     toggleActive(id){
+     toggleActive(id,activeStatus){
         return new Promise((resolve,reject)=>{
             this.connection
-            .query(QUERY_BUILDER.ACTIVE_TOGGLE(id),super.getQueryType("UPDATE"))
+            .query(QUERY_BUILDER.ACTIVE_TOGGLE(id,activeStatus),super.getQueryType("UPDATE"))
             .then((result)=>{
                 resolve(result);
             })
@@ -107,9 +107,11 @@ const QUERY_BUILDER={
         return SqlString.format(query,id)
     },
 
-    ACTIVE_TOGGLE:(id,status)=>{
+    ACTIVE_TOGGLE:(id,active)=>{
+        
+        let data = [active,id];
         const query = `UPDATE ${BANNER_TABLE_NAME} SET ${BANNER_FIELDS.ACTIVE}=? WHERE ${BANNER_FIELDS.ID}=?`;
-        return SqlString.format(query,status,id)
+        return SqlString.format(query,data)
     }
 }
 
