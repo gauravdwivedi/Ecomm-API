@@ -138,6 +138,29 @@ allOrders.completedOrders = async (req,res,next) =>{
   }
 }
 
+
+
+/**
+ * Getting weekly Completed Orders where payment is successful
+ * @param {*} req 
+ * @param {*} res 
+ * @param {*} next 
+ */
+allOrders.weeklyCompletedOrders=async(req,res,next) =>{
+
+try{
+
+  const orderObj = new Orders(req._siteId);
+  const res = await orderObj.weeklyCompletedOrders();
+  req._response =res;
+  next();
+
+}catch(error){
+  req._response={};
+  next();
+}
+}
+
 /**
 * sending response
 * @param {*} req 

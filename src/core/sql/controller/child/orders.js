@@ -245,6 +245,19 @@ allPendingOrders(){
   })
 }
 
+
+weeklyCompletedOrders(){
+  return new Promise((resolve,reject)=>{
+    this.connection
+    .query(QUERY_BUILDER.WEEK_COMPLETED_ORDERS(), super.getQueryType("SELECT"))
+    .then((result)=>{
+      console.log('WEEK REsult',result)
+      resolve(result);
+    })
+    .catch((error) => reject(error));
+  })
+}
+
 }
 
 
@@ -347,7 +360,15 @@ COMPLETED_ORDER_COUNT:()=>{
 ALL_PENDING_ORDERS:()=>{
   const query =  `SELECT * FROM ${ORDERS_TABLE_NAME} WHERE ${ORDERS_FIELDS.DELIVERY_STATUS} ="processing"`;
   return SqlString.format(query);
+},
+
+WEEK_COMPLETED_ORDERS:()=>{
+  const query = `
+  SELECT * FROM ${ORDERS_TABLE_NAME} WHERE (DATE(${ORDERS_FIELDS.CREATED_AT}) BETWEEN NOW()-7 AND NOW()  ) `
+  return SqlString.format(query)
+
 }
+
 
 };
 

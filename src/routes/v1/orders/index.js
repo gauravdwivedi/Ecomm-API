@@ -147,4 +147,14 @@ error
 )
 
 
+//Week orders
+router.get('/week/orders',
+auths.setCredentials,
+auths.verify,
+allOrders.weeklyCompletedOrders,
+allOrders.sendResponse,
+error
+)
+
+
 module.exports = router;
