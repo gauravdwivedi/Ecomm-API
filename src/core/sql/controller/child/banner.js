@@ -108,7 +108,6 @@ const QUERY_BUILDER={
     },
 
     ACTIVE_TOGGLE:(id,active)=>{
-        
         let data = [active,id];
         const query = `UPDATE ${BANNER_TABLE_NAME} SET ${BANNER_FIELDS.ACTIVE}=? WHERE ${BANNER_FIELDS.ID}=?`;
         return SqlString.format(query,data)
