@@ -44,6 +44,7 @@ list.productList = async (req, res, next) => {
     const OrderObj = new Orders(req._siteId);
     const OrderDetailsObj = new OrderDetails(req._siteId);
 
+
     if(category) {
       let mycategory = await CatObj.fetchDetail({slug: category});
       category_id = await mycategory?.id
@@ -67,6 +68,8 @@ list.productList = async (req, res, next) => {
       await Promise.all(promises);
       userProductIds = Array.from(new Set(userProductIds));
     }
+
+  
     ProdObj.list(sort_by, order, min_price, max_price, category_id, size, offset, limit, async (error, result)=>{
       if(result && result.length){
         let myresult = [];
@@ -97,6 +100,7 @@ list.productList = async (req, res, next) => {
         next();
       }
     })
+    
   } catch(err) {
     console.error(err);
     res.status(200).send(base.error({result: []}));
@@ -106,8 +110,6 @@ list.productList = async (req, res, next) => {
 const _wrapper = (userId, params, responses, total, cartList,userProductIds) => {
   let productList = [];
   responses.map(product => {
-
-    console.log(product.saved,'?? CartList',cartList)
 
     let tuple = {
       id: product.id,
@@ -138,5 +140,6 @@ const _wrapper = (userId, params, responses, total, cartList,userProductIds) => 
   }
   return resp;
 }
+
 
 module.exports = list;

@@ -162,6 +162,21 @@ class Orders extends AbstractSQL {
   }
 
   /**
+   * Change Order Status
+   */
+  changeStatus(){
+    return new Promise((resolve,reject)=>{
+      this.connection
+      .query(QUERY_BUILDER.CHANGE_ORDER_STATUS(),super.getQueryType("UPDATE"))
+      .then((result)=>{
+        resolve(result)
+      })
+      .catch((error)=>reject(error))  
+    })
+  }
+
+
+  /**
    * order list from user where order is completed
    */
    completedOrders(id) {
@@ -174,7 +189,78 @@ class Orders extends AbstractSQL {
         .catch((error) => reject(error));
     })
   }
+
+
+/**
+ * Payment list
+ */
+
+paymentList(){
+  return new Promise((resolve,reject)=>{
+    console.log('payment List')
+    this.connection
+    .query(QUERY_BUILDER.PAYMENT_LIST(), super.getQueryType("SELECT"))
+    .then((result)=>{
+      resolve(result);
+    })
+    .catch((error) => reject(error));
+  })
 }
+
+
+/**
+ * Order Count
+ */
+
+orderCount(){
+  return new Promise((resolve,reject)=>{
+    this.connection
+    .query(QUERY_BUILDER.ORDER_COUNT(), super.getQueryType("SELECT"))
+    .then((result)=>{
+      resolve(result);
+    })
+    .catch((error) => reject(error));
+  })
+}
+
+completedOrderCount(){
+    return new Promise((resolve,reject)=>{
+      this.connection
+      .query(QUERY_BUILDER.COMPLETED_ORDER_COUNT(), super.getQueryType("SELECT"))
+      .then((result)=>{
+        resolve(result);
+      })
+      .catch((error) => reject(error));
+    })
+}
+
+allPendingOrders(){
+  return new Promise((resolve,reject)=>{
+    this.connection
+    .query(QUERY_BUILDER.ALL_PENDING_ORDERS(), super.getQueryType("SELECT"))
+    .then((result)=>{
+      resolve(result);
+    })
+    .catch((error) => reject(error));
+  })
+}
+
+
+weeklyCompletedOrders(){
+  return new Promise((resolve,reject)=>{
+    this.connection
+    .query(QUERY_BUILDER.WEEK_COMPLETED_ORDERS(), super.getQueryType("SELECT"))
+    .then((result)=>{
+      console.log('WEEK REsult',result)
+      resolve(result);
+    })
+    .catch((error) => reject(error));
+  })
+}
+
+}
+
+
 
 const QUERY_BUILDER = {
   NEW_ORDER: (id, params) => {
@@ -186,11 +272,14 @@ const QUERY_BUILDER = {
   },
 
   ORDER_STATUS_UPDATE: (params) => {
-    let { status, id } = params;
-    let data = [status, id];
-    let query = `UPDATE ${ORDERS_TABLE_NAME} SET ${ORDERS_FIELDS.STATUS} = ? WHERE ${ORDERS_FIELDS.ID} = ?`;
+    
+    let {status,id} = params;
+    let data = [status,id];
+    let query = `UPDATE ${ORDERS_TABLE_NAME} SET ${ORDERS_FIELDS.DELIVERY_STATUS} = ? WHERE ${ORDERS_FIELDS.ID} = ?`;
     return SqlString.format(query, data);
   },
+
+  
 
   ORDER_PRICE_UPDATE: (params) => {
     let { razorpayOrderId, priceBeforeTax ,priceAfterTax , id } = params;
@@ -227,8 +316,9 @@ const QUERY_BUILDER = {
     return SqlString.format(query, [qty , id]);
   },
 
+  //Orders List
   ORDER_LIST_BY_USER_ID: (id) => {
-     const query = `SELECT ${ORDERS_FIELDS.ID}, ${ORDERS_FIELDS.USER_ID}, ${ORDERS_FIELDS.STATUS}, ${ORDERS_FIELDS.DELIVERY_STATUS}, ${ORDERS_FIELDS.ADDRESS_ID}, ${ORDERS_FIELDS.PRICE_BEFORE_TAX}, ${ORDERS_FIELDS.PRICE_AFTER_TAX}, ${ORDERS_FIELDS.DISCOUNT}, ${ORDERS_FIELDS.NOTES}, ${ORDERS_FIELDS.TAX}  FROM  ${ORDERS_TABLE_NAME}  WHERE  ${ORDERS_FIELDS.USER_ID} =  ? `;
+     const query = `SELECT ${ORDERS_FIELDS.ID}, ${ORDERS_FIELDS.USER_ID}, ${ORDERS_FIELDS.STATUS}, ${ORDERS_FIELDS.DELIVERY_STATUS}, ${ORDERS_FIELDS.ADDRESS_ID}, ${ORDERS_FIELDS.PRICE_BEFORE_TAX}, ${ORDERS_FIELDS.PRICE_AFTER_TAX}, ${ORDERS_FIELDS.DISCOUNT}, ${ORDERS_FIELDS.NOTES}, ${ORDERS_FIELDS.TAX},${ORDERS_FIELDS.CREATED_AT}  FROM  ${ORDERS_TABLE_NAME}  WHERE  ${ORDERS_FIELDS.USER_ID} =  ? ORDER BY ${ORDERS_FIELDS.CREATED_AT} DESC `;
     return SqlString.format(query, [id])
   },
 
@@ -253,6 +343,33 @@ COMPLETED_ORDER_LIST_BY_USER_ID: (id) => {
   const query = `SELECT ${ORDERS_FIELDS.ID}, ${ORDERS_FIELDS.USER_ID}, ${ORDERS_FIELDS.STATUS}, ${ORDERS_FIELDS.DELIVERY_STATUS}, ${ORDERS_FIELDS.ADDRESS_ID}, ${ORDERS_FIELDS.PRICE_BEFORE_TAX}, ${ORDERS_FIELDS.PRICE_AFTER_TAX}, ${ORDERS_FIELDS.DISCOUNT}, ${ORDERS_FIELDS.NOTES}, ${ORDERS_FIELDS.TAX}  FROM  ${ORDERS_TABLE_NAME}  WHERE  ${ORDERS_FIELDS.USER_ID} =  ? AND  ${ORDERS_FIELDS.STATUS} = "success" `;
  return SqlString.format(query, [id])
 },
+
+PAYMENT_LIST:()=>{
+  const query = `SELECT * FROM ${PAYMENTS_TABLE_NAME}`;
+  return SqlString.format(query)
+},
+
+ORDER_COUNT:()=>{
+  const query = `SELECT COUNT(${ORDERS_FIELDS.ID}) FROM ${ORDERS_TABLE_NAME}`;
+  return SqlString.format(query);
+},
+COMPLETED_ORDER_COUNT:()=>{
+  const query =`SELECT COUNT(${ORDERS_FIELDS.DELIVERY_STATUS}) FROM ${ORDERS_TABLE_NAME} WHERE ${ORDERS_FIELDS.DELIVERY_STATUS}="Delivered"`
+  return SqlString.format(query);
+},
+
+ALL_PENDING_ORDERS:()=>{
+  const query =  `SELECT * FROM ${ORDERS_TABLE_NAME} WHERE ${ORDERS_FIELDS.DELIVERY_STATUS} ="processing"`;
+  return SqlString.format(query);
+},
+
+WEEK_COMPLETED_ORDERS:()=>{
+  const query = `
+  SELECT * FROM ${ORDERS_TABLE_NAME} WHERE (DATE(${ORDERS_FIELDS.CREATED_AT}) BETWEEN NOW()-7 AND NOW()  ) `
+  return SqlString.format(query)
+
+}
+
 
 };
 

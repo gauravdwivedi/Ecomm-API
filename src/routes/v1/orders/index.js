@@ -51,15 +51,30 @@ router.get(
   error
 )
 
+//ADMIN all Orders
+
 router.get(
   '/allOrders',
   auths.setCredentials,
-  auths.verify,
-  allOrders.validateRequest,
+  // auths.verify,
+  // allOrders.validateRequest,
   allOrders.orders,
   allOrders.sendResponse,
   error
 )
+
+//Change Order status
+router.post(
+  '/change-status',
+  auths.setCredentials,
+  // auths.verify,
+  // allOrders.validateRequest,
+  allOrders.changeStatus,
+  allOrders.sendResponse,
+  error
+)
+
+
 
 router.get(
   '/user/:userId',
@@ -80,4 +95,66 @@ router.get(
   details.sendResponse,
   error
 )
+
+
+
+router.get(
+  '/order-detail/:id',
+  auths.setCredentials,
+  auths.verify,
+  // details.validateRequest,
+  details.adminOrderDetail,
+  details.sendResponse,
+  error
+)
+
+
+router.get('/transactions/gateway',
+auths.setCredentials,
+auths.verify,
+)
+
+router.get('/transactions/list',
+auths.setCredentials,
+auths.verify,
+allOrders.transactions,
+allOrders.sendResponse,
+error
+)
+
+router.get('/pending-orders/list',
+auths.setCredentials,
+auths.verify,
+allOrders.pendingOrders,
+allOrders.sendResponse,
+error
+)
+
+router.get('/completed-orders/list',
+auths.setCredentials,
+auths.verify,
+allOrders.completedOrders,
+allOrders.sendResponse,
+error
+)
+
+router.get('/pending-orders/all',
+auths.setCredentials,
+auths.verify,
+allOrders.allPendingOrders,
+allOrders.sendResponse,
+error
+)
+
+
+//Week orders
+router.get('/week/orders',
+auths.setCredentials,
+auths.verify,
+allOrders.weeklyCompletedOrders,
+allOrders.sendResponse,
+error
+)
+
+
 module.exports = router;

@@ -1,6 +1,6 @@
 const ApiError = require("../ApiError");
-const {OrderDetails, Orders } = require("../../../core/sql/controller/child");
-
+const {OrderDetails, Orders,Address } = require("../../../core/sql/controller/child");
+const { base } = require("./../../../wrapper");
 const details = {};
 
 /**
@@ -29,6 +29,7 @@ details.order = async(req, res, next) => {
     const response = await OrderObj.orderDetailsById(id);
     if(response){
         response.details = await OrderDetailsObj.orderDetailsByOrderId(id);
+        
         req._response = response;
     }else{
         req._response =[]
@@ -38,6 +39,41 @@ details.order = async(req, res, next) => {
     console.log(err);
     req._response = {};
     next();
+  }
+}
+
+/**
+ * Fetching All Order Details by orderID
+ * @param {*} req 
+ * @param {*} res 
+ * @param {*} next 
+ */
+
+details.adminOrderDetail= async (req,res,next) =>{
+  try{
+    console.log('ADMIN Order Detail');
+  const {id} = req.params;
+  const OrderObj = new Orders(req._siteId);
+  const OrderDetailsObj = new OrderDetails(req._siteId);  
+  const addressObj = new Address(req._siteId);
+
+
+  const response = await OrderObj.orderDetailsById(id);
+  console.log('OrderDetailsByID',response)
+
+  const addressId =response.addressId;
+  console.log(addressId);
+
+  const address = await addressObj.addressById(addressId)
+  console.log('Address',address)
+  
+
+  res.status(200).send(base.success({result:{...response,address}}));
+  
+    
+  }catch(err){
+    res.status(200).send(base.success({result: {}}));
+    
   }
 }
 
