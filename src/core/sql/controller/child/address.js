@@ -41,6 +41,14 @@ class Address extends AbstractSQL {
         })
     }
 
+    checkUserAddress(userId){
+        return new Promise((resolve,reject) =>{
+            this.connection.query(QUERY_BUILDER.CHECK_USER_ADDRESS(userId), super.getQueryType('SELECT')).then(result =>{
+                resolve(result[0])
+            }).catch(error =>resolve(error))
+        })
+    }
+
     makePrimaryAddress(id){
         return new Promise((resolve,reject) =>{
             this.connection.query(QUERY_BUILDER.MAKE_PRIMARY_ADDRESS(id), super.getQueryType('UPDATE')).then(result =>{
@@ -151,6 +159,12 @@ const QUERY_BUILDER = {
             const queryParams = [userId];
             const res = SqlString.format(query,queryParams)
             return res;
+    },
+
+    CHECK_USER_ADDRESS:(userId) =>{
+        console.log('userId',userId)
+        const query = ` SELECT COUNT(*) AS Total  FROM ${ADDRESS_TABLE_NAME} WHERE ${ADDRESS_FIELDS.USER_ID} = ? `;
+        return SqlString.format(query,[userId])
     },
 
     MAKE_PRIMARY_ADDRESS:(id) =>{
